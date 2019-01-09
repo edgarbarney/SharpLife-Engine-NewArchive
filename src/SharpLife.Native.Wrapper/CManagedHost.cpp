@@ -1,6 +1,7 @@
 #include "CManagedHost.h"
 #include "CLR/CCLRHostException.h"
 #include "ConfigurationInput.h"
+#include "ExitCode.h"
 #include "Log.h"
 #include "Utility/StringUtils.h"
 
@@ -8,7 +9,7 @@ namespace Wrapper
 {
 const std::string_view CManagedHost::CONFIG_FILENAME{ "cfg/SharpLife-Wrapper-Native.ini" };
 
-using ManagedEntryPoint = int ( STDMETHODCALLTYPE* )( bool bIsServer );
+using ManagedEntryPoint = ExitCode( STDMETHODCALLTYPE* )( bool bIsServer );
 
 CManagedHost::CManagedHost() = default;
 
@@ -26,7 +27,7 @@ void CManagedHost::Initialize( std::string&& szGameDir, bool bIsServer )
 
 void CManagedHost::Start()
 {
-	int exitCode = 1;
+	auto exitCode = ExitCode::UnknownError;
 
 	if( LoadConfiguration() )
 	{
@@ -70,9 +71,11 @@ void CManagedHost::Start()
 		}
 	}
 
-	Log::DebugMessage( "Exiting with code %d", exitCode );
 
-	std::quick_exit( exitCode );
+
+	Log::DebugMessage( "Exiting with code %s (%d)", ExitCodeToString( exitCode ), exitCode );
+
+	std::quick_exit( ( int ) exitCode );
 }
 
 bool CManagedHost::LoadConfiguration()

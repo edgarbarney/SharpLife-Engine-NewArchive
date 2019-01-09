@@ -80,6 +80,8 @@ target_sources( ${TARGET_NAME} PRIVATE
 	ConfigurationInput.cpp
 	ConfigurationInput.h
 	EngineInterface.cpp
+	ExitCode.h
+	ExitCodes.inc
 	Log.cpp
 	Log.h
 )
