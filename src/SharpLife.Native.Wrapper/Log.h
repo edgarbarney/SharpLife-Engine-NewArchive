@@ -12,6 +12,8 @@ void Message( const char* pszFormat, ... );
 void DebugMessage( const char* pszFormat, ... );
 
 void SetDebugLoggingEnabled( bool bEnable );
+
+void SetGameDirectory( const std::string_view& szGameDir );
 }
 }
 

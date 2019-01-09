@@ -18,6 +18,8 @@ void CManagedHost::Initialize( std::string&& szGameDir, bool bIsServer )
 {
 	m_szGameDir = std::move( szGameDir );
 	m_bIsServer = bIsServer;
+
+	Log::SetGameDirectory( m_szGameDir );
 }
 
 void CManagedHost::Start()

@@ -1,7 +1,9 @@
+#include <cassert>
 #include <chrono>
 #include <cstdarg>
 #include <cstdio>
 #include <ctime>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <memory>
@@ -12,11 +14,15 @@ namespace Wrapper
 {
 namespace Log
 {
-const std::string LOG_FILENAME{ "SharpLifeWrapper-Native.log" };
+const std::string LOG_FILENAME{ "logs/SharpLifeWrapper-Native.log" };
+
+std::string LOG_FILE_PATH;
 
 static void LogToFile( const char* pszFormat, va_list list )
 {
-	if( std::ofstream file{ LOG_FILENAME, std::ofstream::app }; file )
+	assert( !LOG_FILE_PATH.empty() );
+
+	if( std::ofstream file{ LOG_FILE_PATH, std::ofstream::app }; file )
 	{
 		auto time = std::time( nullptr );
 
@@ -47,6 +53,10 @@ static void LogToFile( const char* pszFormat, va_list list )
 		file << std::endl;
 
 		file.flush();
+	}
+	else
+	{
+		assert( !"Couldn't open log file for writing" );
 	}
 }
 
@@ -81,6 +91,13 @@ void DebugMessage( const char* pszFormat, ... )
 void SetDebugLoggingEnabled( bool bEnable )
 {
 	g_bDebugLoggingEnabled = bEnable;
+}
+
+void SetGameDirectory( const std::string_view& szGameDir )
+{
+	//Convert to string to avoid any additional memory usage in specific path implementations
+	LOG_FILE_PATH = ( std::filesystem::path( szGameDir ) / LOG_FILENAME ).string();
+	LOG_FILE_PATH.shrink_to_fit();
 }
 }
 }
