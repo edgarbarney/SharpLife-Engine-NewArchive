@@ -55,6 +55,17 @@ static bool g_bDebugLoggingEnabled = true;
 
 void Message( const char* pszFormat, ... )
 {
+	va_list list;
+
+	va_start( list, pszFormat );
+
+	LogToFile( pszFormat, list );
+
+	va_end( list );
+}
+
+void DebugMessage( const char* pszFormat, ... )
+{
 	if( g_bDebugLoggingEnabled )
 	{
 		va_list list;

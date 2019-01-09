@@ -105,7 +105,7 @@ Utility::CLibrary CCLRHost::LoadCoreCLRModule( const std::wstring_view& targetAp
 		throw CCLRHostException( "CoreCLR.dll could not be found" );
 	}
 
-	Log::Message( "CoreCLR loaded from %ls", coreRoot.c_str() );
+	Log::DebugMessage( "CoreCLR loaded from %ls", coreRoot.c_str() );
 
 	return coreCLRModule;
 }
@@ -161,7 +161,7 @@ void CCLRHost::StartRuntime()
 		throw CCLRHostException( "Failed to start the runtime", hr );
 	}
 
-	Log::Message( "Runtime started" );
+	Log::DebugMessage( "Runtime started" );
 }
 
 DWORD CCLRHost::CreateAppDomain( const std::wstring& targetAppPath, const std::wstring& coreRoot )
@@ -307,7 +307,7 @@ DWORD CCLRHost::CreateAppDomain( const std::wstring& targetAppPath, const std::w
 		throw CCLRHostException( "Failed to create AppDomain", hr );
 	}
 
-	Log::Message( "AppDomain %d created", domainId );
+	Log::DebugMessage( "AppDomain %d created", domainId );
 
 	return domainId;
 }

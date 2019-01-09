@@ -9,6 +9,8 @@ namespace Log
 {
 void Message( const char* pszFormat, ... );
 
+void DebugMessage( const char* pszFormat, ... );
+
 void SetDebugLoggingEnabled( bool bEnable );
 }
 }
