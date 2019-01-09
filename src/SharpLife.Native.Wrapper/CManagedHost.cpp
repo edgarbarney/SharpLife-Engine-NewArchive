@@ -20,6 +20,8 @@ void CManagedHost::Initialize( std::string&& szGameDir, bool bIsServer )
 	m_bIsServer = bIsServer;
 
 	Log::SetGameDirectory( m_szGameDir );
+
+	Log::DebugMessage( "Managed host initialized with game directory %s (%s)", m_szGameDir.c_str(), bIsServer ? "server" : "client" );
 }
 
 void CManagedHost::Start()
@@ -28,17 +30,27 @@ void CManagedHost::Start()
 
 	if( LoadConfiguration() )
 	{
+		Log::DebugMessage( "Configuration loaded" );
+
 		if( StartManagedHost() )
 		{
+			Log::DebugMessage( "Managed host started" );
+
 			try
 			{
+				Log::DebugMessage( "Attempting to load assembly and acquire entry point" );
+
 				auto entryPoint = reinterpret_cast< ManagedEntryPoint >( m_CLRHost->LoadAssemblyAndGetEntryPoint(
 					Utility::ToWideString( m_Configuration.ManagedEntryPoint.AssemblyName ),
 					Utility::ToWideString( m_Configuration.ManagedEntryPoint.Class ),
 					Utility::ToWideString( m_Configuration.ManagedEntryPoint.Method )
 				) );
 
+				Log::DebugMessage( "Attempting to execute entry point" );
+
 				exitCode = entryPoint( m_bIsServer );
+
+				Log::DebugMessage( "Entry point executed with exit code %d", exitCode );
 			}
 			catch( const CLR::CCLRHostException& e )
 			{
@@ -52,9 +64,13 @@ void CManagedHost::Start()
 				}
 			}
 
+			Log::DebugMessage( "Shutting down managed host" );
+
 			ShutdownManagedHost();
 		}
 	}
+
+	Log::DebugMessage( "Exiting with code %d", exitCode );
 
 	std::quick_exit( exitCode );
 }

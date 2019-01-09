@@ -52,6 +52,8 @@ void* CCLRHost::LoadAssemblyAndGetEntryPoint( const std::wstring& assemblyName, 
 		throw CCLRHostException( "Failed to create delegate", hr );
 	}
 
+	Log::DebugMessage( "Created delegate to entry point %ls.%ls", entryPointClass.c_str(), entryPointMethod.c_str() );
+
 	return pfnDelegate;
 }
 
