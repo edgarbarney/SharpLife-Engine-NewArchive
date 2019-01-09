@@ -27,7 +27,7 @@ void CManagedHost::Initialize( std::string&& szGameDir, bool bIsServer )
 
 void CManagedHost::Start()
 {
-	auto exitCode = ExitCode::UnknownError;
+	auto exitCode = ExitCode::WrapperError;
 
 	if( LoadConfiguration() )
 	{
@@ -70,8 +70,6 @@ void CManagedHost::Start()
 			ShutdownManagedHost();
 		}
 	}
-
-
 
 	Log::DebugMessage( "Exiting with code %s (%d)", ExitCodeToString( exitCode ), exitCode );
 

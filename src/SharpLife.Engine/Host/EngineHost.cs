@@ -23,9 +23,9 @@ namespace SharpLife.Engine.Host
     /// <summary>
     /// Handles engine hosting, startup
     /// </summary>
-    public sealed class EngineHost
+    public static class EngineHost
     {
-        public void Start(string[] args, HostType type)
+        public static void Start(string[] args, HostType type)
         {
             ClientServerEngine engine = null;
 
@@ -35,9 +35,7 @@ namespace SharpLife.Engine.Host
 
                 engine.Run(args, type);
             }
-#pragma warning disable RCS1075 // Avoid empty catch clause that catches System.Exception.
             catch (Exception e)
-#pragma warning restore RCS1075 // Avoid empty catch clause that catches System.Exception.
             {
                 if (engine != null)
                 {

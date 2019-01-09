@@ -28,15 +28,25 @@ namespace SharpLife.Engine.Host
         /// </summary>
         /// <param name="isServer">Whether this is starting as a client or dedicated server</param>
         /// <returns>Engine exit code</returns>
-        public static int Start(bool isServer)
+        public static ExitCode Start(bool isServer)
         {
-            var host = new EngineHost();
-
             var args = Environment.GetCommandLineArgs();
 
-            host.Start(args, isServer ? HostType.DedicatedServer : HostType.Client);
+            if (args == null || args.Length == 0)
+            {
+                return ExitCode.NoCommandLineArguments;
+            }
 
-            return 0;
+            try
+            {
+                EngineHost.Start(args, isServer ? HostType.DedicatedServer : HostType.Client);
+            }
+            catch (Exception)
+            {
+                return ExitCode.UnhandledException;
+            }
+
+            return ExitCode.Success;
         }
     }
 }
