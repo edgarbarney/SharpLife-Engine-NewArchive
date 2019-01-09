@@ -87,7 +87,6 @@ namespace SharpLife.Models.BSP.FileFormat
         /// Extracts the WAD path keyvalue from the entities string
         /// </summary>
         /// <param name="entities"></param>
-        /// <returns></returns>
         public static string ExtractWADPathKeyValue(string entities)
         {
             if (string.IsNullOrWhiteSpace(entities))
@@ -105,7 +104,8 @@ namespace SharpLife.Models.BSP.FileFormat
                 return worldspawnData[wadPathIndex].Value;
             }
 
-            throw new InvalidOperationException("No wadpath keyvalue found");
+            //To match original engine behavior, return an empty string
+            return string.Empty;
         }
     }
 }
