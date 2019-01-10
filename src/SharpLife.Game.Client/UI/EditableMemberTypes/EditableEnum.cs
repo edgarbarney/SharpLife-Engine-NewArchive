@@ -48,7 +48,7 @@ namespace SharpLife.Game.Client.UI.EditableMemberTypes
 
             public void Display(object editObject, ObjectAccessor objectAccessor)
             {
-                if (ImGui.BeginCombo(_label, _value, ComboFlags.HeightRegular))
+                if (ImGui.BeginCombo(_label, _value, ImGuiComboFlags.HeightRegular))
                 {
                     foreach (var enumValue in _type.GetEnumNames())
                     {
@@ -121,7 +121,7 @@ namespace SharpLife.Game.Client.UI.EditableMemberTypes
 
             public void Display(object editObject, ObjectAccessor objectAccessor)
             {
-                if (ImGui.CollapsingHeader(_label, TreeNodeFlags.NoTreePushOnOpen))
+                if (ImGui.CollapsingHeader(_label, ImGuiTreeNodeFlags.NoTreePushOnOpen))
                 {
                     _currentValue = objectAccessor[_info.Name];
 

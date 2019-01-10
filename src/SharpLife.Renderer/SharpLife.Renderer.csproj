@@ -16,35 +16,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ImGui.NET" Version="0.4.7" />
+    <PackageReference Include="ImGui.NET" Version="1.66.0" />
     <PackageReference Include="Serilog" Version="2.7.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0005" />
+    <PackageReference Include="Veldrid" Version="4.5.0" />
+    <PackageReference Include="Veldrid.ImageSharp" Version="4.5.0" />
+    <PackageReference Include="Veldrid.SPIRV" Version="1.0.6" />
+    <PackageReference Include="Veldrid.Utilities" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SharpLife.CommandSystem\SharpLife.CommandSystem.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Veldrid">
-      <HintPath>$(STEAMCOMMON)\Half-Life\sharplife_full\assemblies\Veldrid.dll</HintPath>
-    </Reference>
-    <Reference Include="Veldrid.ImageSharp">
-      <HintPath>$(STEAMCOMMON)\Half-Life\sharplife_full\assemblies\Veldrid.ImageSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Veldrid.MetalBindings">
-      <HintPath>$(STEAMCOMMON)\Half-Life\sharplife_full\assemblies\Veldrid.MetalBindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Veldrid.OpenGLBindings">
-      <HintPath>$(STEAMCOMMON)\Half-Life\sharplife_full\assemblies\Veldrid.OpenGLBindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Veldrid.SPIRV">
-      <HintPath>$(STEAMCOMMON)\Half-Life\sharplife_full\assemblies\Veldrid.SPIRV.dll</HintPath>
-    </Reference>
-    <Reference Include="Veldrid.Utilities">
-      <HintPath>$(STEAMCOMMON)\Half-Life\sharplife_full\assemblies\Veldrid.Utilities.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

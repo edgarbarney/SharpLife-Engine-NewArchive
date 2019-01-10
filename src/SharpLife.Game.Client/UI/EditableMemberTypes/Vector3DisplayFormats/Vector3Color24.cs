@@ -54,7 +54,7 @@ namespace SharpLife.Game.Client.UI.EditableMemberTypes.Vector3DisplayFormats
 
         public void Display(object editObject, ObjectAccessor objectAccessor)
         {
-            if (ImGui.ColorEdit3(_label, ref _value, ColorEditFlags.Default | ColorEditFlags.Uint8))
+            if (ImGui.ColorEdit3(_label, ref _value, ImGuiColorEditFlags.None | ImGuiColorEditFlags.Uint8))
             {
                 var newValue = _value;
 

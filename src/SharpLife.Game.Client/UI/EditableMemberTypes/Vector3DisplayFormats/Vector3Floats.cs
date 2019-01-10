@@ -66,7 +66,7 @@ namespace SharpLife.Game.Client.UI.EditableMemberTypes.Vector3DisplayFormats
             {
                 var buffer = _buffers[i];
 
-                if (ImGui.InputText(_labels[i], buffer, (uint)buffer.Length, InputTextFlags.CharsDecimal | InputTextFlags.EnterReturnsTrue, null))
+                if (ImGui.InputText(_labels[i], buffer, (uint)buffer.Length, ImGuiInputTextFlags.CharsDecimal | ImGuiInputTextFlags.EnterReturnsTrue, null))
                 {
                     var text = Encoding.UTF8.GetString(buffer);
 

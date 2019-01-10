@@ -25,7 +25,7 @@ namespace SharpLife.Game.Client.UI.EditableMemberTypes
         private string _value;
 
         public EditableString(int index, object editObject, MemberInfo info, Type type, ObjectAccessor objectAccessor)
-            : base(index, editObject, info, type, objectAccessor, InputTextFlags.CharsDecimal)
+            : base(index, editObject, info, type, objectAccessor, ImGuiInputTextFlags.CharsDecimal)
         {
             _value = (string)objectAccessor[info.Name];
         }

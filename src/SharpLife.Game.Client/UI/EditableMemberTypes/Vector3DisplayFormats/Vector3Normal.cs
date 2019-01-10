@@ -44,7 +44,7 @@ namespace SharpLife.Game.Client.UI.EditableMemberTypes.Vector3DisplayFormats
 
         public void Display(object editObject, ObjectAccessor objectAccessor)
         {
-            if (ImGui.SliderVector3(_label, ref _value, -1, 1, "%.3f", 1))
+            if (ImGui.SliderFloat3(_label, ref _value, -1, 1, "%.3f", 1))
             {
                 objectAccessor[_info.Name] = _value;
             }

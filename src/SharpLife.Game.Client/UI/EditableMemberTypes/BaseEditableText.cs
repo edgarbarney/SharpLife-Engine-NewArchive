@@ -29,9 +29,9 @@ namespace SharpLife.Game.Client.UI.EditableMemberTypes
 
         private readonly byte[] _buffer = new byte[256];
 
-        private readonly InputTextFlags _flags;
+        private readonly ImGuiInputTextFlags _flags;
 
-        protected BaseEditableText(int index, object editObject, MemberInfo info, Type type, ObjectAccessor objectAccessor, InputTextFlags flags)
+        protected BaseEditableText(int index, object editObject, MemberInfo info, Type type, ObjectAccessor objectAccessor, ImGuiInputTextFlags flags)
         {
             _label = $"{index}: {info.Name}";
 
@@ -44,7 +44,7 @@ namespace SharpLife.Game.Client.UI.EditableMemberTypes
 
         public void Display(object editObject, ObjectAccessor objectAccessor)
         {
-            if (ImGui.InputText(_label, _buffer, (uint)_buffer.Length, _flags | InputTextFlags.EnterReturnsTrue, null))
+            if (ImGui.InputText(_label, _buffer, (uint)_buffer.Length, _flags | ImGuiInputTextFlags.EnterReturnsTrue, null))
             {
                 var text = Encoding.UTF8.GetString(_buffer);
 

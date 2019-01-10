@@ -45,7 +45,7 @@ namespace SharpLife.Game.Client.UI.EditableMemberTypes.Vector3DisplayFormats
 
         public unsafe void Display(object editObject, ObjectAccessor objectAccessor)
         {
-            if (ImGui.SliderVector3(_label, ref _value, 0, 360, "%.1f", 1))
+            if (ImGui.SliderFloat3(_label, ref _value, 0, 360, "%.1f", 1))
             {
                 objectAccessor[_info.Name] = VectorUtils.ToRadians(_value);
             }

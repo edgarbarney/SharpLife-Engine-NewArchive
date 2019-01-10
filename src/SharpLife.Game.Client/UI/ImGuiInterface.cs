@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SharpLife.Game.Client.UI
@@ -67,9 +66,8 @@ namespace SharpLife.Game.Client.UI
 
         private string _consoleText = string.Empty;
 
-        private const int _maxConsoleChars = ushort.MaxValue;
-
-        private byte[] _consoleTextUTF8;
+        //TODO: restore old maximum once crash bug is fixed: https://github.com/mellinoe/ImGui.NET/issues/102
+        private const int _maxConsoleChars = 4096;// ushort.MaxValue;
 
         private TextAdded _textAdded;
 
@@ -189,7 +187,7 @@ namespace SharpLife.Game.Client.UI
 
         private void DrawConsole()
         {
-            if (_consoleVisible && ImGui.BeginWindow("Console", ref _consoleVisible, WindowFlags.NoCollapse))
+            if (_consoleVisible && ImGui.Begin("Console", ref _consoleVisible, ImGuiWindowFlags.NoCollapse))
             {
                 var textHeight = ImGuiNative.igGetTextLineHeight();
 
@@ -200,28 +198,13 @@ namespace SharpLife.Game.Client.UI
                 //Leave some space at the bottom
                 var maxHeight = contentMax.Y - contentMin.Y - (textHeight * 3);
 
-                //Convert the text to UTF8
-                //Acount for null terminator
-                var byteCount = Encoding.UTF8.GetByteCount(_consoleText) + 1;
-
-                //Resize on demand
-                if (_consoleTextUTF8 == null || _consoleTextUTF8.Length < byteCount)
-                {
-                    _consoleTextUTF8 = new byte[byteCount];
-                }
-
-                var bytesWritten = StringUtils.EncodeNullTerminatedString(Encoding.UTF8, _consoleText, _consoleTextUTF8);
-
                 //Display as input text area to allow text selection
-                var pinnedBuffer = GCHandle.Alloc(_consoleTextUTF8, GCHandleType.Pinned);
-                var bufferAddress = pinnedBuffer.AddrOfPinnedObject();
-
-                ImGui.InputTextMultiline("##consoleText", bufferAddress, (uint)bytesWritten + 1, new Vector2(wrapWidth, maxHeight), InputTextFlags.ReadOnly, null);
+                ImGui.InputTextMultiline("##consoleText", ref _consoleText, _maxConsoleChars, new Vector2(wrapWidth, maxHeight), ImGuiInputTextFlags.ReadOnly, null);
 
                 //Scroll to bottom when new text is added
                 ImGuiNative.igBeginGroup();
                 var id = ImGui.GetID("##consoleText");
-                ImGui.BeginChildFrame(id, new Vector2(wrapWidth, maxHeight), WindowFlags.Default);
+                ImGui.BeginChildFrame(id, new Vector2(wrapWidth, maxHeight), ImGuiWindowFlags.None);
 
                 switch (_textAdded)
                 {
@@ -245,15 +228,13 @@ namespace SharpLife.Game.Client.UI
                 ImGui.EndChildFrame();
                 ImGuiNative.igEndGroup();
 
-                pinnedBuffer.Free();
-
                 ImGui.Text("Command:");
                 ImGui.SameLine();
 
                 //Max width for the input
                 ImGui.PushItemWidth(-1);
 
-                if (ImGui.InputText("##consoleInput", _consoleInputBuffer, (uint)_consoleInputBuffer.Length, InputTextFlags.EnterReturnsTrue, null))
+                if (ImGui.InputText("##consoleInput", _consoleInputBuffer, (uint)_consoleInputBuffer.Length, ImGuiInputTextFlags.EnterReturnsTrue, null))
                 {
                     //Needed since GetString doesn't understand null terminated strings
                     var stringLength = StringUtils.NullTerminatedByteLength(_consoleInputBuffer);
@@ -270,7 +251,7 @@ namespace SharpLife.Game.Client.UI
 
                 ImGui.PopItemWidth();
 
-                ImGui.EndWindow();
+                ImGui.End();
             }
         }
 
@@ -344,7 +325,7 @@ namespace SharpLife.Game.Client.UI
 
         private void DrawMaterialControl()
         {
-            if (_materialControlVisible && ImGui.BeginWindow("Material Control", ref _materialControlVisible, WindowFlags.NoCollapse))
+            if (_materialControlVisible && ImGui.Begin("Material Control", ref _materialControlVisible, ImGuiWindowFlags.NoCollapse))
             {
                 CacheConsoleVariables();
 
@@ -363,7 +344,7 @@ namespace SharpLife.Game.Client.UI
                 DrawCheckbox(_fullbright, "Enable fullbright");
                 DrawCheckbox(_powerOf2Textures, "Enable power of 2 texture rescaling");
 
-                ImGui.EndWindow();
+                ImGui.End();
             }
         }
 
@@ -432,7 +413,7 @@ namespace SharpLife.Game.Client.UI
 
         private void DrawObjectEditor()
         {
-            if (_objectEditorVisible && ImGui.BeginWindow("Object Editor", ref _objectEditorVisible, WindowFlags.NoCollapse))
+            if (_objectEditorVisible && ImGui.Begin("Object Editor", ref _objectEditorVisible, ImGuiWindowFlags.NoCollapse))
             {
                 var oldObjectHandle = _editObjectHandle;
 
@@ -442,7 +423,7 @@ namespace SharpLife.Game.Client.UI
 
                 if (entityList != null)
                 {
-                    if (ImGui.BeginCombo("Object", "Select object...", ComboFlags.HeightLargest))
+                    if (ImGui.BeginCombo("Object", "Select object...", ImGuiComboFlags.HeightLargest))
                     {
                         for (var handle = entityList.GetFirstEntity(); handle.Valid; handle = entityList.GetNextEntity(handle))
                         {
@@ -479,7 +460,7 @@ namespace SharpLife.Game.Client.UI
 
                             ImGui.Text($"{_editObjectHandle}:{entity.ClassName}");
 
-                            ImGui.InputText("Invoke method", _objectEditorMethodInvokeBuffer, (uint)_objectEditorMethodInvokeBuffer.Length, InputTextFlags.Default, null);
+                            ImGui.InputText("Invoke method", _objectEditorMethodInvokeBuffer, (uint)_objectEditorMethodInvokeBuffer.Length, ImGuiInputTextFlags.None, null);
 
                             ImGui.SameLine();
 
@@ -525,7 +506,7 @@ namespace SharpLife.Game.Client.UI
                     SetupNewObject(null);
                 }
 
-                ImGui.EndWindow();
+                ImGui.End();
             }
         }
     }

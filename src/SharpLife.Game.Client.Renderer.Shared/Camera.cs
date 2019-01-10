@@ -142,7 +142,7 @@ namespace SharpLife.Game.Client.Renderer.Shared
             Vector2 mouseDelta = _inputSystem.Snapshot.MousePosition - _previousMousePos;
             _previousMousePos = _inputSystem.Snapshot.MousePosition;
 
-            if (!ImGui.IsAnyWindowHovered()
+            if (!ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow)
                 && !ImGui.GetIO().WantCaptureMouse
                 && (_inputSystem.Snapshot.IsMouseDown(MouseButton.Left) || _inputSystem.Snapshot.IsMouseDown(MouseButton.Right)))
             {
