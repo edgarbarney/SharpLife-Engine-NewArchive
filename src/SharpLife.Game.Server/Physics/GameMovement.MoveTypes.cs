@@ -550,102 +550,100 @@ namespace SharpLife.Game.Server.Physics
                 ent.Flags &= ~EntityFlags.OnGround;
             }
 
-            if ((ent.Flags & EntityFlags.OnGround) != 0 || VectorUtils.VectorsEqual(ent.RefVelocity, Vector3.Zero))
+            if ((ent.Flags & EntityFlags.OnGround) != 0 && VectorUtils.VectorsEqual(ent.RefVelocity, Vector3.Zero))
             {
+                ent.AngularVelocity = Vector3.Zero;
+
+                if (VectorUtils.VectorsEqual(ent.RefBaseVelocity, Vector3.Zero))
+                    return;
+            }
+
+            CheckVelocity(ent);
+
+            if (ent.MoveType != MoveType.BounceMissile
+                && ent.MoveType != MoveType.Fly
+                && ent.MoveType != MoveType.FlyMissile)
+            {
+                var entGravity = ent.Gravity != 0 ? ent.Gravity : 1;
+
+                var newVelocityZ = ent.RefVelocity.Z - (entGravity * _sv_gravity.Float * (float)_frameTime);
+                ent.RefVelocity.Z = newVelocityZ + ((float)_frameTime * ent.RefBaseVelocity.Z);
+                ent.RefBaseVelocity.Z = 0;
+                CheckVelocity(ent);
+            }
+
+            ent.Angles += (float)_frameTime * ent.AngularVelocity;
+
+            ent.RefVelocity += ent.RefBaseVelocity;
+
+            CheckVelocity(ent);
+
+            var move = ent.RefVelocity * (float)_frameTime;
+
+            ent.RefVelocity -= ent.RefBaseVelocity;
+
+            var trace = PushEntity(ent, move);
+
+            CheckVelocity(ent);
+
+            if (trace.AllSolid)
+            {
+                ent.RefVelocity = Vector3.Zero;
+                ent.AngularVelocity = Vector3.Zero;
                 return;
             }
 
-            ent.AngularVelocity = Vector3.Zero;
-
-            if (!VectorUtils.VectorsEqual(ent.RefBaseVelocity, Vector3.Zero))
+            if (trace.Fraction != 1.0)
             {
-                CheckVelocity(ent);
-
-                if (ent.MoveType != MoveType.BounceMissile
-                    && ent.MoveType != MoveType.Fly
-                    && ent.MoveType != MoveType.FlyMissile)
+                if (ent.PendingDestruction)
                 {
-                    var entGravity = ent.Gravity != 0 ? ent.Gravity : 1;
-
-                    var newVelocityZ = ent.RefVelocity.Z - (entGravity * _sv_gravity.Float * (float)_frameTime);
-                    ent.RefVelocity.Z = newVelocityZ + ((float)_frameTime * ent.RefBaseVelocity.Z);
-                    ent.RefBaseVelocity.Z = 0;
-                    CheckVelocity(ent);
-                }
-
-                ent.Angles += (float)_frameTime * ent.AngularVelocity;
-
-                ent.RefVelocity += ent.RefBaseVelocity;
-
-                CheckVelocity(ent);
-
-                var move = ent.RefVelocity * (float)_frameTime;
-
-                ent.RefVelocity -= ent.RefBaseVelocity;
-
-                var trace = PushEntity(ent, move);
-
-                CheckVelocity(ent);
-
-                if (trace.AllSolid)
-                {
-                    ent.RefVelocity = Vector3.Zero;
-                    ent.AngularVelocity = Vector3.Zero;
                     return;
                 }
 
-                if (trace.Fraction != 1.0)
+                float vecc;
+
+                if (ent.MoveType == MoveType.Bounce)
                 {
-                    if (ent.PendingDestruction)
+                    vecc = 2.0f - ent.Friction;
+                }
+                else if (ent.MoveType == MoveType.BounceMissile)
+                {
+                    vecc = 2.0f;
+                }
+                else
+                {
+                    vecc = 1.0f;
+                }
+
+                ClipVelocity(ref ent.RefVelocity, ref trace.Plane.Normal, out ent.RefVelocity, vecc);
+
+                if (trace.Plane.Normal.Z > 0.7)
+                {
+                    move = ent.RefVelocity + ent.RefBaseVelocity;
+
+                    if ((float)_frameTime * _sv_gravity.Float > move.Z)
                     {
-                        return;
+                        ent.Flags |= EntityFlags.OnGround;
+                        ent.RefVelocity.Z = 0;
+                        ent.GroundEntity = trace.Entity?.Handle ?? ObjectHandle.Invalid;
                     }
 
-                    float vecc;
+                    if (move.LengthSquared() >= 900.0
+                        && (ent.MoveType == MoveType.Bounce || ent.MoveType == MoveType.BounceMissile))
+                    {
+                        move = ent.RefVelocity * ((float)_frameTime * (1.0f - trace.Fraction) * 0.9f);
 
-                    if (ent.MoveType == MoveType.Bounce)
-                    {
-                        vecc = 2.0f - ent.Friction;
-                    }
-                    else if (ent.MoveType == MoveType.BounceMissile)
-                    {
-                        vecc = 2.0f;
+                        move += (1.0f - trace.Fraction) * (float)_frameTime * 0.9f * ent.RefBaseVelocity;
+
+                        trace = PushEntity(ent, move);
                     }
                     else
                     {
-                        vecc = 1.0f;
-                    }
+                        ent.Flags |= EntityFlags.OnGround;
+                        ent.GroundEntity = trace.Entity?.Handle ?? ObjectHandle.Invalid;
 
-                    ClipVelocity(ref ent.RefVelocity, ref trace.Plane.Normal, out ent.RefVelocity, vecc);
-
-                    if (trace.Plane.Normal.Z > 0.7)
-                    {
-                        move = ent.RefVelocity + ent.RefBaseVelocity;
-
-                        if ((float)_frameTime * _sv_gravity.Float > move.Z)
-                        {
-                            ent.Flags |= EntityFlags.OnGround;
-                            ent.RefVelocity.Z = 0;
-                            ent.GroundEntity = trace.Entity?.Handle ?? ObjectHandle.Invalid;
-                        }
-
-                        if (move.LengthSquared() >= 900.0
-                            && (ent.MoveType == MoveType.Bounce || ent.MoveType == MoveType.BounceMissile))
-                        {
-                            move = ent.RefVelocity * ((float)_frameTime * (1.0f - trace.Fraction) * 0.9f);
-
-                            move += (1.0f - trace.Fraction) * (float)_frameTime * 0.9f * ent.RefBaseVelocity;
-
-                            trace = PushEntity(ent, move);
-                        }
-                        else
-                        {
-                            ent.Flags |= EntityFlags.OnGround;
-                            ent.GroundEntity = trace.Entity?.Handle ?? ObjectHandle.Invalid;
-
-                            ent.RefVelocity = Vector3.Zero;
-                            ent.AngularVelocity = Vector3.Zero;
-                        }
+                        ent.RefVelocity = Vector3.Zero;
+                        ent.AngularVelocity = Vector3.Zero;
                     }
                 }
 
