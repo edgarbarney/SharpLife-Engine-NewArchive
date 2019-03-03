@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Game.Shared.Physics;
+using SharpLife.Game.Physics;
 using SharpLife.Models;
 using SharpLife.Models.BSP.FileFormat;
 using System;
