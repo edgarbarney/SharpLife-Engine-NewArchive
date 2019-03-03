@@ -13,7 +13,7 @@
 *
 ****/
 
-namespace SharpLife.Engine.Engines
+namespace SharpLife.Engine.Host
 {
     public enum HostType
     {

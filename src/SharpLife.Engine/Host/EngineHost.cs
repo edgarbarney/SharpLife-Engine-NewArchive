@@ -13,7 +13,6 @@
 *
 ****/
 
-using SharpLife.Engine.Engines;
 using SharpLife.Engine.Shared.UI;
 using System;
 

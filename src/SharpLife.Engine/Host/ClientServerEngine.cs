@@ -38,7 +38,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace SharpLife.Engine.Engines
+namespace SharpLife.Engine.Host
 {
     /// <summary>
     /// A client-server based engine
