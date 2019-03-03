@@ -26,7 +26,7 @@ namespace SharpLife.Engine.UI
     /// <summary>
     /// Controls the User Interface components
     /// </summary>
-    public sealed class UserInterface
+    internal sealed class UserInterface
     {
         private readonly ILogger _logger;
 

@@ -27,7 +27,7 @@ namespace SharpLife.Engine.UI
     /// <summary>
     /// Manages the SDL2 window
     /// </summary>
-    public sealed class Window
+    internal sealed class Window
     {
         public bool Exists => WindowHandle != IntPtr.Zero;
 
