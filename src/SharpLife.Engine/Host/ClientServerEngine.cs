@@ -13,6 +13,7 @@
 *
 ****/
 
+using SDL2;
 using Serilog;
 using Serilog.Formatting;
 using Serilog.Formatting.Compact;
@@ -83,7 +84,7 @@ namespace SharpLife.Engine.Host
         /// Gets the user interface component
         /// This component is optional and should be created only if needed
         /// </summary>
-        public IUserInterface UserInterface { get; private set; }
+        public IUserInterface UserInterface { get; }
 
         private readonly Stopwatch _engineTimeStopwatch = new Stopwatch();
 
@@ -146,19 +147,6 @@ namespace SharpLife.Engine.Host
 
         private readonly IVariable _fpsMax;
 
-        /// <summary>
-        /// Creates the user interface if it does not exist
-        /// </summary>
-        public IUserInterface CreateUserInterface()
-        {
-            if (UserInterface == null)
-            {
-                UserInterface = new UserInterface(Logger, FileSystem, this, CommandLine.Contains("-noontop"));
-            }
-
-            return UserInterface;
-        }
-
         public ClientServerEngine(string[] args, HostType hostType)
         {
             _hostType = hostType;
@@ -178,13 +166,30 @@ namespace SharpLife.Engine.Host
 
             Log.Logger = Logger = CreateLogger(GameDirectory);
 
-            _engineTimeStopwatch.Start();
-
-            EventUtils.RegisterEvents(EventSystem, new EngineEvents());
-
             FileSystem = new DiskFileSystem();
 
             SetupFileSystem(GameDirectory);
+
+            //create the game window if this is a client
+            if (_hostType == HostType.Client)
+            {
+                UserInterface = new UserInterface(Logger, FileSystem, this, CommandLine.Contains("-noontop"));
+
+                var gameWindowName = EngineConfiguration.DefaultGameName;
+
+                if (!string.IsNullOrWhiteSpace(EngineConfiguration.GameName))
+                {
+                    gameWindowName = EngineConfiguration.GameName;
+                }
+
+                var gameWindow = UserInterface.CreateMainWindow(gameWindowName, CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
+
+                gameWindow.Center();
+            }
+
+            _engineTimeStopwatch.Start();
+
+            EventUtils.RegisterEvents(EventSystem, new EngineEvents());
 
             CommandSystem = new CommandSystem.CommandSystem(Logger);
 
