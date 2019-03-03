@@ -16,19 +16,34 @@
 using SDL2;
 using Serilog;
 using SharpLife.Engine.Shared.Loop;
+using SharpLife.Engine.Shared.UI;
 using SharpLife.FileSystem;
+using SharpLife.Input;
 using System;
 
-namespace SharpLife.Engine.Shared.UI
+namespace SharpLife.Engine.UI
 {
-    public class UserInterface : IUserInterface
+    /// <summary>
+    /// Controls the User Interface components
+    /// </summary>
+    public sealed class UserInterface
     {
-        public IWindowManager WindowManager { get; }
+        private readonly ILogger _logger;
 
-        public IWindow MainWindow { get; private set; }
+        private readonly IFileSystem _fileSystem;
 
-        public UserInterface(ILogger logger, IFileSystem fileSystem, IEngineLoop engineLoop, bool noOnTop)
+        private readonly IEngineLoop _engineLoop;
+
+        public IInputSystem InputSystem { get; } = new InputSystem();
+
+        public Window Window { get; private set; }
+
+        public UserInterface(ILogger logger, IFileSystem fileSystem, IEngineLoop engineLoop, bool noOnTop, string windowTitle, SDL.SDL_WindowFlags additionalFlags = 0)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            _engineLoop = engineLoop ?? throw new ArgumentNullException(nameof(engineLoop));
+
             //Disable to prevent debugger from shutting down the game
             SDL.SDL_SetHint(SDL.SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
 
@@ -42,32 +57,18 @@ namespace SharpLife.Engine.Shared.UI
 
             SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING);
 
-            WindowManager = new WindowManager(logger, fileSystem, engineLoop);
+            Window = new Window(_logger, _fileSystem, windowTitle, additionalFlags);
         }
 
-        public IWindow CreateMainWindow(string title, SDL.SDL_WindowFlags additionalFlags = 0, bool recreate = false)
-        {
-            if (MainWindow != null)
-            {
-                if (!recreate)
-                {
-                    throw new InvalidOperationException("Cannot recreate main window when recreate is not requested");
-                }
-
-                DestroyMainWindow();
-            }
-
-            MainWindow = WindowManager.CreateWindow(title, additionalFlags);
-
-            return MainWindow;
-        }
-
+        /// <summary>
+        /// Destroys the main window if exists
+        /// </summary>
         public void DestroyMainWindow()
         {
-            if (MainWindow != null)
+            if (Window != null)
             {
-                WindowManager.DestroyWindow(MainWindow);
-                MainWindow = null;
+                Window.Destroy();
+                Window = null;
             }
         }
 
@@ -77,14 +78,46 @@ namespace SharpLife.Engine.Shared.UI
         /// <param name="milliSeconds"></param>
         public void SleepUntilInput(int milliSeconds)
         {
-            WindowManager.SleepUntilInput(milliSeconds);
+            InputSystem.ProcessEvents(milliSeconds);
+
+            var snapshot = InputSystem.Snapshot;
+
+            for (var i = 0; i < snapshot.Events.Count; ++i)
+            {
+                var sdlEvent = snapshot.Events[i];
+
+                switch (sdlEvent.type)
+                {
+                    case SDL.SDL_EventType.SDL_WINDOWEVENT:
+                        {
+                            Window.ProcessEvent(ref sdlEvent);
+
+                            break;
+                        }
+                    case SDL.SDL_EventType.SDL_QUIT:
+                        {
+                            _engineLoop.Exiting = true;
+                            break;
+                        }
+                }
+            }
         }
 
+        /// <summary>
+        /// Shuts down the user interface
+        /// The interface can no longer be used after this
+        /// </summary>
         public void Shutdown()
         {
             SDL.SDL_Quit();
         }
 
+        /// <summary>
+        /// Displays a message box containing the given title, message and icon
+        /// </summary>
+        /// <param name="icon"></param>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
         public void ShowMessageBox(MessageBoxIcon icon, string title, string message)
         {
             if (title == null)

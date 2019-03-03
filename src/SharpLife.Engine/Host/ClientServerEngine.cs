@@ -27,7 +27,7 @@ using SharpLife.Engine.Shared.Configuration;
 using SharpLife.Engine.Shared.Events;
 using SharpLife.Engine.Shared.Logging;
 using SharpLife.Engine.Shared.Loop;
-using SharpLife.Engine.Shared.UI;
+using SharpLife.Engine.UI;
 using SharpLife.FileSystem;
 using SharpLife.Models;
 using SharpLife.Utility;
@@ -82,9 +82,9 @@ namespace SharpLife.Engine.Host
 
         /// <summary>
         /// Gets the user interface component
-        /// This component is optional and should be created only if needed
+        /// This component is optional and is only created for clients
         /// </summary>
-        public IUserInterface UserInterface { get; }
+        public UserInterface UserInterface { get; }
 
         private readonly Stopwatch _engineTimeStopwatch = new Stopwatch();
 
@@ -173,8 +173,6 @@ namespace SharpLife.Engine.Host
             //create the game window if this is a client
             if (_hostType == HostType.Client)
             {
-                UserInterface = new UserInterface(Logger, FileSystem, this, CommandLine.Contains("-noontop"));
-
                 var gameWindowName = EngineConfiguration.DefaultGameName;
 
                 if (!string.IsNullOrWhiteSpace(EngineConfiguration.GameName))
@@ -182,9 +180,9 @@ namespace SharpLife.Engine.Host
                     gameWindowName = EngineConfiguration.GameName;
                 }
 
-                var gameWindow = UserInterface.CreateMainWindow(gameWindowName, CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
+                UserInterface = new UserInterface(Logger, FileSystem, this, CommandLine.Contains("-noontop"), gameWindowName, CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
 
-                gameWindow.Center();
+                UserInterface.Window.Center();
             }
 
             _engineTimeStopwatch.Start();

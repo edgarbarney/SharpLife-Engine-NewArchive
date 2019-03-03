@@ -22,12 +22,12 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace SharpLife.Engine.Shared.UI
+namespace SharpLife.Engine.UI
 {
     /// <summary>
     /// Manages the SDL2 window
     /// </summary>
-    internal sealed class Window : IWindow
+    public sealed class Window
     {
         public bool Exists => WindowHandle != IntPtr.Zero;
 
@@ -37,12 +37,19 @@ namespace SharpLife.Engine.Shared.UI
             set => SDL.SDL_SetWindowTitle(WindowHandle, value);
         }
 
+        //TODO: maybe make this internal so only code that needs to access these handles can get them?
         public IntPtr WindowHandle { get; private set; }
 
         public event Action Resized;
 
+        /// <summary>
+        /// Invoked when the window is about to be destroyed
+        /// </summary>
         public event Action Destroying;
 
+        /// <summary>
+        /// Invoked after the window has been destroyed
+        /// </summary>
         public event Action Destroyed;
 
         public Window(ILogger logger, IFileSystem fileSystem, string title, SDL.SDL_WindowFlags additionalFlags = 0)
