@@ -14,13 +14,19 @@
     <PackageReference Include="ImGui.NET" Version="1.66.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
+    <PackageReference Include="Veldrid.ImGui" Version="5.66.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SharpLife.CommandSystem\SharpLife.CommandSystem.csproj" />
     <ProjectReference Include="..\SharpLife.Engine.Shared\SharpLife.Engine.Shared.csproj" />
-    <ProjectReference Include="..\SharpLife.Game.Client.Renderer.Shared\SharpLife.Game.Client.Renderer.Shared.csproj" />
-    <ProjectReference Include="..\SharpLife.Game.Shared\SharpLife.Game.Shared.csproj" />
+    <ProjectReference Include="..\SharpLife.Input\SharpLife.Input.csproj" />
+    <ProjectReference Include="..\SharpLife.Models.BSP\SharpLife.Models.BSP.csproj" />
+    <ProjectReference Include="..\SharpLife.Models.MDL\SharpLife.Models.MDL.csproj" />
+    <ProjectReference Include="..\SharpLife.Models.SPR\SharpLife.Models.SPR.csproj" />
+    <ProjectReference Include="..\SharpLife.Models\SharpLife.Models.csproj" />
+    <ProjectReference Include="..\SharpLife.Networking.Shared\SharpLife.Networking.Shared.csproj" />
+    <ProjectReference Include="..\SharpLife.Renderer\SharpLife.Renderer.csproj" />
     <ProjectReference Include="..\SharpLife.Utility\SharpLife.Utility.csproj" />
   </ItemGroup>
 
@@ -29,5 +35,9 @@
       <HintPath>$(STEAMCOMMON)\Half-Life\sharplife_full\assemblies\SDL2-CS.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File ../SharpLife.Networking.Shared/Messages/GenerateMessages.ps1 ." />
+  </Target>
 
 </Project>
