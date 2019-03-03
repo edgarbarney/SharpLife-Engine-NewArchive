@@ -84,11 +84,6 @@ namespace SharpLife.Engine.Engines
         bool IsDedicatedServer { get; }
 
         /// <summary>
-        /// Whether the local server is running
-        /// </summary>
-        bool IsServerActive { get; }
-
-        /// <summary>
         /// Gets the log text writer used to forward logs to the console
         /// </summary>
         ForwardingTextWriter LogTextWriter { get; }
@@ -99,17 +94,5 @@ namespace SharpLife.Engine.Engines
         IUserInterface CreateUserInterface();
 
         void Run(string[] args, HostType hostType);
-
-        /// <summary>
-        /// Ends the game, if running
-        /// Servers are shut down, clients are disconnected
-        /// </summary>
-        /// <param name="reason">Reason why the game is being ended</param>
-        void EndGame(string reason);
-
-        /// <summary>
-        /// Stops the server if it is running
-        /// </summary>
-        void StopServer();
     }
 }

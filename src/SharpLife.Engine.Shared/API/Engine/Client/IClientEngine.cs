@@ -41,7 +41,5 @@ namespace SharpLife.Engine.Shared.API.Engine.Client
         IModelManager ModelManager { get; }
 
         IEngineModels Models { get; }
-
-        int MaxClients { get; }
     }
 }

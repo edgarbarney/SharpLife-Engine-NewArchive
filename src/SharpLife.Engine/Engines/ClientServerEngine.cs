@@ -20,10 +20,7 @@ using Serilog.Formatting.Display;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.Commands.VariableFilters;
-using SharpLife.Engine.Client.Host;
-using SharpLife.Engine.Server.Host;
 using SharpLife.Engine.Shared;
-using SharpLife.Engine.Shared.API.Game.Server;
 using SharpLife.Engine.Shared.CommandSystem;
 using SharpLife.Engine.Shared.Configuration;
 using SharpLife.Engine.Shared.Events;
@@ -32,7 +29,6 @@ using SharpLife.Engine.Shared.Loop;
 using SharpLife.Engine.Shared.UI;
 using SharpLife.FileSystem;
 using SharpLife.Models;
-using SharpLife.Networking.Shared;
 using SharpLife.Utility;
 using SharpLife.Utility.Events;
 using SharpLife.Utility.FileSystem;
@@ -89,8 +85,6 @@ namespace SharpLife.Engine.Engines
 
         public bool IsDedicatedServer => _hostType == HostType.DedicatedServer;
 
-        public bool IsServerActive => _server?.Active == true;
-
         public ForwardingTextWriter LogTextWriter { get; } = new ForwardingTextWriter();
 
         private HostType _hostType;
@@ -117,9 +111,6 @@ namespace SharpLife.Engine.Engines
         private double _desiredFrameLengthSeconds = 1.0 / DefaultFPS;
 
         private IVariable _fpsMax;
-
-        private IEngineClientHost _client;
-        private IEngineServerHost _server;
 
         public IUserInterface CreateUserInterface()
         {
@@ -183,8 +174,6 @@ namespace SharpLife.Engine.Engines
                 {
                     break;
                 }
-
-                _client?.Draw();
             }
 
             Shutdown();
@@ -193,10 +182,6 @@ namespace SharpLife.Engine.Engines
         private void Update(float deltaSeconds)
         {
             CommandSystem.Execute();
-
-            _server?.RunFrame(deltaSeconds);
-
-            _client?.Update(deltaSeconds);
         }
 
         private static EngineConfiguration LoadEngineConfiguration(string gameDirectory)
@@ -315,31 +300,10 @@ namespace SharpLife.Engine.Engines
             ModelManager = new ModelManager(FileSystem);
 
             //TODO: initialize subsystems
-
-            CommandSystem.SharedContext.RegisterCommand(new CommandInfo("map", StartNewMap).WithHelpInfo("Loads the specified map"));
-
-            //We should be fully initialized before creating the client and/or server, in case it tries to access one of our members
-
-            if (hostType == HostType.Client)
-            {
-                _client = new EngineClientHost(this, Logger);
-            }
-
-            if (hostType == HostType.DedicatedServer)
-            {
-                CreateServer();
-            }
-
-            //Only one of these will exist right now
-            _client?.CommandContext.QueueCommands($"exec {EngineConfiguration.DefaultGame}.rc");
-            _server?.CommandContext.QueueCommands($"exec {EngineConfiguration.DefaultGame}.rc");
         }
 
         private void Shutdown()
         {
-            _server?.Shutdown();
-            _client?.Shutdown();
-
             UserInterface?.Shutdown();
 
             EventUtils.UnregisterEvents(EventSystem, new EngineEvents());
@@ -362,110 +326,6 @@ namespace SharpLife.Engine.Engines
                 false,
                 !CommandLine.Contains("-nohdmodels") && EngineConfiguration.EnableHDModels,
                 CommandLine.Contains("-addons") || EngineConfiguration.EnableAddonsFolder);
-        }
-
-        private void CreateServer()
-        {
-            if (_server == null)
-            {
-                _server = new EngineServerHost(this, Logger, _client?.GameBridge);
-            }
-        }
-
-        /// <summary>
-        /// Start a new map, loading entities from the map entity data string
-        /// </summary>
-        /// <param name="command"></param>
-        private void StartNewMap(ICommandArgs command)
-        {
-            if (command.Count == 0)
-            {
-                Logger.Information("map <levelname> : changes server to specified map");
-                return;
-            }
-
-            _client?.Disconnect(false);
-
-            ClearMemory();
-
-            var mapName = command[0];
-
-            //Remove BSP extension
-            if (mapName.EndsWith(FileExtensionUtils.AsExtension(Framework.Extension.BSP)))
-            {
-                mapName = Path.GetFileNameWithoutExtension(mapName);
-            }
-
-            CreateServer();
-
-            EventSystem.DispatchEvent(EngineEvents.EngineNewMapRequest);
-
-            if (!_server.IsMapValid(mapName))
-            {
-                Logger.Error($"map change failed: '{mapName}' not found on server.");
-                return;
-            }
-
-            _server.Stop();
-
-            EventSystem.DispatchEvent(EngineEvents.EngineStartingServer);
-
-            //Reset time
-            //TODO: define constant for initial time
-            EngineTime.ElapsedTime = 1;
-            EngineTime.FrameTime = 0;
-
-            const ServerStartFlags flags = ServerStartFlags.None;
-
-            if (!_server.Start(mapName, null, flags))
-            {
-                return;
-            }
-
-            FinishLoadMap(null, flags);
-
-            //Listen server hosts need to connect to their own server
-            if (!IsDedicatedServer)
-            {
-                _client.CommandContext.QueueCommands($"connect {NetAddresses.Local}");
-            }
-        }
-
-        /// <summary>
-        /// Finishes loading a map and activates the server
-        /// </summary>
-        /// <param name="startSpot"></param>
-        /// <param name="flags"></param>
-        private void FinishLoadMap(string startSpot = null, ServerStartFlags flags = ServerStartFlags.None)
-        {
-            _server.InitializeMap(flags);
-
-            _server.Activate();
-        }
-
-        public void EndGame(string reason)
-        {
-            if (reason == null)
-            {
-                throw new ArgumentNullException(nameof(reason));
-            }
-
-            Logger.Debug($"Host_EndGame: {reason}");
-
-            StopServer();
-
-            //Disconnected by server
-            _client?.Disconnect(false);
-
-            ClearMemory();
-        }
-
-        public void StopServer()
-        {
-            if (_server?.Active == true)
-            {
-                _server.Stop();
-            }
         }
 
         /// <summary>
