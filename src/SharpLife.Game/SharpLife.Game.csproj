@@ -25,7 +25,6 @@
     <ProjectReference Include="..\SharpLife.Models.MDL\SharpLife.Models.MDL.csproj" />
     <ProjectReference Include="..\SharpLife.Models.SPR\SharpLife.Models.SPR.csproj" />
     <ProjectReference Include="..\SharpLife.Models\SharpLife.Models.csproj" />
-    <ProjectReference Include="..\SharpLife.Networking.Shared\SharpLife.Networking.Shared.csproj" />
     <ProjectReference Include="..\SharpLife.Renderer\SharpLife.Renderer.csproj" />
     <ProjectReference Include="..\SharpLife.Utility\SharpLife.Utility.csproj" />
   </ItemGroup>
@@ -35,9 +34,5 @@
       <HintPath>$(STEAMCOMMON)\Half-Life\sharplife_full\assemblies\SDL2-CS.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File ../SharpLife.Networking.Shared/Messages/GenerateMessages.ps1 ." />
-  </Target>
 
 </Project>
