@@ -29,9 +29,9 @@ namespace SharpLife.Engine.Host
 
             try
             {
-                engine = new ClientServerEngine();
+                engine = new ClientServerEngine(args, type);
 
-                engine.Run(args, type);
+                engine.Run();
             }
             catch (Exception e)
             {

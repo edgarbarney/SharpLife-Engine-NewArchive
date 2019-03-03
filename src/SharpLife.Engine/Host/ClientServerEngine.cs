@@ -62,22 +62,22 @@ namespace SharpLife.Engine.Host
         /// <summary>
         /// Gets the command line passed to the engine
         /// </summary>
-        public ICommandLine CommandLine { get; private set; }
+        public ICommandLine CommandLine { get; }
 
         /// <summary>
         /// Gets the filesystem used by the engine
         /// </summary>
-        public IFileSystem FileSystem { get; private set; }
+        public IFileSystem FileSystem { get; }
 
         /// <summary>
         /// Gets the game directory that this game was loaded from
         /// </summary>
-        public string GameDirectory { get; private set; }
+        public string GameDirectory { get; }
 
         /// <summary>
         /// Gets the command system
         /// </summary>
-        public ICommandSystem CommandSystem { get; private set; }
+        public ICommandSystem CommandSystem { get; }
 
         /// <summary>
         /// Gets the user interface component
@@ -94,7 +94,7 @@ namespace SharpLife.Engine.Host
         /// </summary>
         public ITime EngineTime => _engineTime;
 
-        public IModelManager ModelManager { get; private set; }
+        public IModelManager ModelManager { get; }
 
         /// <summary>
         /// The engine wide event system
@@ -104,12 +104,12 @@ namespace SharpLife.Engine.Host
         /// <summary>
         /// The engine configuration
         /// </summary>
-        public EngineConfiguration EngineConfiguration { get; private set; }
+        public EngineConfiguration EngineConfiguration { get; }
 
         /// <summary>
         /// Gets the date that the engine was built
         /// </summary>
-        public DateTimeOffset BuildDate { get; private set; }
+        public DateTimeOffset BuildDate { get; }
 
         /// <summary>
         /// Whether this is a dedicated server
@@ -121,10 +121,10 @@ namespace SharpLife.Engine.Host
         /// </summary>
         public ForwardingTextWriter LogTextWriter { get; } = new ForwardingTextWriter();
 
-        private HostType _hostType;
+        private readonly HostType _hostType;
 
         //Internal so the host can access it if needed
-        internal ILogger Logger { get; private set; }
+        internal ILogger Logger { get; }
 
         private bool _exiting;
 
@@ -144,7 +144,7 @@ namespace SharpLife.Engine.Host
 
         private double _desiredFrameLengthSeconds = 1.0 / DefaultFPS;
 
-        private IVariable _fpsMax;
+        private readonly IVariable _fpsMax;
 
         /// <summary>
         /// Creates the user interface if it does not exist
@@ -159,7 +159,7 @@ namespace SharpLife.Engine.Host
             return UserInterface;
         }
 
-        public void Run(string[] args, HostType hostType)
+        public ClientServerEngine(string[] args, HostType hostType)
         {
             _hostType = hostType;
 
@@ -178,8 +178,57 @@ namespace SharpLife.Engine.Host
 
             Log.Logger = Logger = CreateLogger(GameDirectory);
 
-            Initialize(GameDirectory, hostType);
+            _engineTimeStopwatch.Start();
 
+            EventUtils.RegisterEvents(EventSystem, new EngineEvents());
+
+            FileSystem = new DiskFileSystem();
+
+            SetupFileSystem(GameDirectory);
+
+            CommandSystem = new CommandSystem.CommandSystem(Logger);
+
+            CommonCommands.AddStuffCmds(CommandSystem.SharedContext, Logger, CommandLine);
+            CommonCommands.AddExec(CommandSystem.SharedContext, Logger, FileSystem, ExecPathIDs);
+            CommonCommands.AddEcho(CommandSystem.SharedContext, Logger);
+            CommonCommands.AddAlias(CommandSystem.SharedContext, Logger);
+
+            _fpsMax = CommandSystem.SharedContext.RegisterVariable(
+                new VariableInfo("fps_max")
+                .WithValue(DefaultFPS)
+                .WithHelpInfo("Sets the maximum frames per second")
+                .WithNumberFilter(true)
+                //Avoid negative maximum
+                .WithMinMaxFilter(0, MaximumFPS)
+                .WithChangeHandler((ref VariableChangeEvent @event) =>
+                {
+                    var desiredFPS = @event.Integer;
+
+                    if (desiredFPS == 0)
+                    {
+                        desiredFPS = MaximumFPS;
+                    }
+                    _desiredFrameLengthSeconds = 1.0 / desiredFPS;
+                }));
+
+            //Get the build date from the generated resource file
+            var assembly = typeof(ClientServerEngine).Assembly;
+            using (var reader = new StreamReader(assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources.BuildDate.txt")))
+            {
+                string buildTimestamp = reader.ReadToEnd();
+
+                BuildDate = DateTimeOffset.Parse(buildTimestamp);
+
+                Logger.Information($"Exe: {BuildDate.ToString("HH:mm:ss MMM dd yyyy")}");
+            }
+
+            ModelManager = new ModelManager(FileSystem);
+
+            //TODO: initialize subsystems
+        }
+
+        public void Run()
+        {
             double previousFrameSeconds = 0;
 
             while (!_exiting)
@@ -286,57 +335,6 @@ namespace SharpLife.Engine.Host
             config.WriteTo.TextWriter(logFormatter, LogTextWriter);
 
             return config.CreateLogger();
-        }
-
-        private void Initialize(string gameDirectory, HostType hostType)
-        {
-            _engineTimeStopwatch.Start();
-
-            EventUtils.RegisterEvents(EventSystem, new EngineEvents());
-
-            FileSystem = new DiskFileSystem();
-
-            SetupFileSystem(gameDirectory);
-
-            CommandSystem = new CommandSystem.CommandSystem(Logger);
-
-            CommonCommands.AddStuffCmds(CommandSystem.SharedContext, Logger, CommandLine);
-            CommonCommands.AddExec(CommandSystem.SharedContext, Logger, FileSystem, ExecPathIDs);
-            CommonCommands.AddEcho(CommandSystem.SharedContext, Logger);
-            CommonCommands.AddAlias(CommandSystem.SharedContext, Logger);
-
-            _fpsMax = CommandSystem.SharedContext.RegisterVariable(
-                new VariableInfo("fps_max")
-                .WithValue(DefaultFPS)
-                .WithHelpInfo("Sets the maximum frames per second")
-                .WithNumberFilter(true)
-                //Avoid negative maximum
-                .WithMinMaxFilter(0, MaximumFPS)
-                .WithChangeHandler((ref VariableChangeEvent @event) =>
-                {
-                    var desiredFPS = @event.Integer;
-
-                    if (desiredFPS == 0)
-                    {
-                        desiredFPS = MaximumFPS;
-                    }
-                    _desiredFrameLengthSeconds = 1.0 / desiredFPS;
-                }));
-
-            //Get the build date from the generated resource file
-            var assembly = typeof(ClientServerEngine).Assembly;
-            using (var reader = new StreamReader(assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources.BuildDate.txt")))
-            {
-                string buildTimestamp = reader.ReadToEnd();
-
-                BuildDate = DateTimeOffset.Parse(buildTimestamp);
-
-                Logger.Information($"Exe: {BuildDate.ToString("HH:mm:ss MMM dd yyyy")}");
-            }
-
-            ModelManager = new ModelManager(FileSystem);
-
-            //TODO: initialize subsystems
         }
 
         private void Shutdown()
