@@ -15,7 +15,7 @@
 
 using System;
 
-namespace SharpLife.Game.Shared.Physics
+namespace SharpLife.Game.Physics
 {
     [Flags]
     public enum TraceFlags

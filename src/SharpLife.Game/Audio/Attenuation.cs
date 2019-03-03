@@ -13,7 +13,7 @@
 *
 ****/
 
-namespace SharpLife.Game.Shared.Audio
+namespace SharpLife.Game.Audio
 {
     public static class Attenuation
     {

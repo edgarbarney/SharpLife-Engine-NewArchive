@@ -13,7 +13,7 @@
 *
 ****/
 
-namespace SharpLife.Game.Shared.Physics
+namespace SharpLife.Game.Physics
 {
     public enum TraceType : short
     {

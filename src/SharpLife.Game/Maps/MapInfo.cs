@@ -13,10 +13,10 @@
 *
 ****/
 
-using SharpLife.Game.Shared.Models.BSP;
+using SharpLife.Game.Models.BSP;
 using System;
 
-namespace SharpLife.Game.Shared.Maps
+namespace SharpLife.Game.Maps
 {
     /// <summary>
     /// Read-only map info

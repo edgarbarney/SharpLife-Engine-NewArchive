@@ -13,7 +13,7 @@
 *
 ****/
 
-namespace SharpLife.Game.Shared.Models
+namespace SharpLife.Game.Models
 {
     public enum RenderFX
     {

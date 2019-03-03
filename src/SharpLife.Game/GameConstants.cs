@@ -13,7 +13,7 @@
 *
 ****/
 
-namespace SharpLife.Game.Shared
+namespace SharpLife.Game
 {
     public static class GameConstants
     {

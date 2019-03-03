@@ -13,9 +13,9 @@
 *
 ****/
 
-using SharpLife.Game.Shared.Models.BSP;
+using SharpLife.Game.Models.BSP;
 
-namespace SharpLife.Game.Shared.Maps
+namespace SharpLife.Game.Maps
 {
     /// <summary>
     /// Provides access to map info

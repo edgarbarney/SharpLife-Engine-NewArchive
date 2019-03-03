@@ -20,7 +20,7 @@ using System;
 using System.IO;
 using System.Numerics;
 
-namespace SharpLife.Game.Shared.Models.BSP
+namespace SharpLife.Game.Models.BSP
 {
     public sealed class BSPModelLoader : IModelLoader
     {

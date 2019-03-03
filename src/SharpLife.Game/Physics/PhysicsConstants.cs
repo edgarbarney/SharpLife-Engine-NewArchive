@@ -15,7 +15,7 @@
 
 using System.Numerics;
 
-namespace SharpLife.Game.Shared.Physics
+namespace SharpLife.Game.Physics
 {
     public static class PhysicsConstants
     {

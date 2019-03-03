@@ -18,7 +18,7 @@ using SharpLife.Models.MDL.FileFormat;
 using System;
 using System.Numerics;
 
-namespace SharpLife.Game.Shared.Models.MDL
+namespace SharpLife.Game.Models.MDL
 {
     public sealed class StudioModel : BaseModel
     {

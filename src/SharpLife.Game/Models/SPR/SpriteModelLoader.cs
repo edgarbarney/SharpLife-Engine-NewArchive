@@ -19,7 +19,7 @@ using SharpLife.Models.SPR.FileFormat;
 using System;
 using System.IO;
 
-namespace SharpLife.Game.Shared.Models.SPR
+namespace SharpLife.Game.Models.SPR
 {
     public sealed class SpriteModelLoader : IModelLoader
     {
