@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Engine.Shared.Engines;
+using SharpLife.Engine.Engines;
 using System;
 
 namespace SharpLife.Engine.Host

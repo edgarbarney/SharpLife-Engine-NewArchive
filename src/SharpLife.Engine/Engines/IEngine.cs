@@ -23,7 +23,7 @@ using SharpLife.Utility;
 using SharpLife.Utility.Events;
 using System;
 
-namespace SharpLife.Engine.Shared.Engines
+namespace SharpLife.Engine.Engines
 {
     /// <summary>
     /// Manages top level engine components (client, server) and shared components

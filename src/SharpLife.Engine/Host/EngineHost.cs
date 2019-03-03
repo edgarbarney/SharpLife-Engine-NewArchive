@@ -14,7 +14,6 @@
 ****/
 
 using SharpLife.Engine.Engines;
-using SharpLife.Engine.Shared.Engines;
 using SharpLife.Engine.Shared.UI;
 using System;
 

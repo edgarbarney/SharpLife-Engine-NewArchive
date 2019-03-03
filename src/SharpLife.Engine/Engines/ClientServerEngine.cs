@@ -26,7 +26,6 @@ using SharpLife.Engine.Shared;
 using SharpLife.Engine.Shared.API.Game.Server;
 using SharpLife.Engine.Shared.CommandSystem;
 using SharpLife.Engine.Shared.Configuration;
-using SharpLife.Engine.Shared.Engines;
 using SharpLife.Engine.Shared.Events;
 using SharpLife.Engine.Shared.Logging;
 using SharpLife.Engine.Shared.Loop;
