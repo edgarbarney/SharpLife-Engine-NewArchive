@@ -41,10 +41,10 @@ using System.Xml.Serialization;
 namespace SharpLife.Engine.Host
 {
     /// <summary>
-    /// A client-server based engine
+    /// Manages top level engine components (client, server) and shared components
     /// Can host clients, dedicated servers and clients running listen servers
     /// </summary>
-    internal class ClientServerEngine : IEngine, IEngineLoop
+    internal class ClientServerEngine : IEngineLoop
     {
         private static readonly List<string> CommandLineKeyPrefixes = new List<string> { "-", "+" };
 
@@ -59,32 +59,66 @@ namespace SharpLife.Engine.Host
 
         private const int DefaultFPS = 60;
 
+        /// <summary>
+        /// Gets the command line passed to the engine
+        /// </summary>
         public ICommandLine CommandLine { get; private set; }
 
+        /// <summary>
+        /// Gets the filesystem used by the engine
+        /// </summary>
         public IFileSystem FileSystem { get; private set; }
 
+        /// <summary>
+        /// Gets the game directory that this game was loaded from
+        /// </summary>
         public string GameDirectory { get; private set; }
 
+        /// <summary>
+        /// Gets the command system
+        /// </summary>
         public ICommandSystem CommandSystem { get; private set; }
 
+        /// <summary>
+        /// Gets the user interface component
+        /// This component is optional and should be created only if needed
+        /// </summary>
         public IUserInterface UserInterface { get; private set; }
 
         private readonly Stopwatch _engineTimeStopwatch = new Stopwatch();
 
-        private SnapshotTime EngineTime { get; } = new SnapshotTime();
+        private readonly SnapshotTime _engineTime = new SnapshotTime();
 
-        ITime IEngine.EngineTime => EngineTime;
+        /// <summary>
+        /// Gets the engine time
+        /// </summary>
+        public ITime EngineTime => _engineTime;
 
         public IModelManager ModelManager { get; private set; }
 
+        /// <summary>
+        /// The engine wide event system
+        /// </summary>
         public IEventSystem EventSystem { get; } = new EventSystem();
 
+        /// <summary>
+        /// The engine configuration
+        /// </summary>
         public EngineConfiguration EngineConfiguration { get; private set; }
 
+        /// <summary>
+        /// Gets the date that the engine was built
+        /// </summary>
         public DateTimeOffset BuildDate { get; private set; }
 
+        /// <summary>
+        /// Whether this is a dedicated server
+        /// </summary>
         public bool IsDedicatedServer => _hostType == HostType.DedicatedServer;
 
+        /// <summary>
+        /// Gets the log text writer used to forward logs to the console
+        /// </summary>
         public ForwardingTextWriter LogTextWriter { get; } = new ForwardingTextWriter();
 
         private HostType _hostType;
@@ -112,6 +146,9 @@ namespace SharpLife.Engine.Host
 
         private IVariable _fpsMax;
 
+        /// <summary>
+        /// Creates the user interface if it does not exist
+        /// </summary>
         public IUserInterface CreateUserInterface()
         {
             if (UserInterface == null)
@@ -159,10 +196,10 @@ namespace SharpLife.Engine.Host
                 //TODO: need to provide a way to query real time
                 //TODO: need to properly handle frame time calculation
                 //TODO: engine time is advanced after physics in the original engine
-                EngineTime.FrameTime = currentFrameSeconds - previousFrameSeconds;
+                _engineTime.FrameTime = currentFrameSeconds - previousFrameSeconds;
 
                 //Engine time is relative, so advance by frame time
-                EngineTime.ElapsedTime += EngineTime.FrameTime;
+                _engineTime.ElapsedTime += _engineTime.FrameTime;
 
                 previousFrameSeconds = currentFrameSeconds;
 
