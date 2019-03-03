@@ -13,6 +13,7 @@
 *
 ****/
 
+using ImGuiNET;
 using SDL2;
 using Serilog;
 using SharpLife.CommandSystem;
@@ -175,6 +176,8 @@ namespace SharpLife.Game.Client.Renderer
             initCL.End();
             _gd.SubmitCommands(initCL);
             initCL.Dispose();
+
+            ImGui.StyleColorsClassic();
         }
 
         private static SwapchainSource GetSwapchainSource(IntPtr window)
