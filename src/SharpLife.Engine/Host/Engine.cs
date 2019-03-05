@@ -44,7 +44,7 @@ namespace SharpLife.Engine.Host
     /// Manages top level engine components (client, server) and shared components
     /// Can host clients, dedicated servers and clients running listen servers
     /// </summary>
-    internal class ClientServerEngine
+    internal sealed class Engine
     {
         private static readonly List<string> CommandLineKeyPrefixes = new List<string> { "-", "+" };
 
@@ -134,7 +134,7 @@ namespace SharpLife.Engine.Host
 
         private readonly IVariable _fpsMax;
 
-        public ClientServerEngine(string[] args, HostType hostType)
+        public Engine(string[] args, HostType hostType)
         {
             _hostType = hostType;
 
@@ -205,7 +205,7 @@ namespace SharpLife.Engine.Host
                 }));
 
             //Get the build date from the generated resource file
-            var assembly = typeof(ClientServerEngine).Assembly;
+            var assembly = typeof(Engine).Assembly;
             using (var reader = new StreamReader(assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources.BuildDate.txt")))
             {
                 string buildTimestamp = reader.ReadToEnd();

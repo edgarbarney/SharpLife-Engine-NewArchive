@@ -25,11 +25,11 @@ namespace SharpLife.Engine.Host
     {
         public static void Start(string[] args, HostType type)
         {
-            ClientServerEngine engine = null;
+            Engine engine = null;
 
             try
             {
-                engine = new ClientServerEngine(args, type);
+                engine = new Engine(args, type);
 
                 engine.Run();
             }
