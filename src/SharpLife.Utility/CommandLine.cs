@@ -24,7 +24,7 @@ namespace SharpLife.Utility
     {
         private readonly List<string> _arguments;
 
-        private readonly List<string> _keyPrefixes;
+        private readonly string[] _keyPrefixes;
 
         public string this[int index] => _arguments[index];
 
@@ -44,7 +44,7 @@ namespace SharpLife.Utility
 
             _arguments = arguments.ToList();
 
-            _keyPrefixes = keyPrefixes?.ToList() ?? new List<string>();
+            _keyPrefixes = keyPrefixes?.ToArray() ?? Array.Empty<string>();
         }
 
         public bool Contains(string name) => _arguments.Contains(name);
