@@ -80,6 +80,8 @@ namespace SharpLife.Engine.Host
         /// </summary>
         public ICommandSystem CommandSystem { get; }
 
+        public ICommandContext ClientContext { get; }
+
         /// <summary>
         /// Gets the user interface component
         /// This component is optional and is only created for clients
@@ -170,6 +172,10 @@ namespace SharpLife.Engine.Host
 
             SetupFileSystem(GameDirectory);
 
+            CommandSystem = new CommandSystem.CommandSystem(Logger);
+
+            ClientContext = CommandSystem.CreateContext("ClientContext");
+
             //create the game window if this is a client
             if (_hostType == HostType.Client)
             {
@@ -180,16 +186,13 @@ namespace SharpLife.Engine.Host
                     gameWindowName = EngineConfiguration.GameName;
                 }
 
-                UserInterface = new UserInterface(Logger, FileSystem, this, CommandLine.Contains("-noontop"), gameWindowName, CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
-
-                UserInterface.Window.Center();
+                UserInterface = new UserInterface(Logger, EngineTime, FileSystem, this, ClientContext,
+                    CommandLine.Contains("-noontop"), gameWindowName, CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
             }
 
             _engineTimeStopwatch.Start();
 
             EventUtils.RegisterEvents(EventSystem, new EngineEvents());
-
-            CommandSystem = new CommandSystem.CommandSystem(Logger);
 
             CommonCommands.AddStuffCmds(CommandSystem.SharedContext, Logger, CommandLine);
             CommonCommands.AddExec(CommandSystem.SharedContext, Logger, FileSystem, ExecPathIDs);
@@ -263,6 +266,8 @@ namespace SharpLife.Engine.Host
                 {
                     break;
                 }
+
+                UserInterface?.Draw();
             }
 
             Shutdown();
@@ -271,6 +276,8 @@ namespace SharpLife.Engine.Host
         private void Update(float deltaSeconds)
         {
             CommandSystem.Execute();
+
+            UserInterface?.Update(deltaSeconds);
         }
 
         private static EngineConfiguration LoadEngineConfiguration(string gameDirectory)

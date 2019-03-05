@@ -15,10 +15,13 @@
 
 using SDL2;
 using Serilog;
+using SharpLife.CommandSystem;
+using SharpLife.Engine.Shared;
 using SharpLife.Engine.Shared.Loop;
 using SharpLife.Engine.Shared.UI;
 using SharpLife.FileSystem;
 using SharpLife.Input;
+using SharpLife.Utility;
 using System;
 
 namespace SharpLife.Engine.UI
@@ -34,11 +37,14 @@ namespace SharpLife.Engine.UI
 
         private readonly IEngineLoop _engineLoop;
 
+        private readonly Renderer.Renderer _renderer;
+
         public IInputSystem InputSystem { get; } = new InputSystem();
 
         public Window Window { get; private set; }
 
-        public UserInterface(ILogger logger, IFileSystem fileSystem, IEngineLoop engineLoop, bool noOnTop, string windowTitle, SDL.SDL_WindowFlags additionalFlags = 0)
+        public UserInterface(ILogger logger, ITime engineTime, IFileSystem fileSystem, IEngineLoop engineLoop, ICommandContext commandContext,
+            bool noOnTop, string windowTitle, SDL.SDL_WindowFlags additionalFlags = 0)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
@@ -58,6 +64,10 @@ namespace SharpLife.Engine.UI
             SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING);
 
             Window = new Window(_logger, _fileSystem, windowTitle, additionalFlags);
+
+            Window.Center();
+
+            _renderer = new Renderer.Renderer(logger, engineTime, commandContext, fileSystem, this, Framework.Path.Shaders);
         }
 
         /// <summary>
@@ -101,6 +111,16 @@ namespace SharpLife.Engine.UI
                         }
                 }
             }
+        }
+
+        public void Update(float deltaSeconds)
+        {
+            _renderer.Update(deltaSeconds);
+        }
+
+        public void Draw()
+        {
+            _renderer.Draw();
         }
 
         /// <summary>
