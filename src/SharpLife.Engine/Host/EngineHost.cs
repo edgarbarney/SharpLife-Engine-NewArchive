@@ -25,11 +25,12 @@ namespace SharpLife.Engine.Host
     {
         public static void Start(string[] args, HostType type)
         {
+            var launcher = new Launcher();
             Engine engine = null;
 
             try
             {
-                engine = new Engine(args, type);
+                engine = launcher.Launch(args, type);
 
                 engine.Run();
             }
@@ -38,7 +39,15 @@ namespace SharpLife.Engine.Host
                 if (engine != null)
                 {
                     //Log first, in case user terminates program while messagebox is open
-                    engine.Logger?.Error(e, "A fatal error occurred");
+                    //The logger can be null here if logger creation throws
+                    if (launcher.Logger != null)
+                    {
+                        launcher.Logger.Error(e, "A fatal error occurred");
+                    }
+                    else
+                    {
+                        launcher.FallbackErrorLog(e.Message + "\n");
+                    }
 
                     //Display an error message for clients only (dedicated server doesn't have a local UI)
                     if (type == HostType.Client)

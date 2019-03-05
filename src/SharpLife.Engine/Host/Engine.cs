@@ -14,9 +14,6 @@
 ****/
 
 using Serilog;
-using Serilog.Formatting;
-using Serilog.Formatting.Compact;
-using Serilog.Formatting.Display;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.Commands.VariableFilters;
@@ -45,8 +42,6 @@ namespace SharpLife.Engine.Host
     /// </summary>
     internal sealed class Engine
     {
-        private static readonly List<string> CommandLineKeyPrefixes = new List<string> { "-", "+" };
-
         private static readonly List<string> ExecPathIDs = new List<string>
         {
             FileSystemConstants.PathID.GameConfig,
@@ -118,7 +113,7 @@ namespace SharpLife.Engine.Host
         /// <summary>
         /// Gets the log text writer used to forward logs to the console
         /// </summary>
-        public ForwardingTextWriter LogTextWriter { get; } = new ForwardingTextWriter();
+        public ForwardingTextWriter LogTextWriter { get; }
 
         private readonly HostType _hostType;
 
@@ -131,24 +126,15 @@ namespace SharpLife.Engine.Host
 
         private readonly IVariable _fpsMax;
 
-        public Engine(string[] args, HostType hostType)
+        public Engine(HostType hostType, ICommandLine commandLine, string gameDirectory, EngineConfiguration engineConfiguration, ILogger logger, ForwardingTextWriter forwardingTextWriter)
         {
             _hostType = hostType;
 
-            CommandLine = new CommandLine(args, CommandLineKeyPrefixes);
-
-            GameDirectory = CommandLine.GetValue("-game");
-
-            //This can't actually happen since SharpLife loads from its own directory, so unless somebody placed the installation in the default game directory this isn't an issue
-            //It's an easy way to verify that nothing went wrong during user setup though
-            if (GameDirectory == null)
-            {
-                throw new InvalidOperationException("No game directory specified, cannot continue");
-            }
-
-            EngineConfiguration = LoadEngineConfiguration(GameDirectory);
-
-            Log.Logger = Logger = CreateLogger(GameDirectory);
+            CommandLine = commandLine ?? throw new ArgumentNullException(nameof(commandLine));
+            GameDirectory = gameDirectory ?? throw new ArgumentNullException(nameof(gameDirectory));
+            EngineConfiguration = engineConfiguration ?? throw new ArgumentNullException(nameof(engineConfiguration));
+            Log.Logger = Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            LogTextWriter = forwardingTextWriter ?? throw new ArgumentNullException(nameof(forwardingTextWriter));
 
             FileSystem = new DiskFileSystem();
 
@@ -258,71 +244,6 @@ namespace SharpLife.Engine.Host
             CommandSystem.Execute();
 
             Client?.Update(deltaSeconds);
-        }
-
-        private static EngineConfiguration LoadEngineConfiguration(string gameDirectory)
-        {
-            EngineConfiguration engineConfiguration;
-
-            using (var stream = new FileStream($"{gameDirectory}/cfg/SharpLife-Engine.xml", FileMode.Open))
-            {
-                engineConfiguration = (EngineConfiguration)EngineConfiguration.Serializer.Deserialize(stream);
-            }
-
-            if (string.IsNullOrWhiteSpace(engineConfiguration.DefaultGame))
-            {
-                throw new InvalidOperationException("Default game must be specified");
-            }
-
-            if (string.IsNullOrWhiteSpace(engineConfiguration.DefaultGameName))
-            {
-                throw new InvalidOperationException("Default game name must be specified");
-            }
-
-            //Use a default configuration if none was provided
-            if (engineConfiguration.LoggingConfiguration == null)
-            {
-                engineConfiguration.LoggingConfiguration = new LoggingConfiguration();
-            }
-
-            return engineConfiguration;
-        }
-
-        private ILogger CreateLogger(string gameDirectory)
-        {
-            var config = new LoggerConfiguration();
-
-            config.MinimumLevel.Verbose();
-
-            ITextFormatter fileFormatter = null;
-
-            switch (EngineConfiguration.LoggingConfiguration.LogFormat)
-            {
-                case LoggingConfiguration.Format.Text:
-                    {
-                        fileFormatter = new MessageTemplateTextFormatter("{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}", null);
-                        break;
-                    }
-
-                case LoggingConfiguration.Format.CompactJSON:
-                    {
-                        fileFormatter = new CompactJsonFormatter();
-                        break;
-                    }
-            }
-
-            //Invalid config setting for RetainedFileCountLimit will throw
-            config
-                .WriteTo.File(fileFormatter, $"{gameDirectory}/logs/engine.log",
-                rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: EngineConfiguration.LoggingConfiguration.RetainedFileCountLimit);
-
-            //Use basic formatting for console output
-            var logFormatter = new MessageTemplateTextFormatter("{Message:lj}{NewLine}{Exception}", null);
-
-            config.WriteTo.TextWriter(logFormatter, LogTextWriter);
-
-            return config.CreateLogger();
         }
 
         private void Shutdown()
