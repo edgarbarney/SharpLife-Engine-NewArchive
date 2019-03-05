@@ -20,7 +20,6 @@ using Serilog.Formatting.Display;
 using SharpLife.Engine.Shared.Configuration;
 using SharpLife.Engine.Shared.Logging;
 using SharpLife.Utility;
-using System.Collections.Generic;
 using System.IO;
 
 namespace SharpLife.Engine.Host
@@ -32,7 +31,7 @@ namespace SharpLife.Engine.Host
     {
         private const string ErrorGameDirectory = "sharplife_error";
 
-        private static readonly List<string> CommandLineKeyPrefixes = new List<string> { "-", "+" };
+        private static readonly string[] CommandLineKeyPrefixes = new[] { "-", "+" };
 
         public ILogger Logger { get; private set; }
 
