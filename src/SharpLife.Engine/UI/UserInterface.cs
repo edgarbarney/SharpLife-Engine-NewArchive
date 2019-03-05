@@ -17,7 +17,6 @@ using SDL2;
 using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.Engine.Shared;
-using SharpLife.Engine.Shared.UI;
 using SharpLife.FileSystem;
 using SharpLife.Input;
 using SharpLife.Utility;
@@ -131,42 +130,6 @@ namespace SharpLife.Engine.UI
         public void Shutdown()
         {
             SDL.SDL_Quit();
-        }
-
-        /// <summary>
-        /// Displays a message box containing the given title, message and icon
-        /// </summary>
-        /// <param name="icon"></param>
-        /// <param name="title"></param>
-        /// <param name="message"></param>
-        public void ShowMessageBox(MessageBoxIcon icon, string title, string message)
-        {
-            if (title == null)
-            {
-                throw new ArgumentNullException(nameof(title));
-            }
-
-            if (message == null)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
-
-            SDL.SDL_MessageBoxFlags iconFlag = SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_INFORMATION;
-
-            switch (icon)
-            {
-                default:
-                    iconFlag = SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_INFORMATION;
-                    break;
-                case MessageBoxIcon.Warning:
-                    iconFlag = SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_WARNING;
-                    break;
-                case MessageBoxIcon.Error:
-                    iconFlag = SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR;
-                    break;
-            }
-
-            SDL.SDL_ShowSimpleMessageBox(iconFlag, title, message, IntPtr.Zero);
         }
     }
 }

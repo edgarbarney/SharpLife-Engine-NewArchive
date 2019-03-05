@@ -40,8 +40,11 @@ namespace SharpLife.Engine.Host
                     //Log first, in case user terminates program while messagebox is open
                     engine.Logger?.Error(e, "A fatal error occurred");
 
-                    //Display an error message if a user interface is available
-                    engine.UserInterface?.ShowMessageBox(MessageBoxIcon.Error, "SharpLife error", e.Message);
+                    //Display an error message for clients only (dedicated server doesn't have a local UI)
+                    if (type == HostType.Client)
+                    {
+                        MessageBox.Error("SharpLife error", e.Message);
+                    }
                 }
 
                 throw;
