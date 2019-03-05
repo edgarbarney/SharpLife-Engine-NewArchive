@@ -13,7 +13,6 @@
 *
 ****/
 
-using SDL2;
 using Serilog;
 using Serilog.Formatting;
 using Serilog.Formatting.Compact;
@@ -21,6 +20,7 @@ using Serilog.Formatting.Display;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.Commands.VariableFilters;
+using SharpLife.Engine.Client;
 using SharpLife.Engine.Shared;
 using SharpLife.Engine.Shared.CommandSystem;
 using SharpLife.Engine.Shared.Configuration;
@@ -78,13 +78,16 @@ namespace SharpLife.Engine.Host
         /// </summary>
         public ICommandSystem CommandSystem { get; }
 
-        public ICommandContext ClientContext { get; }
+        /// <summary>
+        /// The client system, if this is a client instance
+        /// </summary>
+        public EngineClient Client { get; }
 
         /// <summary>
         /// Gets the user interface component
         /// This component is optional and is only created for clients
         /// </summary>
-        public UserInterface UserInterface { get; }
+        public UserInterface UserInterface => Client?.UserInterface;
 
         private readonly Stopwatch _engineTimeStopwatch = new Stopwatch();
 
@@ -153,22 +156,10 @@ namespace SharpLife.Engine.Host
 
             CommandSystem = new CommandSystem.CommandSystem(Logger);
 
-            ClientContext = CommandSystem.CreateContext("ClientContext");
-
             //create the game window if this is a client
             if (_hostType == HostType.Client)
             {
-                var gameWindowName = EngineConfiguration.DefaultGameName;
-
-                if (!string.IsNullOrWhiteSpace(EngineConfiguration.GameName))
-                {
-                    gameWindowName = EngineConfiguration.GameName;
-                }
-
-                UserInterface = new UserInterface(Logger, EngineTime, FileSystem, ClientContext,
-                    CommandLine.Contains("-noontop"), gameWindowName, CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
-
-                UserInterface.Quit += OnQuit;
+                Client = new EngineClient(this);
             }
 
             _engineTimeStopwatch.Start();
@@ -239,7 +230,7 @@ namespace SharpLife.Engine.Host
 
                 previousFrameSeconds = currentFrameSeconds;
 
-                UserInterface?.SleepUntilInput(0);
+                Client?.SleepUntilInput(0);
 
                 Update((float)deltaSeconds);
 
@@ -248,17 +239,25 @@ namespace SharpLife.Engine.Host
                     break;
                 }
 
-                UserInterface?.Draw();
+                Client?.Draw();
             }
 
             Shutdown();
+        }
+
+        /// <summary>
+        /// Exit the game and shut it down
+        /// </summary>
+        public void Exit()
+        {
+            _exiting = true;
         }
 
         private void Update(float deltaSeconds)
         {
             CommandSystem.Execute();
 
-            UserInterface?.Update(deltaSeconds);
+            Client?.Update(deltaSeconds);
         }
 
         private static EngineConfiguration LoadEngineConfiguration(string gameDirectory)
@@ -328,14 +327,9 @@ namespace SharpLife.Engine.Host
 
         private void Shutdown()
         {
-            UserInterface?.Shutdown();
+            Client?.Shutdown();
 
             EventUtils.UnregisterEvents(EventSystem, new EngineEvents());
-        }
-
-        private void OnQuit()
-        {
-            _exiting = true;
         }
 
         private void SetupFileSystem(string gameDirectory)
