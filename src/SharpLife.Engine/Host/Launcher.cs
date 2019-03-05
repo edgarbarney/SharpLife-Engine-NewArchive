@@ -34,37 +34,31 @@ namespace SharpLife.Engine.Host
 
         private static readonly List<string> CommandLineKeyPrefixes = new List<string> { "-", "+" };
 
-        private ICommandLine _commandLine;
-
-        private string _gameDirectory;
-
-        private EngineConfiguration _engineConfiguration;
-
         public ILogger Logger { get; private set; }
-
-        private readonly ForwardingTextWriter _logTextWriter = new ForwardingTextWriter();
 
         public Engine Launch(string[] args, HostType hostType)
         {
             //This two stage setup is required to ensure that a logger always exists
 
-            _commandLine = new CommandLine(args, CommandLineKeyPrefixes);
+            var commandLine = new CommandLine(args, CommandLineKeyPrefixes);
 
-            _gameDirectory = _commandLine.GetValue("-game");
+            var gameDirectory = commandLine.GetValue("-game");
 
             //This can't actually happen since SharpLife loads from its own directory, so unless somebody placed the installation in the default game directory this isn't an issue
             //It's an easy way to verify that nothing went wrong during user setup though
-            if (_gameDirectory == null)
+            if (gameDirectory == null)
             {
                 FatalError("No game directory specified, cannot continue");
             }
 
-            _engineConfiguration = LoadEngineConfiguration(_gameDirectory);
+            var engineConfiguration = LoadEngineConfiguration(gameDirectory);
 
-            Logger = CreateLogger(_gameDirectory, _engineConfiguration.LoggingConfiguration);
+            var logTextWriter = new ForwardingTextWriter();
+
+            Logger = CreateLogger(gameDirectory, engineConfiguration.LoggingConfiguration, logTextWriter);
 
             //Now that the logger has been set up the engine can take care of the rest
-            return new Engine(hostType, _commandLine, _gameDirectory, _engineConfiguration, Logger, _logTextWriter);
+            return new Engine(hostType, commandLine, gameDirectory, engineConfiguration, Logger, logTextWriter);
         }
 
         private EngineConfiguration LoadEngineConfiguration(string gameDirectory)
@@ -95,7 +89,7 @@ namespace SharpLife.Engine.Host
             return engineConfiguration;
         }
 
-        private ILogger CreateLogger(string gameDirectory, LoggingConfiguration loggingConfiguration)
+        private ILogger CreateLogger(string gameDirectory, LoggingConfiguration loggingConfiguration, ForwardingTextWriter logTextWriter)
         {
             var config = new LoggerConfiguration();
 
@@ -127,7 +121,10 @@ namespace SharpLife.Engine.Host
             //Use basic formatting for console output
             var logFormatter = new MessageTemplateTextFormatter("{Message:lj}{NewLine}{Exception}", null);
 
-            config.WriteTo.TextWriter(logFormatter, _logTextWriter);
+            if (logTextWriter != null)
+            {
+                config.WriteTo.TextWriter(logFormatter, logTextWriter);
+            }
 
             return config.CreateLogger();
         }
@@ -138,7 +135,7 @@ namespace SharpLife.Engine.Host
         private void CreateErrorLogger()
         {
             //Create the configuration if we didn't load it yet
-            Logger = CreateLogger(ErrorGameDirectory, _engineConfiguration?.LoggingConfiguration ?? new LoggingConfiguration());
+            Logger = CreateLogger(ErrorGameDirectory, new LoggingConfiguration(), null);
         }
 
         private void FatalError(string reason)
