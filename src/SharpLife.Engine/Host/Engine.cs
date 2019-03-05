@@ -36,7 +36,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Xml.Serialization;
 
 namespace SharpLife.Engine.Host
 {
@@ -273,9 +272,7 @@ namespace SharpLife.Engine.Host
 
             using (var stream = new FileStream($"{gameDirectory}/cfg/SharpLife-Engine.xml", FileMode.Open))
             {
-                var serializer = new XmlSerializer(typeof(EngineConfiguration));
-
-                engineConfiguration = (EngineConfiguration)serializer.Deserialize(stream);
+                engineConfiguration = (EngineConfiguration)EngineConfiguration.Serializer.Deserialize(stream);
             }
 
             if (string.IsNullOrWhiteSpace(engineConfiguration.DefaultGame))

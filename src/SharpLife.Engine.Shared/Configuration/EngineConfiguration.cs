@@ -13,10 +13,14 @@
 *
 ****/
 
+using System.Xml.Serialization;
+
 namespace SharpLife.Engine.Shared.Configuration
 {
     public sealed class EngineConfiguration
     {
+        public static readonly XmlSerializer Serializer = new XmlSerializer(typeof(EngineConfiguration));
+
         /// <summary>
         /// The game name of the default game to load
         /// </summary>
