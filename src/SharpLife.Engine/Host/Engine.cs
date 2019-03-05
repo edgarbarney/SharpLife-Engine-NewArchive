@@ -113,11 +113,6 @@ namespace SharpLife.Engine.Host
         public DateTimeOffset BuildDate { get; }
 
         /// <summary>
-        /// Whether this is a dedicated server
-        /// </summary>
-        public bool IsDedicatedServer => _hostType == HostType.DedicatedServer;
-
-        /// <summary>
         /// Gets the log text writer used to forward logs to the console
         /// </summary>
         public ForwardingTextWriter LogTextWriter { get; } = new ForwardingTextWriter();
