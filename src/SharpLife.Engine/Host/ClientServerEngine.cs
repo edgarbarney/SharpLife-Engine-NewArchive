@@ -26,7 +26,6 @@ using SharpLife.Engine.Shared.CommandSystem;
 using SharpLife.Engine.Shared.Configuration;
 using SharpLife.Engine.Shared.Events;
 using SharpLife.Engine.Shared.Logging;
-using SharpLife.Engine.Shared.Loop;
 using SharpLife.Engine.UI;
 using SharpLife.FileSystem;
 using SharpLife.Models;
@@ -45,7 +44,7 @@ namespace SharpLife.Engine.Host
     /// Manages top level engine components (client, server) and shared components
     /// Can host clients, dedicated servers and clients running listen servers
     /// </summary>
-    internal class ClientServerEngine : IEngineLoop
+    internal class ClientServerEngine
     {
         private static readonly List<string> CommandLineKeyPrefixes = new List<string> { "-", "+" };
 
@@ -131,20 +130,6 @@ namespace SharpLife.Engine.Host
 
         private bool _exiting;
 
-        public bool Exiting
-        {
-            get => _exiting;
-
-            set
-            {
-                //Don't allow continuing loop once exit has been signalled
-                if (!_exiting)
-                {
-                    _exiting = value;
-                }
-            }
-        }
-
         private double _desiredFrameLengthSeconds = 1.0 / DefaultFPS;
 
         private readonly IVariable _fpsMax;
@@ -186,8 +171,10 @@ namespace SharpLife.Engine.Host
                     gameWindowName = EngineConfiguration.GameName;
                 }
 
-                UserInterface = new UserInterface(Logger, EngineTime, FileSystem, this, ClientContext,
+                UserInterface = new UserInterface(Logger, EngineTime, FileSystem, ClientContext,
                     CommandLine.Contains("-noontop"), gameWindowName, CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
+
+                UserInterface.Quit += OnQuit;
             }
 
             _engineTimeStopwatch.Start();
@@ -352,6 +339,11 @@ namespace SharpLife.Engine.Host
             UserInterface?.Shutdown();
 
             EventUtils.UnregisterEvents(EventSystem, new EngineEvents());
+        }
+
+        private void OnQuit()
+        {
+            _exiting = true;
         }
 
         private void SetupFileSystem(string gameDirectory)

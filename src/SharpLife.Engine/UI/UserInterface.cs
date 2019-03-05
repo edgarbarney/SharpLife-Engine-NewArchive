@@ -17,7 +17,6 @@ using SDL2;
 using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.Engine.Shared;
-using SharpLife.Engine.Shared.Loop;
 using SharpLife.Engine.Shared.UI;
 using SharpLife.FileSystem;
 using SharpLife.Input;
@@ -35,20 +34,22 @@ namespace SharpLife.Engine.UI
 
         private readonly IFileSystem _fileSystem;
 
-        private readonly IEngineLoop _engineLoop;
-
         private readonly Renderer.Renderer _renderer;
 
         public IInputSystem InputSystem { get; } = new InputSystem();
 
         public Window Window { get; private set; }
 
-        public UserInterface(ILogger logger, ITime engineTime, IFileSystem fileSystem, IEngineLoop engineLoop, ICommandContext commandContext,
+        /// <summary>
+        /// Invoked when the Quit event has been received
+        /// </summary>
+        public event Action Quit;
+
+        public UserInterface(ILogger logger, ITime engineTime, IFileSystem fileSystem, ICommandContext commandContext,
             bool noOnTop, string windowTitle, SDL.SDL_WindowFlags additionalFlags = 0)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-            _engineLoop = engineLoop ?? throw new ArgumentNullException(nameof(engineLoop));
 
             //Disable to prevent debugger from shutting down the game
             SDL.SDL_SetHint(SDL.SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
@@ -106,7 +107,7 @@ namespace SharpLife.Engine.UI
                         }
                     case SDL.SDL_EventType.SDL_QUIT:
                         {
-                            _engineLoop.Exiting = true;
+                            Quit?.Invoke();
                             break;
                         }
                 }
