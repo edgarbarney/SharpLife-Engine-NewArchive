@@ -36,9 +36,9 @@ namespace SharpLife.CommandSystem.Commands
 
         public IReadOnlyList<IVariableFilter> Filters => _filters;
 
-        private readonly List<Delegates.VariableChangeHandler> _onChangeDelegates = new List<Delegates.VariableChangeHandler>();
+        private readonly List<VariableChangeHandler> _onChangeDelegates = new List<VariableChangeHandler>();
 
-        public IReadOnlyList<Delegates.VariableChangeHandler> ChangeHandlers => _onChangeDelegates;
+        public IReadOnlyList<VariableChangeHandler> ChangeHandlers => _onChangeDelegates;
 
         public VariableInfo(string name)
             : base(name)
@@ -94,7 +94,7 @@ namespace SharpLife.CommandSystem.Commands
             return this;
         }
 
-        public VariableInfo WithChangeHandler(Delegates.VariableChangeHandler changeHandler)
+        public VariableInfo WithChangeHandler(VariableChangeHandler changeHandler)
         {
             if (changeHandler == null)
             {

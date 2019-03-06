@@ -67,11 +67,11 @@ namespace SharpLife.CommandSystem.Commands
 
         public IReadOnlyList<IVariableFilter> Filters => _filters;
 
-        public event Delegates.VariableChangeHandler OnChange;
+        public event VariableChangeHandler OnChange;
 
         public Variable(CommandContext commandContext, string name, string value, CommandFlags flags, string helpInfo,
             IReadOnlyList<IVariableFilter> filters,
-            IReadOnlyList<Delegates.VariableChangeHandler> changeHandlers,
+            IReadOnlyList<VariableChangeHandler> changeHandlers,
             object tag = null)
             : base(commandContext, name, flags, helpInfo, tag)
         {
@@ -82,7 +82,7 @@ namespace SharpLife.CommandSystem.Commands
 
         public Variable(CommandContext commandContext, string name, float value, CommandFlags flags, string helpInfo,
             IReadOnlyList<IVariableFilter> filters,
-            IReadOnlyList<Delegates.VariableChangeHandler> changeHandlers,
+            IReadOnlyList<VariableChangeHandler> changeHandlers,
             object tag = null)
             : base(commandContext, name, flags, helpInfo, tag)
         {
@@ -93,7 +93,7 @@ namespace SharpLife.CommandSystem.Commands
 
         public Variable(CommandContext commandContext, string name, int value, CommandFlags flags, string helpInfo,
             IReadOnlyList<IVariableFilter> filters,
-            IReadOnlyList<Delegates.VariableChangeHandler> changeHandlers,
+            IReadOnlyList<VariableChangeHandler> changeHandlers,
             object tag = null)
             : base(commandContext, name, flags, helpInfo, tag)
         {
@@ -102,7 +102,7 @@ namespace SharpLife.CommandSystem.Commands
             Construct(filters, changeHandlers);
         }
 
-        private void Construct(IReadOnlyList<IVariableFilter> filters, IReadOnlyList<Delegates.VariableChangeHandler> changeHandlers)
+        private void Construct(IReadOnlyList<IVariableFilter> filters, IReadOnlyList<VariableChangeHandler> changeHandlers)
         {
             InitialValue = String;
 

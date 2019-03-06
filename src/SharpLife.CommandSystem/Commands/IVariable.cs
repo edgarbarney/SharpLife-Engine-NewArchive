@@ -40,7 +40,7 @@ namespace SharpLife.CommandSystem.Commands
         /// Change handlers may change the variable by using the change event interface
         /// If the variable is reset to its old value, the change message is suppressed
         /// </summary>
-        event Delegates.VariableChangeHandler OnChange;
+        event VariableChangeHandler OnChange;
 
         /// <summary>
         /// Resets this variable to <see cref="InitialValue"/>

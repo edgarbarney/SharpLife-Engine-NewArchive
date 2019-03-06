@@ -20,10 +20,10 @@ namespace SharpLife.CommandSystem.Commands
 {
     internal class Command : BaseCommand, ICommand
     {
-        public event Delegates.CommandExecutor OnExecute;
+        public event CommandExecutor OnExecute;
 
         public Command(CommandContext commandContext, string name,
-            IReadOnlyList<Delegates.CommandExecutor> executors,
+            IReadOnlyList<CommandExecutor> executors,
             CommandFlags flags = CommandFlags.None, string helpInfo = "", object tag = null)
             : base(commandContext, name, flags, helpInfo, tag)
         {

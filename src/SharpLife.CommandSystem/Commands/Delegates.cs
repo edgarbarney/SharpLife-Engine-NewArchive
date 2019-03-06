@@ -15,18 +15,15 @@
 
 namespace SharpLife.CommandSystem.Commands
 {
-    public static class Delegates
-    {
-        /// <summary>
-        /// Command execution delegate
-        /// </summary>
-        /// <param name="command"></param>
-        public delegate void CommandExecutor(ICommandArgs command);
+    /// <summary>
+    /// Command execution delegate
+    /// </summary>
+    /// <param name="command"></param>
+    public delegate void CommandExecutor(ICommandArgs command);
 
-        /// <summary>
-        /// Variable change handler
-        /// </summary>
-        /// <param name="changeEvent">Contains information about which variable changed and what the old value was</param>
-        public delegate void VariableChangeHandler(ref VariableChangeEvent changeEvent);
-    }
+    /// <summary>
+    /// Variable change handler
+    /// </summary>
+    /// <param name="changeEvent">Contains information about which variable changed and what the old value was</param>
+    public delegate void VariableChangeHandler(ref VariableChangeEvent changeEvent);
 }

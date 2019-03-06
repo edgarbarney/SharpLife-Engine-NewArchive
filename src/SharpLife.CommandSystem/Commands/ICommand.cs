@@ -20,6 +20,6 @@ namespace SharpLife.CommandSystem.Commands
         /// <summary>
         /// Invoked when the command is executed
         /// </summary>
-        event Delegates.CommandExecutor OnExecute;
+        event CommandExecutor OnExecute;
     }
 }

@@ -23,16 +23,16 @@ namespace SharpLife.CommandSystem.Commands
     /// </summary>
     public sealed class CommandInfo : BaseCommandInfo<CommandInfo>
     {
-        private readonly List<Delegates.CommandExecutor> _onExecuteDelegates = new List<Delegates.CommandExecutor>();
+        private readonly List<CommandExecutor> _onExecuteDelegates = new List<CommandExecutor>();
 
-        public IReadOnlyList<Delegates.CommandExecutor> Executors => _onExecuteDelegates;
+        public IReadOnlyList<CommandExecutor> Executors => _onExecuteDelegates;
 
         /// <summary>
         /// Creates a new info instance
         /// </summary>
         /// <param name="name"></param>
         /// <param name="executor">Must be valid</param>
-        public CommandInfo(string name, Delegates.CommandExecutor executor)
+        public CommandInfo(string name, CommandExecutor executor)
             : base(name)
         {
             _onExecuteDelegates.Add(executor ?? throw new ArgumentNullException(nameof(executor)));
@@ -43,7 +43,7 @@ namespace SharpLife.CommandSystem.Commands
         /// </summary>
         /// <param name="executor">Must be valid</param>
         /// <returns></returns>
-        public CommandInfo WithCallback(Delegates.CommandExecutor executor)
+        public CommandInfo WithCallback(CommandExecutor executor)
         {
             _onExecuteDelegates.Add(executor ?? throw new ArgumentNullException(nameof(executor)));
 
