@@ -13,9 +13,6 @@
 *
 ****/
 
-using SharpLife.CommandSystem.Commands.VariableFilters;
-using System.Collections.Generic;
-
 namespace SharpLife.CommandSystem.Commands
 {
     public interface IVariable : IBaseCommand
@@ -33,8 +30,6 @@ namespace SharpLife.CommandSystem.Commands
 
         bool Boolean { get; set; }
 
-        IReadOnlyList<IVariableFilter> Filters { get; }
-
         /// <summary>
         /// Invoked after the variable has changed
         /// Change handlers may change the variable by using the change event interface
@@ -46,19 +41,5 @@ namespace SharpLife.CommandSystem.Commands
         /// Resets this variable to <see cref="InitialValue"/>
         /// </summary>
         void RevertToInitialValue();
-
-        /// <summary>
-        /// Adds a filter to the variable
-        /// </summary>
-        /// <param name="filter"></param>
-        void AddFilter(IVariableFilter filter);
-
-        /// <summary>
-        /// Gets a filter by type
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        /// <exception cref="System.Reflection.AmbiguousMatchException">If more than one filter of the given type exists on this variable</exception>
-        T GetFilter<T>() where T : class, IVariableFilter;
     }
 }

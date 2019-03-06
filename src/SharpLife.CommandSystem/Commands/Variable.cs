@@ -18,7 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 
 namespace SharpLife.CommandSystem.Commands
 {
@@ -64,8 +63,6 @@ namespace SharpLife.CommandSystem.Commands
         }
 
         private List<IVariableFilter> _filters;
-
-        public IReadOnlyList<IVariableFilter> Filters => _filters;
 
         public event VariableChangeHandler OnChange;
 
@@ -120,32 +117,6 @@ namespace SharpLife.CommandSystem.Commands
         public void RevertToInitialValue()
         {
             String = InitialValue;
-        }
-
-        public void AddFilter(IVariableFilter filter)
-        {
-            if (filter == null)
-            {
-                throw new ArgumentNullException(nameof(filter));
-            }
-
-            (_filters ?? (_filters = new List<IVariableFilter>())).Add(filter);
-        }
-
-        public T GetFilter<T>() where T : class, IVariableFilter
-        {
-            var matches = _filters.Where(filter => filter is T).ToList();
-
-            if (matches.Count == 0)
-            {
-                return null;
-            }
-            else if (matches.Count == 1)
-            {
-                return (T)matches[0];
-            }
-
-            throw new AmbiguousMatchException($"More than one instance of filter {typeof(T).FullName} is present on variable {Name}");
         }
 
         internal void SetString(string value, bool suppressChangeMessage)
