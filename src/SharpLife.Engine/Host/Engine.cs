@@ -32,6 +32,7 @@ using SharpLife.Utility.FileSystem;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 
 namespace SharpLife.Engine.Host
@@ -140,7 +141,7 @@ namespace SharpLife.Engine.Host
 
             SetupFileSystem(GameDirectory);
 
-            CommandSystem = new CommandSystem.CommandSystem(Logger);
+            CommandSystem = new CommandSystem.CommandSystem(Logger, CultureInfo.InvariantCulture);
 
             //create the game window if this is a client
             if (_hostType == HostType.Client)
@@ -158,15 +159,13 @@ namespace SharpLife.Engine.Host
             CommonCommands.AddAlias(CommandSystem.SharedContext, Logger);
 
             _fpsMax = CommandSystem.SharedContext.RegisterVariable(
-                new VariableInfo("fps_max")
-                .WithValue(DefaultFPS)
+                new VariableInfo<uint>("fps_max", DefaultFPS)
                 .WithHelpInfo("Sets the maximum frames per second")
-                .WithNumberFilter(true)
                 //Avoid negative maximum
                 .WithMinMaxFilter(0, MaximumFPS)
-                .WithChangeHandler((ref VariableChangeEvent @event) =>
+                .WithChangeHandler((ref VariableChangeEvent<uint> @event) =>
                 {
-                    var desiredFPS = @event.Integer;
+                    var desiredFPS = @event.Value;
 
                     if (desiredFPS == 0)
                     {

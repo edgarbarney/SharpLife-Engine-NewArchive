@@ -44,7 +44,7 @@ namespace SharpLife.Utility.Mathematics
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static int NearestUpperPowerOf2(int value)
+        public static uint NearestUpperPowerOf2(uint value)
         {
             //Check if value is itself a power of 2
             if (value != 0 && (value & (value - 1)) == 0)
@@ -61,7 +61,7 @@ namespace SharpLife.Utility.Mathematics
                 ++count;
             }
 
-            return 1 << count;
+            return 1U << count;
         }
     }
 }

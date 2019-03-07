@@ -35,13 +35,13 @@ namespace SharpLife.Renderer
         private const int DefaultPicMip = 0;
         private const bool DefaultRescaleTextures = true;
 
-        private readonly IVariable _maxSize;
+        private readonly IVariable<uint> _maxSize;
 
-        private readonly IVariable _roundDown;
+        private readonly IVariable<uint> _roundDown;
 
-        private readonly IVariable _picMip;
+        private readonly IVariable<uint> _picMip;
 
-        private readonly IVariable _powerOf2Textures;
+        private readonly IVariable<bool> _powerOf2Textures;
 
         public TextureLoader(ICommandContext commandContext)
         {
@@ -51,31 +51,23 @@ namespace SharpLife.Renderer
             }
 
             _maxSize = commandContext.RegisterVariable(
-                new VariableInfo("mat_max_size")
-                .WithValue(DefaultMaxSize)
+                new VariableInfo<uint>("mat_max_size", DefaultMaxSize)
                 .WithHelpInfo("This is used to constrain texture sizes")
-                .WithNumberFilter(true)
                 .WithMinMaxFilter(MinimumMaxSize, null, true));
 
             _roundDown = commandContext.RegisterVariable(
-                new VariableInfo("mat_round_down")
-                .WithValue(DefaultRoundDown)
+                new VariableInfo<uint>("mat_round_down", DefaultRoundDown)
                 .WithHelpInfo("If not 0, this is used to round down texture sizes when rescaling to power of 2. Ignored when mat_powerof2textures is false")
-                .WithNumberFilter(true)
                 .WithMinMaxFilter(ImageConversionUtils.MinSizeExponent, ImageConversionUtils.MaxSizeExponent, true));
 
             _picMip = commandContext.RegisterVariable(
-                new VariableInfo("mat_picmip")
+                new VariableInfo<uint>("mat_picmip", DefaultPicMip)
                 .WithHelpInfo("If not 0, this is the number of times to halve the size of texture sizes")
-                .WithValue(DefaultPicMip)
-                .WithNumberFilter(true)
                 .WithMinMaxFilter(ImageConversionUtils.MinSizeExponent, ImageConversionUtils.MaxSizeExponent, true));
 
             _powerOf2Textures = commandContext.RegisterVariable(
-                new VariableInfo("mat_powerof2textures")
-                .WithValue(DefaultRescaleTextures)
-                .WithHelpInfo("Whether to rescale textures to power of 2")
-                .WithBooleanFilter());
+                new VariableInfo<bool>("mat_powerof2textures", DefaultRescaleTextures)
+                .WithHelpInfo("Whether to rescale textures to power of 2"));
         }
 
         /// <summary>
@@ -84,9 +76,9 @@ namespace SharpLife.Renderer
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        public (int, int) ComputeScaledSize(int width, int height)
+        public (uint, uint) ComputeScaledSize(uint width, uint height)
         {
-            return ImageConversionUtils.ComputeScaledSize(width, height, _powerOf2Textures.Boolean, _maxSize.Integer, _roundDown.Integer, _picMip.Integer);
+            return ImageConversionUtils.ComputeScaledSize(width, height, _powerOf2Textures.Value, _maxSize.Value, _roundDown.Value, _picMip.Value);
         }
 
         private Image<Rgba32> InternalConvertTexture(IndexedColor256Image inputImage, TextureFormat textureFormat)
@@ -102,11 +94,11 @@ namespace SharpLife.Renderer
             }
 
             //Rescale image to nearest power of 2
-            (var scaledWidth, var scaledHeight) = ComputeScaledSize(inputImage.Width, inputImage.Height);
+            (var scaledWidth, var scaledHeight) = ComputeScaledSize((uint)inputImage.Width, (uint)inputImage.Height);
 
-            var scaledPixels = ImageConversionUtils.ResampleImage(new Span<Rgba32>(pixels), inputImage.Width, inputImage.Height, scaledWidth, scaledHeight);
+            var scaledPixels = ImageConversionUtils.ResampleImage(new Span<Rgba32>(pixels), inputImage.Width, inputImage.Height, (int)scaledWidth, (int)scaledHeight);
 
-            return Image.LoadPixelData(scaledPixels, scaledWidth, scaledHeight);
+            return Image.LoadPixelData(scaledPixels, (int)scaledWidth, (int)scaledHeight);
         }
 
         /// <summary>

@@ -33,8 +33,8 @@ namespace SharpLife.Renderer.Utility
 
         public const int MinimumMaxImageSize = 1;
 
-        public const int MinSizeExponent = 0;
-        public static readonly int MaxSizeExponent = (8 * Marshal.SizeOf<int>()) - 1;
+        public const uint MinSizeExponent = 0;
+        public static readonly uint MaxSizeExponent = (uint)(8U * Marshal.SizeOf<int>()) - 1;
 
         /// <summary>
         /// Convert an indexed 256 color image to an Rgba32 image
@@ -329,15 +329,15 @@ namespace SharpLife.Renderer.Utility
             return output;
         }
 
-        private static int ComputeRoundedDownValue(int value, bool doPowerOf2Rescale, int maxValue, int roundDownExponent, int divisorExponent)
+        private static uint ComputeRoundedDownValue(uint value, bool doPowerOf2Rescale, uint maxValue, uint roundDownExponent, uint divisorExponent)
         {
-            int scaledValue;
+            uint scaledValue;
 
             if (doPowerOf2Rescale)
             {
                 scaledValue = MathUtils.NearestUpperPowerOf2(value);
 
-                if ((roundDownExponent > 0) && (value < scaledValue) && (roundDownExponent == 1 || ((scaledValue - value) > (scaledValue >> roundDownExponent))))
+                if ((roundDownExponent > 0) && (value < scaledValue) && (roundDownExponent == 1 || ((scaledValue - value) > (scaledValue >> (int)roundDownExponent))))
                 {
                     scaledValue /= 2;
                 }
@@ -347,10 +347,10 @@ namespace SharpLife.Renderer.Utility
                 scaledValue = value;
             }
 
-            scaledValue >>= divisorExponent;
+            scaledValue >>= (int)divisorExponent;
 
             //Make sure it's always valid
-            return Math.Clamp(scaledValue, 1, maxValue);
+            return Math.Clamp(scaledValue, 1U, maxValue);
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ namespace SharpLife.Renderer.Utility
         /// <param name="roundDownExponent">Exponent used to round down the scaled size</param>
         /// <param name="divisorExponent">Exponent used to divide the scaled size further</param>
         /// <returns></returns>
-        public static (int, int) ComputeScaledSize(int inWidth, int inHeight, bool doPowerOf2Rescale, int maxValue, int roundDownExponent, int divisorExponent)
+        public static (uint, uint) ComputeScaledSize(uint inWidth, uint inHeight, bool doPowerOf2Rescale, uint maxValue, uint roundDownExponent, uint divisorExponent)
         {
             if (inWidth <= 0)
             {

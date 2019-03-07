@@ -60,12 +60,12 @@ namespace SharpLife.Models.SPR.Rendering
             var framesPerLine = (int)Math.Ceiling(Math.Sqrt(spriteFile.Frames.Count));
 
             //Account for the change in size when converting textures
-            (var maximumWith, var maximumHeight) = textureLoader.ComputeScaledSize(spriteFile.MaximumWidth, spriteFile.MaximumHeight);
+            (var maximumWith, var maximumHeight) = textureLoader.ComputeScaledSize((uint)spriteFile.MaximumWidth, (uint)spriteFile.MaximumHeight);
 
             var totalWidth = maximumWith * framesPerLine;
             var totalHeight = maximumHeight * framesPerLine;
 
-            var atlasImage = new Image<Rgba32>(totalWidth, totalHeight);
+            var atlasImage = new Image<Rgba32>((int)totalWidth, (int)totalHeight);
 
             var graphicsOptions = GraphicsOptions.Default;
 
@@ -152,13 +152,13 @@ namespace SharpLife.Models.SPR.Rendering
                 //TODO: could refactor this by having one vertex and one index buffer, and returning the start & count of indices for each frame
                 vertexBuffers.Add(vb);
 
-                nextFramePosition.X += maximumWith;
+                nextFramePosition.X += (int)maximumWith;
 
                 //Wrap to next line
                 if (nextFramePosition.X >= totalWidth)
                 {
                     nextFramePosition.X = 0;
-                    nextFramePosition.Y += maximumHeight;
+                    nextFramePosition.Y += (int)maximumHeight;
                 }
             }
 
