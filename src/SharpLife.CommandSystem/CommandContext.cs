@@ -174,15 +174,7 @@ namespace SharpLife.CommandSystem
 
             var typeProxy = _commandSystem.GetTypeProxy<T>();
 
-            var changeHandlers = info._onChangeDelegates;
-
-            //Add the filter aggregate to the front to allow vetoing ahead of time
-            if (info._filters?.HasFilters == true)
-            {
-                changeHandlers.Insert(0, info._filters.CreateAggregate().OnChange);
-            }
-
-            var variable = new VirtualVariable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, typeProxy, changeHandlers, info.Tag);
+            var variable = new VirtualVariable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, typeProxy, info.CreateChangeHandlerList(), info.Tag);
 
             _commands.Add(variable.Name, variable);
 
@@ -191,8 +183,20 @@ namespace SharpLife.CommandSystem
             return variable;
         }
 
-        public IVariable<T> RegisterVariable<T>(string name, Expression<Func<T>> expression)
+        public IVariable<T> RegisterVariable<T>(ProxyVariableInfo<T> info)
         {
+            if (info == null)
+            {
+                throw new ArgumentNullException(nameof(info));
+            }
+
+            if (CheckForCommandExistence<IVariable<T>>(info.Name, out var existingCommand))
+            {
+                return existingCommand;
+            }
+
+            var expression = info.Expression;
+
             if (!(expression.Body is MemberExpression memberAccess))
             {
                 throw new ArgumentException("Invalid Expression. Expression should consist of a property or field access only", nameof(expression));
@@ -209,7 +213,7 @@ namespace SharpLife.CommandSystem
 
             var typeProxy = _commandSystem.GetTypeProxy<T>();
 
-            var variable = new ProxyVariable<T>(this, name, CommandFlags.None, "", instance, memberInfo, typeProxy);
+            var variable = new ProxyVariable<T>(this, info.Name, info.Flags, info.HelpInfo, instance, memberInfo, typeProxy, info.CreateChangeHandlerList(), info.Tag);
 
             _commands.Add(variable.Name, variable);
 

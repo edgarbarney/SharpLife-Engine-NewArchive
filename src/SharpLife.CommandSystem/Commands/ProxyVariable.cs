@@ -15,6 +15,7 @@
 
 using FastMember;
 using SharpLife.CommandSystem.TypeProxies;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace SharpLife.CommandSystem.Commands
@@ -35,8 +36,9 @@ namespace SharpLife.CommandSystem.Commands
 
         public ProxyVariable(CommandContext commandContext, string name, CommandFlags flags, string helpInfo,
             object instance, MemberInfo member, ITypeProxy<T> typeProxy,
+            IReadOnlyList<VariableChangeHandler<T>> changeHandlers,
             object tag = null)
-            : base(commandContext, name, CreateAccessorAndGetValue(instance, member, out var accessor), flags, helpInfo, typeProxy, null, tag)
+            : base(commandContext, name, CreateAccessorAndGetValue(instance, member, out var accessor), flags, helpInfo, typeProxy, changeHandlers, tag)
         {
             _accessor = accessor;
             _member = member;

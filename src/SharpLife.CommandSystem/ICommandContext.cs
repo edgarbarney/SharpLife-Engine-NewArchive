@@ -16,7 +16,6 @@
 using SharpLife.CommandSystem.Commands;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace SharpLife.CommandSystem
 {
@@ -56,7 +55,7 @@ namespace SharpLife.CommandSystem
 
         IVariable<T> RegisterVariable<T>(VirtualVariableInfo<T> info);
 
-        IVariable<T> RegisterVariable<T>(string name, Expression<Func<T>> expression);
+        IVariable<T> RegisterVariable<T>(ProxyVariableInfo<T> info);
 
         /// <summary>
         /// Sets an alias to the given command text

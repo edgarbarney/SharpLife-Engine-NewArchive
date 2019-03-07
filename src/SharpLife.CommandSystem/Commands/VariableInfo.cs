@@ -16,6 +16,7 @@
 using SharpLife.CommandSystem.Commands.VariableFilters;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace SharpLife.CommandSystem.Commands
 {
@@ -65,6 +66,17 @@ namespace SharpLife.CommandSystem.Commands
 
             return this as TDerived;
         }
+
+        internal List<VariableChangeHandler<T>> CreateChangeHandlerList()
+        {
+            //Add the filter aggregate to the front to allow vetoing ahead of time
+            if (_filters?.HasFilters == true)
+            {
+                _onChangeDelegates.Insert(0, _filters.CreateAggregate().OnChange);
+            }
+
+            return _onChangeDelegates;
+        }
     }
 
     public sealed class VirtualVariableInfo<T> : VariableInfo<T, VirtualVariableInfo<T>>
@@ -75,6 +87,17 @@ namespace SharpLife.CommandSystem.Commands
             : base(name)
         {
             Value = defaultValue;
+        }
+    }
+
+    public sealed class ProxyVariableInfo<T> : VariableInfo<T, ProxyVariableInfo<T>>
+    {
+        public Expression<Func<T>> Expression { get; }
+
+        public ProxyVariableInfo(string name, Expression<Func<T>> expression)
+            : base(name)
+        {
+            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
         }
     }
 }
