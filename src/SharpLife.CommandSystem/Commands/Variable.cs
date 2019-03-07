@@ -23,6 +23,8 @@ namespace SharpLife.CommandSystem.Commands
     {
         public Type Type => typeof(T);
 
+        public abstract bool IsReadOnly { get; }
+
         public object InitialValueObject => InitialValue;
 
         public string InitialValueString => Proxy.ToString(InitialValue, _commandContext._commandSystem._provider);
@@ -71,8 +73,16 @@ namespace SharpLife.CommandSystem.Commands
             Value = InitialValue;
         }
 
+        protected void LogReadOnlyMessage() => _commandContext._logger.Information("The variable {Name} is read only", Name);
+
         private void SetString(string stringValue, bool suppressChangeMessage = false)
         {
+            if (IsReadOnly)
+            {
+                LogReadOnlyMessage();
+                return;
+            }
+
             if (Proxy.TryParse(stringValue, _commandContext._commandSystem._provider, out var result))
             {
                 SetValue(result, suppressChangeMessage);
@@ -85,6 +95,12 @@ namespace SharpLife.CommandSystem.Commands
 
         internal void SetValue(T value, bool suppressChangeMessage = false, bool invokeChangeHandlers = true)
         {
+            if (IsReadOnly)
+            {
+                LogReadOnlyMessage();
+                return;
+            }
+
             var changeEvent = new VariableChangeEvent<T>(this, Value);
 
             Value = value;
@@ -128,6 +144,12 @@ namespace SharpLife.CommandSystem.Commands
             if (command.Count == 0)
             {
                 _commandContext._logger.Information($"\"{Name}\" is \"{ValueString}\"");
+                return;
+            }
+
+            if (IsReadOnly)
+            {
+                LogReadOnlyMessage();
                 return;
             }
 

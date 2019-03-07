@@ -28,10 +28,23 @@ namespace SharpLife.CommandSystem.Commands
         private readonly ObjectAccessor _accessor;
         private readonly MemberInfo _member;
 
+        public override bool IsReadOnly { get; }
+
         public override T Value
         {
             get => (T)_accessor[_member.Name];
-            set => _accessor[_member.Name] = value;
+
+            set
+            {
+                if (!IsReadOnly)
+                {
+                    _accessor[_member.Name] = value;
+                }
+                else
+                {
+                    LogReadOnlyMessage();
+                }
+            }
         }
 
         public ProxyVariable(CommandContext commandContext, string name, CommandFlags flags, string helpInfo,
@@ -42,6 +55,21 @@ namespace SharpLife.CommandSystem.Commands
         {
             _accessor = accessor;
             _member = member;
+
+            switch (_member)
+            {
+                case FieldInfo field:
+                    {
+                        IsReadOnly = field.IsLiteral || field.IsInitOnly;
+                        break;
+                    }
+
+                case PropertyInfo prop:
+                    {
+                        IsReadOnly = !prop.CanWrite;
+                        break;
+                    }
+            }
         }
 
         private static T CreateAccessorAndGetValue(object instance, MemberInfo member, out ObjectAccessor accessor)

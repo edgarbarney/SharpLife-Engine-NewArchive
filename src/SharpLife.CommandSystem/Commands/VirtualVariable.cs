@@ -24,6 +24,9 @@ namespace SharpLife.CommandSystem.Commands
     /// <typeparam name="T"></typeparam>
     internal sealed class VirtualVariable<T> : Variable<T>
     {
+        //Virtual variables are always writable
+        public override bool IsReadOnly => false;
+
         public override T Value { get; set; }
 
         public VirtualVariable(CommandContext commandContext, string name, in T value, CommandFlags flags, string helpInfo,

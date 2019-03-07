@@ -25,6 +25,11 @@ namespace SharpLife.CommandSystem.Commands
         Type Type { get; }
 
         /// <summary>
+        /// Indicates whether this variable is read only
+        /// </summary>
+        bool IsReadOnly { get; }
+
+        /// <summary>
         /// The initial value assigned to this variable as an object
         /// </summary>
         object InitialValueObject { get; }
