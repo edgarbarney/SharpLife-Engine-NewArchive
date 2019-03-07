@@ -137,7 +137,7 @@ namespace SharpLife.CommandSystem.Commands
                 return;
             }
 
-            throw new InvalidCommandSyntaxException("Variables can only be set with syntax \"name value\"");
+            _commandContext._logger.Information("Variables can only be set with syntax \"name value\"");
         }
     }
 }

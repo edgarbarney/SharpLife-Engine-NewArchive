@@ -121,14 +121,7 @@ namespace SharpLife.CommandSystem
 
                 if (command != null)
                 {
-                    try
-                    {
-                        command.OnCommand(commandArgs);
-                    }
-                    catch (InvalidCommandSyntaxException e)
-                    {
-                        _logger.Information(e.Message);
-                    }
+                    command.OnCommand(commandArgs);
                 }
                 //This is different from the original; there aliases are checked before cvars
                 else if (commandArgs.Context.Aliases.TryGetValue(commandArgs.Name, out var aliasedCommand))
