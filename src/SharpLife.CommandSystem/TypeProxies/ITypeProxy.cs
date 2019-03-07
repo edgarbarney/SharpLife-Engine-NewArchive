@@ -23,6 +23,7 @@ namespace SharpLife.CommandSystem.TypeProxies
     /// </summary>
     public interface ITypeProxy
     {
+        bool TryParse(string value, IFormatProvider provider, out object result);
     }
 
     public interface ITypeProxy<T> : ITypeProxy

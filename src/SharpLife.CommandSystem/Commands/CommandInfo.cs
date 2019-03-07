@@ -21,7 +21,7 @@ namespace SharpLife.CommandSystem.Commands
     /// <summary>
     /// Contains information about a command
     /// </summary>
-    public sealed class CommandInfo : BaseCommandInfo<CommandInfo>
+    public class CommandInfo : BaseCommandInfo<CommandInfo>
     {
         private readonly List<CommandExecutor> _onExecuteDelegates = new List<CommandExecutor>();
 
@@ -38,6 +38,11 @@ namespace SharpLife.CommandSystem.Commands
             _onExecuteDelegates.Add(executor ?? throw new ArgumentNullException(nameof(executor)));
         }
 
+        protected CommandInfo(string name)
+            : base(name)
+        {
+        }
+
         /// <summary>
         /// Adds another executor
         /// </summary>
@@ -48,6 +53,18 @@ namespace SharpLife.CommandSystem.Commands
             _onExecuteDelegates.Add(executor ?? throw new ArgumentNullException(nameof(executor)));
 
             return this;
+        }
+    }
+
+    public sealed class ProxyCommandInfo<TDelegate> : CommandInfo
+        where TDelegate : Delegate
+    {
+        public TDelegate Delegate { get; }
+
+        public ProxyCommandInfo(string name, TDelegate @delegate)
+            : base(name)
+        {
+            Delegate = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
         }
     }
 }

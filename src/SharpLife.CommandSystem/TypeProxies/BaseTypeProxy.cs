@@ -28,6 +28,15 @@ namespace SharpLife.CommandSystem.TypeProxies
 
         public virtual string ToString(T value, IFormatProvider provider) => value.ToString();
 
+        public bool TryParse(string value, IFormatProvider provider, out object result)
+        {
+            var success = TryParse(value, provider, out T strongResult);
+
+            result = strongResult;
+
+            return success;
+        }
+
         public abstract bool TryParse(string value, IFormatProvider provider, out T result);
     }
 }

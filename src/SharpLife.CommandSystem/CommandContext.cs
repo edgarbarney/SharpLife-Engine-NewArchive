@@ -136,6 +136,28 @@ namespace SharpLife.CommandSystem
             return command;
         }
 
+        public ICommand RegisterCommand<TDelegate>(ProxyCommandInfo<TDelegate> info)
+            where TDelegate : Delegate
+        {
+            if (info == null)
+            {
+                throw new ArgumentNullException(nameof(info));
+            }
+
+            if (CheckForCommandExistence<ICommand>(info.Name, out var existingCommand))
+            {
+                return existingCommand;
+            }
+
+            var command = new ProxyCommand<TDelegate>(this, info.Name, info.Executors, info.Delegate, info.Flags, info.HelpInfo, info.Tag);
+
+            _commands.Add(command.Name, command);
+
+            CommandAdded?.Invoke(command);
+
+            return command;
+        }
+
         public IVariable<T> RegisterVariable<T>(VariableInfo<T> info)
         {
             if (info == null)

@@ -89,6 +89,16 @@ namespace SharpLife.CommandSystem
             throw new ArgumentException($"No type proxy for type {typeof(T).FullName}", nameof(T));
         }
 
+        internal ITypeProxy GetTypeProxy(Type type)
+        {
+            if (_typeProxies.TryGetValue(type, out var proxy))
+            {
+                return proxy;
+            }
+
+            throw new ArgumentException($"No type proxy for type {type.FullName}", nameof(type));
+        }
+
         public void AddTypeProxy<T>(ITypeProxy<T> typeProxy)
         {
             if (typeProxy == null)
