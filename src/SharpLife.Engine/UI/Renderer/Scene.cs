@@ -95,40 +95,40 @@ namespace SharpLife.Engine.UI.Renderer
             //TODO: might need to move these somewhere else
             //TODO: archived, but circular dependency on engine helpers makes it impossible for now
             _mainGamma = commandContext.RegisterVariable(
-                new VariableInfo<float>("mat_gamma", 2.5f)
+                new VirtualVariableInfo<float>("mat_gamma", 2.5f)
                 .WithHelpInfo("The main gamma value to use for gamma correction")
                 .ConfigureFilters(filters => filters.WithMinMaxFilter(1.8f, 3.0f))
                 .WithChangeHandler((ref VariableChangeEvent<float> _) => _lightingSettingChanged = true));
 
             _textureGamma = commandContext.RegisterVariable(
-                new VariableInfo<float>("mat_texgamma", 2.0f)
+                new VirtualVariableInfo<float>("mat_texgamma", 2.0f)
                 .WithHelpInfo("The texture gamma value to use for gamma correction")
                 .ConfigureFilters(filters => filters.WithMinMaxFilter(1.8f, null))
                 .WithChangeHandler((ref VariableChangeEvent<float> _) => _lightingSettingChanged = true));
 
             _lightingGamma = commandContext.RegisterVariable(
-                new VariableInfo<float>("mat_lightgamma", 2.5f)
+                new VirtualVariableInfo<float>("mat_lightgamma", 2.5f)
                 .WithHelpInfo("The lighting gamma value to use for gamma correction")
                 .ConfigureFilters(filters => filters.WithMinMaxFilter(1.8f, null))
                 .WithChangeHandler((ref VariableChangeEvent<float> _) => _lightingSettingChanged = true));
 
             //TODO: archived
             _brightness = commandContext.RegisterVariable(
-                new VariableInfo<float>("mat_brightness", 0.0f)
+                new VirtualVariableInfo<float>("mat_brightness", 0.0f)
                 .WithHelpInfo("The lighting brightness multiplier. Set to 0 to disable")
                 .ConfigureFilters(filters => filters.WithMinMaxFilter(0.0f, 2.0f))
                 .WithChangeHandler((ref VariableChangeEvent<float> _) => _lightingSettingChanged = true));
 
             //TODO: archived
             _overbright = commandContext.RegisterVariable(
-                new VariableInfo<bool>("mat_overbright", true)
+                new VirtualVariableInfo<bool>("mat_overbright", true)
                 .WithHelpInfo("Enable or disable overbright lighting")
                 .WithChangeHandler((ref VariableChangeEvent<bool> _) => _lightingSettingChanged = true));
 
             //TODO: mark as cheat cvar
             //TODO: needs to be an integer with settings 0, 1, 2
             Fullbright = commandContext.RegisterVariable(
-                new VariableInfo<bool>("mat_fullbright", false)
+                new VirtualVariableInfo<bool>("mat_fullbright", false)
                 .WithHelpInfo("Enable or disable full brightness (debug)")
                 .WithChangeHandler((ref VariableChangeEvent<bool> _) => _lightingSettingChanged = true));
         }

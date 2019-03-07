@@ -159,7 +159,7 @@ namespace SharpLife.Engine.Host
             CommonCommands.AddAlias(CommandSystem.SharedContext, Logger);
 
             _fpsMax = CommandSystem.SharedContext.RegisterVariable(
-                new VariableInfo<uint>("fps_max", DefaultFPS)
+                new VirtualVariableInfo<uint>("fps_max", DefaultFPS)
                 .WithHelpInfo("Sets the maximum frames per second")
                 //Avoid negative maximum
                 .ConfigureFilters(filters => filters.WithMinMaxFilter(0, MaximumFPS))

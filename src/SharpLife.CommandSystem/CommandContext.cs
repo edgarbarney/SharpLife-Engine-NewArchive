@@ -160,7 +160,7 @@ namespace SharpLife.CommandSystem
             return command;
         }
 
-        public IVariable<T> RegisterVariable<T>(VariableInfo<T> info)
+        public IVariable<T> RegisterVariable<T>(VirtualVariableInfo<T> info)
         {
             if (info == null)
             {

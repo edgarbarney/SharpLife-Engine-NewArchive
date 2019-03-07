@@ -23,7 +23,8 @@ namespace SharpLife.CommandSystem.Commands
     /// Contains information about a command variable
     /// A command variable has a value of a specific type, specified as type parameter <typeparamref name="T"/>
     /// </summary>
-    public sealed class VariableInfo<T> : BaseCommandInfo<VariableInfo<T>>
+    public abstract class VariableInfo<T, TDerived> : BaseCommandInfo<TDerived>
+        where TDerived : VariableInfo<T, TDerived>
     {
         internal readonly List<VariableChangeHandler<T>> _onChangeDelegates = new List<VariableChangeHandler<T>>();
 
@@ -31,15 +32,12 @@ namespace SharpLife.CommandSystem.Commands
 
         internal VariableFiltersBuilder<T> _filters;
 
-        public T Value { get; }
-
-        public VariableInfo(string name, in T defaultValue = default)
+        protected VariableInfo(string name)
             : base(name)
         {
-            Value = defaultValue;
         }
 
-        public VariableInfo<T> WithChangeHandler(VariableChangeHandler<T> changeHandler)
+        public TDerived WithChangeHandler(VariableChangeHandler<T> changeHandler)
         {
             if (changeHandler == null)
             {
@@ -48,10 +46,10 @@ namespace SharpLife.CommandSystem.Commands
 
             _onChangeDelegates.Add(changeHandler);
 
-            return this;
+            return this as TDerived;
         }
 
-        public VariableInfo<T> ConfigureFilters(Action<VariableFiltersBuilder<T>> configurer)
+        public TDerived ConfigureFilters(Action<VariableFiltersBuilder<T>> configurer)
         {
             if (configurer == null)
             {
@@ -65,7 +63,18 @@ namespace SharpLife.CommandSystem.Commands
 
             configurer(_filters);
 
-            return this;
+            return this as TDerived;
+        }
+    }
+
+    public sealed class VirtualVariableInfo<T> : VariableInfo<T, VirtualVariableInfo<T>>
+    {
+        public T Value { get; }
+
+        public VirtualVariableInfo(string name, in T defaultValue = default)
+            : base(name)
+        {
+            Value = defaultValue;
         }
     }
 }

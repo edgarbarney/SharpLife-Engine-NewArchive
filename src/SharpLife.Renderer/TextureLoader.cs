@@ -51,22 +51,22 @@ namespace SharpLife.Renderer
             }
 
             _maxSize = commandContext.RegisterVariable(
-                new VariableInfo<uint>("mat_max_size", DefaultMaxSize)
+                new VirtualVariableInfo<uint>("mat_max_size", DefaultMaxSize)
                 .WithHelpInfo("This is used to constrain texture sizes")
                 .ConfigureFilters(filters => filters.WithMinMaxFilter(MinimumMaxSize, null, true)));
 
             _roundDown = commandContext.RegisterVariable(
-                new VariableInfo<uint>("mat_round_down", DefaultRoundDown)
+                new VirtualVariableInfo<uint>("mat_round_down", DefaultRoundDown)
                 .WithHelpInfo("If not 0, this is used to round down texture sizes when rescaling to power of 2. Ignored when mat_powerof2textures is false")
                 .ConfigureFilters(filters => filters.WithMinMaxFilter(ImageConversionUtils.MinSizeExponent, ImageConversionUtils.MaxSizeExponent, true)));
 
             _picMip = commandContext.RegisterVariable(
-                new VariableInfo<uint>("mat_picmip", DefaultPicMip)
+                new VirtualVariableInfo<uint>("mat_picmip", DefaultPicMip)
                 .WithHelpInfo("If not 0, this is the number of times to halve the size of texture sizes")
                 .ConfigureFilters(filters => filters.WithMinMaxFilter(ImageConversionUtils.MinSizeExponent, ImageConversionUtils.MaxSizeExponent, true)));
 
             _powerOf2Textures = commandContext.RegisterVariable(
-                new VariableInfo<bool>("mat_powerof2textures", DefaultRescaleTextures)
+                new VirtualVariableInfo<bool>("mat_powerof2textures", DefaultRescaleTextures)
                 .WithHelpInfo("Whether to rescale textures to power of 2"));
         }
 

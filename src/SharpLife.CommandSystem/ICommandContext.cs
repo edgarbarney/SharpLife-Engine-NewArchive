@@ -54,7 +54,7 @@ namespace SharpLife.CommandSystem
         ICommand RegisterCommand<TDelegate>(ProxyCommandInfo<TDelegate> info)
             where TDelegate : Delegate;
 
-        IVariable<T> RegisterVariable<T>(VariableInfo<T> info);
+        IVariable<T> RegisterVariable<T>(VirtualVariableInfo<T> info);
 
         IVariable<T> RegisterVariable<T>(string name, Expression<Func<T>> expression);
 
