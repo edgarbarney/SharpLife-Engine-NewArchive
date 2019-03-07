@@ -89,14 +89,19 @@ namespace SharpLife.CommandSystem.Commands
 
             if (invokeChangeHandlers)
             {
-                foreach (VariableChangeHandler<T> handler in OnChange.GetInvocationList())
-                {
-                    handler.Invoke(ref changeEvent);
+                var handlers = OnChange;
 
-                    //Bow out as soon as a single handler has vetoed the change
-                    if (changeEvent.Veto)
+                if (handlers != null)
+                {
+                    foreach (VariableChangeHandler<T> handler in handlers.GetInvocationList())
                     {
-                        return;
+                        handler.Invoke(ref changeEvent);
+
+                        //Bow out as soon as a single handler has vetoed the change
+                        if (changeEvent.Veto)
+                        {
+                            return;
+                        }
                     }
                 }
             }
