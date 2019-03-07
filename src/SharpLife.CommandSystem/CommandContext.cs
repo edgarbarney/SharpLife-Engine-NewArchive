@@ -18,6 +18,7 @@ using SharpLife.CommandSystem.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace SharpLife.CommandSystem
 {
@@ -210,6 +211,30 @@ namespace SharpLife.CommandSystem
             }
 
             var memberInfo = memberAccess.Member;
+
+            //Reject write-only properties
+            if (memberInfo is PropertyInfo prop)
+            {
+                var getter = prop.GetGetMethod(true);
+
+                if (getter == null)
+                {
+                    throw new ArgumentException($"The property {prop.Name} of type {prop.DeclaringType.FullName} has no get accessor", nameof(expression));
+                }
+
+                if (!getter.IsPublic)
+                {
+                    throw new ArgumentException($"The property {prop.Name} of type {prop.DeclaringType.FullName} has a non-public get accessor", nameof(expression));
+                }
+
+                var setter = prop.GetSetMethod(true);
+
+                //Allow null setters (read only)
+                if (setter?.IsPublic == false)
+                {
+                    throw new ArgumentException($"The property {prop.Name} of type {prop.DeclaringType.FullName} has a non-public set accessor", nameof(expression));
+                }
+            }
 
             var typeProxy = _commandSystem.GetTypeProxy<T>();
 
