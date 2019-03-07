@@ -125,7 +125,7 @@ namespace SharpLife.Engine.Host
 
         private double _desiredFrameLengthSeconds = 1.0 / DefaultFPS;
 
-        private readonly IVariable _fpsMax;
+        private readonly IVariable<uint> _fpsMax;
 
         public Engine(HostType hostType, ICommandLine commandLine, string gameDirectory, EngineConfiguration engineConfiguration, ILogger logger, ForwardingTextWriter forwardingTextWriter)
         {
