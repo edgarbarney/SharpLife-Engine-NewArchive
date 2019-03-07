@@ -29,11 +29,7 @@ namespace SharpLife.CommandSystem.Commands
 
         public IReadOnlyList<VariableChangeHandler<T>> ChangeHandlers => _onChangeDelegates;
 
-        private VariableFiltersBuilder<T> _filters;
-
-        public VariableFiltersBuilder<T> Filters => _filters ?? (_filters = new VariableFiltersBuilder<T>(this));
-
-        internal bool HasFilters => _filters?.HasFilters == true;
+        internal VariableFiltersBuilder<T> _filters;
 
         public T Value { get; }
 
@@ -51,6 +47,23 @@ namespace SharpLife.CommandSystem.Commands
             }
 
             _onChangeDelegates.Add(changeHandler);
+
+            return this;
+        }
+
+        public VariableInfo<T> ConfigureFilters(Action<VariableFiltersBuilder<T>> configurer)
+        {
+            if (configurer == null)
+            {
+                throw new ArgumentNullException(nameof(configurer));
+            }
+
+            if (_filters == null)
+            {
+                _filters = new VariableFiltersBuilder<T>();
+            }
+
+            configurer(_filters);
 
             return this;
         }

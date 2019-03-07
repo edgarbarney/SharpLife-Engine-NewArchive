@@ -177,9 +177,9 @@ namespace SharpLife.CommandSystem
             var changeHandlers = info._onChangeDelegates;
 
             //Add the filter aggregate to the front to allow vetoing ahead of time
-            if (info.HasFilters)
+            if (info._filters?.HasFilters == true)
             {
-                changeHandlers.Insert(0, info.Filters.CreateAggregate().OnChange);
+                changeHandlers.Insert(0, info._filters.CreateAggregate().OnChange);
             }
 
             var variable = new VirtualVariable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, typeProxy, changeHandlers, info.Tag);

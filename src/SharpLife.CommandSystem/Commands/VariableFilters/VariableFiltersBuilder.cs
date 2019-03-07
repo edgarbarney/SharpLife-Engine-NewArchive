@@ -20,18 +20,11 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
 {
     public sealed class VariableFiltersBuilder<T>
     {
-        private readonly VariableInfo<T> _info;
-
         private readonly List<IVariableFilter<T>> _filters = new List<IVariableFilter<T>>();
 
         internal bool HasFilters => _filters.Count > 0;
 
-        internal VariableFiltersBuilder(VariableInfo<T> info)
-        {
-            _info = info ?? throw new ArgumentNullException(nameof(info));
-        }
-
-        public VariableInfo<T> WithFilter(IVariableFilter<T> filter)
+        public VariableFiltersBuilder<T> WithFilter(IVariableFilter<T> filter)
         {
             if (filter == null)
             {
@@ -40,7 +33,7 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
 
             _filters.Add(filter);
 
-            return _info;
+            return this;
         }
 
         internal FilterAggregate<T> CreateAggregate()

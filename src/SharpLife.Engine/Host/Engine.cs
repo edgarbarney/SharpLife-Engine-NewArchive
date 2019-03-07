@@ -162,7 +162,7 @@ namespace SharpLife.Engine.Host
                 new VariableInfo<uint>("fps_max", DefaultFPS)
                 .WithHelpInfo("Sets the maximum frames per second")
                 //Avoid negative maximum
-                .Filters.WithMinMaxFilter(0, MaximumFPS)
+                .ConfigureFilters(filters => filters.WithMinMaxFilter(0, MaximumFPS))
                 .WithChangeHandler((ref VariableChangeEvent<uint> @event) =>
                 {
                     var desiredFPS = @event.Value;
