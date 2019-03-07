@@ -36,7 +36,7 @@ namespace SharpLife.CommandSystem
             return command;
         }
 
-        public override IVariable RegisterVariable<T>(VariableInfo<T> info)
+        public override IVariable<T> RegisterVariable<T>(VariableInfo<T> info)
         {
             var command = base.RegisterVariable(info);
 

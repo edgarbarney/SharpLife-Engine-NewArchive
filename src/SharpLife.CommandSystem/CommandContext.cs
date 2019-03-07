@@ -132,14 +132,14 @@ namespace SharpLife.CommandSystem
             return command;
         }
 
-        public virtual IVariable RegisterVariable<T>(VariableInfo<T> info)
+        public virtual IVariable<T> RegisterVariable<T>(VariableInfo<T> info)
         {
             if (info == null)
             {
                 throw new ArgumentNullException(nameof(info));
             }
 
-            if (CheckForCommandExistence<IVariable>(info.Name, out var existingCommand))
+            if (CheckForCommandExistence<IVariable<T>>(info.Name, out var existingCommand))
             {
                 return existingCommand;
             }
