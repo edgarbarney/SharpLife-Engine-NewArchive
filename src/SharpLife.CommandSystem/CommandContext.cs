@@ -35,7 +35,7 @@ namespace SharpLife.CommandSystem
         public IReadOnlyDictionary<string, string> Aliases => _aliases;
 
         internal readonly ILogger _logger;
-        protected readonly CommandSystem _commandSystem;
+        internal readonly CommandSystem _commandSystem;
 
         private readonly Dictionary<string, IBaseCommand> _commands = new Dictionary<string, IBaseCommand>();
 
@@ -143,7 +143,9 @@ namespace SharpLife.CommandSystem
                 return existingCommand;
             }
 
-            var variable = new Variable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, info.Filters, info.ChangeHandlers, info.Tag);
+            var typeProxy = _commandSystem.GetTypeProxy<T>();
+
+            var variable = new Variable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, typeProxy, info.Filters, info.ChangeHandlers, info.Tag);
 
             _commands.Add(variable.Name, variable);
 

@@ -14,6 +14,8 @@
 ****/
 
 using SharpLife.CommandSystem.Commands.VariableFilters;
+using SharpLife.CommandSystem.TypeProxies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,20 +39,25 @@ namespace SharpLife.CommandSystem.Commands
 
         public string ValueString
         {
-            get => Value.ToString();
+            get => Proxy.ToString(Value, _commandContext._commandSystem._provider);
             set => SetString(value);
         }
 
         public T Value { get; set; }
 
+        public ITypeProxy<T> Proxy { get; }
+
         public event VariableChangeHandler<T> OnChange;
 
         public Variable(CommandContext commandContext, string name, in T value, CommandFlags flags, string helpInfo,
+            ITypeProxy<T> typeProxy,
             IReadOnlyList<IVariableFilter<T>> filters,
             IReadOnlyList<VariableChangeHandler<T>> changeHandlers,
             object tag = null)
             : base(commandContext, name, flags, helpInfo, tag)
         {
+            Proxy = typeProxy ?? throw new ArgumentNullException(nameof(typeProxy));
+
             SetValue(value, true);
 
             InitialValue = value;
@@ -73,7 +80,14 @@ namespace SharpLife.CommandSystem.Commands
 
         private void SetString(string stringValue, bool suppressChangeMessage = false)
         {
-            //TODO
+            if (Proxy.TryParse(stringValue, _commandContext._commandSystem._provider, out var result))
+            {
+                SetValue(result, suppressChangeMessage);
+            }
+            else
+            {
+                _commandContext._logger.Information("Could not parse value \"{StringValue}\" to type {Type}", stringValue, typeof(T).FullName);
+            }
         }
 
         internal void SetValue(T value, bool suppressChangeMessage = false)

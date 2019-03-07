@@ -34,7 +34,7 @@ namespace SharpLife.CommandSystem.Commands
         /// <summary>
         /// Indicates whether the variable is different from its old value
         /// </summary>
-        public bool Different => !Variable.Value.Equals(OldValue);
+        public bool Different => !_variable.Proxy.Comparer.Equals(Value, OldValue);
 
         internal VariableChangeEvent(Variable<T> variable, T oldValue)
         {

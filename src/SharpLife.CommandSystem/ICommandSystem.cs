@@ -13,6 +13,8 @@
 *
 ****/
 
+using SharpLife.CommandSystem.TypeProxies;
+
 namespace SharpLife.CommandSystem
 {
     public interface ICommandSystem
@@ -25,6 +27,14 @@ namespace SharpLife.CommandSystem
         /// Shared commands will only be able to execute commands in the context that they were executed in
         /// </summary>
         ICommandContext SharedContext { get; }
+
+        /// <summary>
+        /// Adds a new type proxy
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="typeProxy"></param>
+        /// <exception cref="System.ArgumentException">If there is already a type proxy for the given type</exception>
+        void AddTypeProxy<T>(ITypeProxy<T> typeProxy);
 
         /// <summary>
         /// Creates a new context

@@ -15,6 +15,7 @@
 
 using Serilog;
 using SharpLife.CommandSystem.Commands;
+using SharpLife.CommandSystem.TypeProxies;
 using System;
 using System.Collections.Generic;
 
@@ -27,6 +28,9 @@ namespace SharpLife.CommandSystem
         public ICommandContext SharedContext => _sharedContext;
 
         internal readonly ILogger _logger;
+        internal readonly IFormatProvider _provider;
+
+        private readonly Dictionary<Type, ITypeProxy> _typeProxies = new Dictionary<Type, ITypeProxy>();
 
         private readonly CommandQueue _queue;
 
@@ -38,9 +42,28 @@ namespace SharpLife.CommandSystem
         /// Creates a new command system
         /// </summary>
         /// <param name="logger"></param>
-        public CommandSystem(ILogger logger)
+        /// <param name="provider">The format provider used for type proxy conversions</param>
+        public CommandSystem(ILogger logger, IFormatProvider provider)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+
+            //Add proxies for primitive types
+            AddTypeProxy(new BoolTypeProxy());
+            AddTypeProxy(new CharTypeProxy());
+            AddTypeProxy(new Int8TypeProxy());
+            AddTypeProxy(new UInt8TypeProxy());
+            AddTypeProxy(new Int16TypeProxy());
+            AddTypeProxy(new UInt16TypeProxy());
+            AddTypeProxy(new Int32TypeProxy());
+            AddTypeProxy(new UInt32TypeProxy());
+            AddTypeProxy(new Int64TypeProxy());
+            AddTypeProxy(new UInt64TypeProxy());
+            AddTypeProxy(new SingleTypeProxy());
+            AddTypeProxy(new DoubleTypeProxy());
+            AddTypeProxy(new DecimalTypeProxy());
+            AddTypeProxy(new StringTypeProxy());
+            AddTypeProxy(new DateTimeTypeProxy());
 
             _queue = new CommandQueue(_logger);
 
@@ -51,6 +74,31 @@ namespace SharpLife.CommandSystem
             //Add as a shared command
             SharedContext.RegisterCommand(new CommandInfo("wait", _ => _queue.Wait = true)
                 .WithHelpInfo("Delay execution of remaining commands until the next execution"));
+        }
+
+        public ITypeProxy<T> GetTypeProxy<T>()
+        {
+            if (_typeProxies.TryGetValue(typeof(T), out var proxy))
+            {
+                return (ITypeProxy<T>)proxy;
+            }
+
+            throw new ArgumentException($"No type proxy for type {typeof(T).FullName}", nameof(T));
+        }
+
+        public void AddTypeProxy<T>(ITypeProxy<T> typeProxy)
+        {
+            if (typeProxy == null)
+            {
+                throw new ArgumentNullException(nameof(typeProxy));
+            }
+
+            if (_typeProxies.ContainsKey(typeof(T)))
+            {
+                throw new ArgumentException($"A proxy for type {typeof(T).FullName} already exists", nameof(typeProxy));
+            }
+
+            _typeProxies.Add(typeof(T), typeProxy);
         }
 
         public ICommandContext CreateContext(string name, object tag = null, string protectedVariableChangeString = null)
