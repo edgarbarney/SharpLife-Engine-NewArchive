@@ -34,11 +34,11 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _positive = positive;
         }
 
-        public bool Filter(IVariable<T> variable, ref T value)
+        public bool Filter(ref VariableChangeEvent<T> changeEvent)
         {
             //This takes advantage of the fact that default values are 0 for numeric types
             //Will not work quite as well for other types
-            return (value.CompareTo(default) < 0) ^ _positive;
+            return (changeEvent.Value.CompareTo(default) < 0) ^ _positive;
         }
     }
 }

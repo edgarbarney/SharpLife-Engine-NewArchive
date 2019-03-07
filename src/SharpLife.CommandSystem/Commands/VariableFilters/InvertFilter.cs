@@ -29,9 +29,9 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _filter = filter ?? throw new ArgumentNullException(nameof(filter));
         }
 
-        public bool Filter(IVariable<T> variable, ref T value)
+        public bool Filter(ref VariableChangeEvent<T> changeEvent)
         {
-            return !_filter.Filter(variable, ref value);
+            return !_filter.Filter(ref changeEvent);
         }
     }
 }

@@ -70,8 +70,10 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             return result;
         }
 
-        public bool Filter(IVariable<T> variable, ref T value)
+        public bool Filter(ref VariableChangeEvent<T> changeEvent)
         {
+            var value = changeEvent.Value;
+
             var min = Min ?? value;
             var max = Max ?? value;
 

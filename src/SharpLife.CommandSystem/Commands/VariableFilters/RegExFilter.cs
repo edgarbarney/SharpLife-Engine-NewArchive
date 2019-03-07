@@ -30,9 +30,9 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _regex = regex ?? throw new ArgumentNullException(nameof(regex));
         }
 
-        public bool Filter(IVariable<string> variable, ref string value)
+        public bool Filter(ref VariableChangeEvent<string> changeEvent)
         {
-            return _regex.IsMatch(value);
+            return _regex.IsMatch(changeEvent.Value);
         }
     }
 }

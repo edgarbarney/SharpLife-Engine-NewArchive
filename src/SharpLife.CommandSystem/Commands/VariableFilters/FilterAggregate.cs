@@ -14,35 +14,31 @@
 ****/
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SharpLife.CommandSystem.Commands.VariableFilters
 {
     /// <summary>
-    /// Denies any inputs that are not found in a given list
+    /// Contains an aggregate of filters that are treated as a single change handler
     /// </summary>
-    public class StringListFilter : IVariableFilter<string>
+    internal sealed class FilterAggregate<T>
     {
-        private readonly List<string> _strings;
+        private readonly IVariableFilter<T>[] _filters;
 
-        /// <summary>
-        /// Creates a new string list filter
-        /// </summary>
-        /// <param name="strings"></param>
-        public StringListFilter(IReadOnlyList<string> strings)
+        public FilterAggregate(IVariableFilter<T>[] filters)
         {
-            if (strings == null)
-            {
-                throw new ArgumentNullException(nameof(strings));
-            }
-
-            _strings = strings.ToList();
+            _filters = filters ?? throw new ArgumentNullException(nameof(filters));
         }
 
-        public bool Filter(ref VariableChangeEvent<string> changeEvent)
+        public void OnChange(ref VariableChangeEvent<T> changeEvent)
         {
-            return _strings.Contains(changeEvent.Value);
+            foreach (var filter in _filters)
+            {
+                if (!filter.Filter(ref changeEvent))
+                {
+                    changeEvent.Veto = true;
+                    return;
+                }
+            }
         }
     }
 }

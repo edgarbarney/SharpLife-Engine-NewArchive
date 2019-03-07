@@ -34,8 +34,10 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _emptyValue = emptyValue ?? throw new ArgumentNullException(nameof(emptyValue));
         }
 
-        public bool Filter(IVariable<string> variable, ref string value)
+        public bool Filter(ref VariableChangeEvent<string> changeEvent)
         {
+            var value = changeEvent.Value;
+
             var builder = new StringBuilder();
 
             foreach (var c in value)
@@ -52,6 +54,8 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             {
                 value = _emptyValue;
             }
+
+            changeEvent.Value = value;
 
             return true;
         }

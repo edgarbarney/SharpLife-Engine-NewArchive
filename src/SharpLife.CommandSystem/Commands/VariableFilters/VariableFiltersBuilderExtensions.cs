@@ -22,7 +22,7 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// <summary>
     /// Extensions to make adding filters to variables easier
     /// </summary>
-    public static class VariableInfoFilterExtensions
+    public static class VariableFiltersBuilderExtensions
     {
         /// <summary>
         /// <see cref="NumberSignFilter(bool)"/>
@@ -30,54 +30,54 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
         /// <param name="this"></param>
         /// <param name="positive"></param>
         /// <returns></returns>
-        public static VariableInfo<T> WithNumberSignFilter<T>(this VariableInfo<T> @this, bool positive)
+        public static VariableInfo<T> WithNumberSignFilter<T>(this VariableFiltersBuilder<T> @this, bool positive)
             where T : IComparable<T>
         {
             return @this.WithFilter(new NumberSignFilter<T>(positive));
         }
 
-        public static VariableInfo<T> WithMinMaxFilter<T>(this VariableInfo<T> @this, T? min, T? max, bool denyOutOfRangeValues = false)
+        public static VariableInfo<T> WithMinMaxFilter<T>(this VariableFiltersBuilder<T> @this, T? min, T? max, bool denyOutOfRangeValues = false)
             where T : struct, IComparable<T>, IEquatable<T>
         {
             return @this.WithFilter(new MinMaxFilter<T>(min, max, denyOutOfRangeValues));
         }
 
-        public static VariableInfo<string> WithRegexFilter(this VariableInfo<string> @this, Regex regex)
+        public static VariableInfo<string> WithRegexFilter(this VariableFiltersBuilder<string> @this, Regex regex)
         {
             return @this.WithFilter(new RegexFilter(regex));
         }
 
-        public static VariableInfo<string> WithRegexFilter(this VariableInfo<string> @this, string pattern)
+        public static VariableInfo<string> WithRegexFilter(this VariableFiltersBuilder<string> @this, string pattern)
         {
             return @this.WithFilter(new RegexFilter(new Regex(pattern)));
         }
 
-        public static VariableInfo<string> WithStringListFilter(this VariableInfo<string> @this, IReadOnlyList<string> strings)
+        public static VariableInfo<string> WithStringListFilter(this VariableFiltersBuilder<string> @this, IReadOnlyList<string> strings)
         {
             return @this.WithFilter(new StringListFilter(strings));
         }
 
-        public static VariableInfo<string> WithStringListFilter(this VariableInfo<string> @this, params string[] strings)
+        public static VariableInfo<string> WithStringListFilter(this VariableFiltersBuilder<string> @this, params string[] strings)
         {
             return @this.WithFilter(new StringListFilter(strings));
         }
 
-        public static VariableInfo<T> WithInvertedFilter<T>(this VariableInfo<T> @this, IVariableFilter<T> filter)
+        public static VariableInfo<T> WithInvertedFilter<T>(this VariableFiltersBuilder<T> @this, IVariableFilter<T> filter)
         {
             return @this.WithFilter(new InvertFilter<T>(filter));
         }
 
-        public static VariableInfo<T> WithDelegateFilter<T>(this VariableInfo<T> @this, DelegateFilter<T>.FilterDelegate @delegate)
+        public static VariableInfo<T> WithDelegateFilter<T>(this VariableFiltersBuilder<T> @this, DelegateFilter<T>.FilterDelegate @delegate)
         {
             return @this.WithFilter(new DelegateFilter<T>(@delegate));
         }
 
-        public static VariableInfo<string> WithPrintableCharactersFilter(this VariableInfo<string> @this, string emptyValue = "")
+        public static VariableInfo<string> WithPrintableCharactersFilter(this VariableFiltersBuilder<string> @this, string emptyValue = "")
         {
             return @this.WithFilter(new UnprintableCharactersFilter(emptyValue));
         }
 
-        public static VariableInfo<string> WithWhitespaceFilter(this VariableInfo<string> @this)
+        public static VariableInfo<string> WithWhitespaceFilter(this VariableFiltersBuilder<string> @this)
         {
             return @this.WithFilter(new StripWhitespaceFilter());
         }

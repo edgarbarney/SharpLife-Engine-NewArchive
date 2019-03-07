@@ -146,7 +146,15 @@ namespace SharpLife.CommandSystem
 
             var typeProxy = _commandSystem.GetTypeProxy<T>();
 
-            var variable = new VirtualVariable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, typeProxy, info.Filters, info.ChangeHandlers, info.Tag);
+            var changeHandlers = info._onChangeDelegates;
+
+            //Add the filter aggregate to the front to allow vetoing ahead of time
+            if (info.HasFilters)
+            {
+                changeHandlers.Insert(0, info.Filters.CreateAggregate().OnChange);
+            }
+
+            var variable = new VirtualVariable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, typeProxy, changeHandlers, info.Tag);
 
             _commands.Add(variable.Name, variable);
 

@@ -13,10 +13,8 @@
 *
 ****/
 
-using SharpLife.CommandSystem.Commands.VariableFilters;
 using SharpLife.CommandSystem.TypeProxies;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SharpLife.CommandSystem.Commands
 {
@@ -26,37 +24,15 @@ namespace SharpLife.CommandSystem.Commands
     /// <typeparam name="T"></typeparam>
     internal sealed class VirtualVariable<T> : BaseVariable<T>
     {
-        private readonly IVariableFilter<T>[] _filters;
-
         public override T Value { get; set; }
 
         public VirtualVariable(CommandContext commandContext, string name, in T value, CommandFlags flags, string helpInfo,
             ITypeProxy<T> typeProxy,
-            IReadOnlyList<IVariableFilter<T>> filters,
             IReadOnlyList<VariableChangeHandler<T>> changeHandlers,
             object tag = null)
             : base(commandContext, name, value, flags, helpInfo, typeProxy, changeHandlers, tag)
         {
             SetValue(value, true, false);
-
-            _filters = filters?.ToArray();
-        }
-
-        //Overridden to filter values
-        internal override void SetValue(T value, bool suppressChangeMessage = false, bool invokeChangeHandlers = true)
-        {
-            if (_filters != null)
-            {
-                foreach (var filter in _filters)
-                {
-                    if (!filter.Filter(this, ref value))
-                    {
-                        return;
-                    }
-                }
-            }
-
-            base.SetValue(value, suppressChangeMessage, invokeChangeHandlers);
         }
     }
 }

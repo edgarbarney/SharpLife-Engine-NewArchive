@@ -23,9 +23,8 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
         /// <summary>
         /// Invoked when a variable is about to change values, filters the new values
         /// </summary>
-        /// <param name="variable"></param>
-        /// <param name="value">New value</param>
+        /// <param name="changeEvent"></param>
         /// <returns>Whether to allow the change at all</returns>
-        bool Filter(IVariable<T> variable, ref T value);
+        bool Filter(ref VariableChangeEvent<T> changeEvent);
     }
 }

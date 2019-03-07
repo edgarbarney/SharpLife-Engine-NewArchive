@@ -97,26 +97,26 @@ namespace SharpLife.Engine.UI.Renderer
             _mainGamma = commandContext.RegisterVariable(
                 new VariableInfo<float>("mat_gamma", 2.5f)
                 .WithHelpInfo("The main gamma value to use for gamma correction")
-                .WithMinMaxFilter(1.8f, 3.0f)
+                .Filters.WithMinMaxFilter(1.8f, 3.0f)
                 .WithChangeHandler((ref VariableChangeEvent<float> _) => _lightingSettingChanged = true));
 
             _textureGamma = commandContext.RegisterVariable(
                 new VariableInfo<float>("mat_texgamma", 2.0f)
                 .WithHelpInfo("The texture gamma value to use for gamma correction")
-                .WithMinMaxFilter(1.8f, null)
+                .Filters.WithMinMaxFilter(1.8f, null)
                 .WithChangeHandler((ref VariableChangeEvent<float> _) => _lightingSettingChanged = true));
 
             _lightingGamma = commandContext.RegisterVariable(
                 new VariableInfo<float>("mat_lightgamma", 2.5f)
                 .WithHelpInfo("The lighting gamma value to use for gamma correction")
-                .WithMinMaxFilter(1.8f, null)
+                .Filters.WithMinMaxFilter(1.8f, null)
                 .WithChangeHandler((ref VariableChangeEvent<float> _) => _lightingSettingChanged = true));
 
             //TODO: archived
             _brightness = commandContext.RegisterVariable(
                 new VariableInfo<float>("mat_brightness", 0.0f)
                 .WithHelpInfo("The lighting brightness multiplier. Set to 0 to disable")
-                .WithMinMaxFilter(0.0f, 2.0f)
+                .Filters.WithMinMaxFilter(0.0f, 2.0f)
                 .WithChangeHandler((ref VariableChangeEvent<float> _) => _lightingSettingChanged = true));
 
             //TODO: archived

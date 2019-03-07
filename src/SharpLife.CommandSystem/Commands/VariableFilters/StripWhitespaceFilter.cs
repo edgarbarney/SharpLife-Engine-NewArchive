@@ -20,9 +20,9 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// </summary>
     internal class StripWhitespaceFilter : IVariableFilter<string>
     {
-        public bool Filter(IVariable<string> variable, ref string value)
+        public bool Filter(ref VariableChangeEvent<string> changeEvent)
         {
-            value = value.Trim();
+            changeEvent.Value = changeEvent.Value.Trim();
 
             return true;
         }

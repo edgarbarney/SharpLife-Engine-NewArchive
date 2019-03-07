@@ -22,7 +22,7 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// </summary>
     public class DelegateFilter<T> : IVariableFilter<T>
     {
-        public delegate bool FilterDelegate(IVariable<T> variable, ref T value);
+        public delegate bool FilterDelegate(ref VariableChangeEvent<T> changeEvent);
 
         private readonly FilterDelegate _delegate;
 
@@ -31,9 +31,9 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _delegate = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
         }
 
-        public bool Filter(IVariable<T> variable, ref T value)
+        public bool Filter(ref VariableChangeEvent<T> changeEvent)
         {
-            return _delegate(variable, ref value);
+            return _delegate(ref changeEvent);
         }
     }
 }

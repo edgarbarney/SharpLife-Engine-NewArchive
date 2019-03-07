@@ -81,7 +81,7 @@ namespace SharpLife.CommandSystem.Commands
             }
         }
 
-        internal virtual void SetValue(T value, bool suppressChangeMessage = false, bool invokeChangeHandlers = true)
+        internal void SetValue(T value, bool suppressChangeMessage = false, bool invokeChangeHandlers = true)
         {
             var changeEvent = new VariableChangeEvent<T>(this, Value);
 
@@ -89,7 +89,16 @@ namespace SharpLife.CommandSystem.Commands
 
             if (invokeChangeHandlers)
             {
-                OnChange?.Invoke(ref changeEvent);
+                foreach (VariableChangeHandler<T> handler in OnChange.GetInvocationList())
+                {
+                    handler.Invoke(ref changeEvent);
+
+                    //Bow out as soon as a single handler has vetoed the change
+                    if (changeEvent.Veto)
+                    {
+                        return;
+                    }
+                }
             }
 
             if (!suppressChangeMessage

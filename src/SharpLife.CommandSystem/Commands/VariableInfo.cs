@@ -25,32 +25,22 @@ namespace SharpLife.CommandSystem.Commands
     /// </summary>
     public sealed class VariableInfo<T> : BaseCommandInfo<VariableInfo<T>>
     {
-        public T Value { get; }
-
-        private List<IVariableFilter<T>> _filters;
-
-        public IReadOnlyList<IVariableFilter<T>> Filters => _filters;
-
-        private readonly List<VariableChangeHandler<T>> _onChangeDelegates = new List<VariableChangeHandler<T>>();
+        internal readonly List<VariableChangeHandler<T>> _onChangeDelegates = new List<VariableChangeHandler<T>>();
 
         public IReadOnlyList<VariableChangeHandler<T>> ChangeHandlers => _onChangeDelegates;
+
+        private VariableFiltersBuilder<T> _filters;
+
+        public VariableFiltersBuilder<T> Filters => _filters ?? (_filters = new VariableFiltersBuilder<T>(this));
+
+        internal bool HasFilters => _filters?.HasFilters == true;
+
+        public T Value { get; }
 
         public VariableInfo(string name, in T defaultValue = default)
             : base(name)
         {
             Value = defaultValue;
-        }
-
-        public VariableInfo<T> WithFilter(IVariableFilter<T> filter)
-        {
-            if (filter == null)
-            {
-                throw new ArgumentNullException(nameof(filter));
-            }
-
-            (_filters ?? (_filters = new List<IVariableFilter<T>>())).Add(filter);
-
-            return this;
         }
 
         public VariableInfo<T> WithChangeHandler(VariableChangeHandler<T> changeHandler)

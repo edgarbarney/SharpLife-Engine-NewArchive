@@ -36,10 +36,18 @@ namespace SharpLife.CommandSystem.Commands
         /// </summary>
         public bool Different => !_variable.Proxy.Comparer.Equals(Value, OldValue);
 
+        /// <summary>
+        /// Gets or sets whether this change has been vetoed
+        /// A vetoed change will be ignored
+        /// </summary>
+        public bool Veto { get; set; }
+
         internal VariableChangeEvent(BaseVariable<T> variable, T oldValue)
         {
             _variable = variable ?? throw new ArgumentNullException(nameof(variable));
             OldValue = oldValue;
+
+            Veto = false;
         }
     }
 }
