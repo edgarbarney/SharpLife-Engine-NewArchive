@@ -96,4 +96,9 @@ namespace SharpLife.CommandSystem.TypeProxies
     {
         public override bool TryParse(string value, IFormatProvider provider, out DateTime result) => DateTime.TryParse(value, provider, DateTimeStyles.None, out result);
     }
+
+    internal sealed class DateTimeOffsetTypeProxy : BaseFormattableTypeProxy<DateTimeOffset>
+    {
+        public override bool TryParse(string value, IFormatProvider provider, out DateTimeOffset result) => DateTimeOffset.TryParse(value, provider, DateTimeStyles.None, out result);
+    }
 }

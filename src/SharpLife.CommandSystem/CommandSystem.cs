@@ -64,6 +64,7 @@ namespace SharpLife.CommandSystem
             AddTypeProxy(new DecimalTypeProxy());
             AddTypeProxy(new StringTypeProxy());
             AddTypeProxy(new DateTimeTypeProxy());
+            AddTypeProxy(new DateTimeOffsetTypeProxy());
 
             _queue = new CommandQueue(_logger);
 
