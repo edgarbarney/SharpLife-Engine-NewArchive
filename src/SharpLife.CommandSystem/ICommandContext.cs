@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.CommandSystem.Commands;
+using System;
 using System.Collections.Generic;
 
 namespace SharpLife.CommandSystem
@@ -45,6 +46,8 @@ namespace SharpLife.CommandSystem
         ICommand RegisterCommand(CommandInfo info);
 
         IVariable<T> RegisterVariable<T>(VariableInfo<T> info);
+
+        IVariable<T> RegisterVariable<T>(string name, Expression<Func<T>> expression);
 
         /// <summary>
         /// Sets an alias to the given command text

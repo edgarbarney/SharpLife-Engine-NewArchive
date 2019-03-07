@@ -158,10 +158,12 @@ namespace SharpLife.CommandSystem
 
             _commands.Add(variable.Name, variable);
 
+            CommandAdded?.Invoke(variable);
+
             return variable;
         }
 
-        public void RegisterVariable<T>(string name, Expression<Func<T>> expression)
+        public IVariable<T> RegisterVariable<T>(string name, Expression<Func<T>> expression)
         {
             if (!(expression.Body is MemberExpression memberAccess))
             {
@@ -180,6 +182,10 @@ namespace SharpLife.CommandSystem
             var typeProxy = _commandSystem.GetTypeProxy<T>();
 
             var variable = new ProxyVariable<T>(this, name, CommandFlags.None, "", instance, memberInfo, typeProxy);
+
+            _commands.Add(variable.Name, variable);
+
+            return variable;
         }
 
         public void SetAlias(string aliasName, string commandText)
