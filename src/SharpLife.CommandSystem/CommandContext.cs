@@ -42,6 +42,8 @@ namespace SharpLife.CommandSystem
 
         private readonly Dictionary<string, string> _aliases = new Dictionary<string, string>();
 
+        internal bool _destroyed;
+
         public event Action<IBaseCommand> CommandAdded;
 
         public CommandContext(ILogger logger, CommandSystem commandSystem, string name, object tag = null, string protectedVariableChangeString = null)
@@ -246,12 +248,12 @@ namespace SharpLife.CommandSystem
 
         public void QueueCommands(string commandText)
         {
-            _commandSystem.Queue.QueueCommands(this, commandText);
+            _commandSystem._queue.InternalQueueCommands(this, commandText);
         }
 
         public void InsertCommands(string commandText, int index = 0)
         {
-            _commandSystem.Queue.InsertCommands(this, commandText, index);
+            _commandSystem._queue.InternalInsertCommands(this, commandText, index);
         }
 
         public void AddSharedCommand(BaseCommand command)

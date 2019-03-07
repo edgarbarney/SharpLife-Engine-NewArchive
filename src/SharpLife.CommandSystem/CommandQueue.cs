@@ -38,7 +38,23 @@ namespace SharpLife.CommandSystem
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        private bool CheckValidContext(CommandContext context)
+        {
+            if (context._destroyed)
+            {
+                _logger.Information("Attempted to queue commands for destroyed context {ContextName}", context.Name);
+                return false;
+            }
+
+            return true;
+        }
+
         public void QueueCommands(ICommandContext context, string commandText)
+        {
+            InternalQueueCommands((CommandContext)context, commandText);
+        }
+
+        internal void InternalQueueCommands(CommandContext context, string commandText)
         {
             if (context == null)
             {
@@ -50,12 +66,22 @@ namespace SharpLife.CommandSystem
                 throw new ArgumentNullException(nameof(commandText));
             }
 
+            if (!CheckValidContext(context))
+            {
+                return;
+            }
+
             var commands = CommandUtils.ParseCommands(context, commandText);
 
             commands.ForEach(_commandsToExecute.Add);
         }
 
         public void InsertCommands(ICommandContext context, string commandText, int index = 0)
+        {
+            InternalInsertCommands((CommandContext)context, commandText, index);
+        }
+
+        internal void InternalInsertCommands(CommandContext context, string commandText, int index = 0)
         {
             if (context == null)
             {
@@ -70,6 +96,11 @@ namespace SharpLife.CommandSystem
             if (index < 0 || index > _commandsToExecute.Count)
             {
                 throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (!CheckValidContext(context))
+            {
+                return;
             }
 
             var commands = CommandUtils.ParseCommands(context, commandText);

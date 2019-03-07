@@ -32,7 +32,7 @@ namespace SharpLife.CommandSystem
 
         private readonly Dictionary<Type, ITypeProxy> _typeProxies = new Dictionary<Type, ITypeProxy>();
 
-        private readonly CommandQueue _queue;
+        internal readonly CommandQueue _queue;
 
         private readonly List<CommandContext> _commandContexts = new List<CommandContext>();
 
@@ -140,7 +140,7 @@ namespace SharpLife.CommandSystem
 
             _commandContexts.Remove(internalContext);
 
-            //TODO: mark context as destroyed to prevent command queueing
+            internalContext._destroyed = true;
         }
 
         public void DestroyContext(ICommandContext context)
@@ -156,7 +156,7 @@ namespace SharpLife.CommandSystem
                 throw new ArgumentException(nameof(context));
             }
 
-            InternalDestroyContext((CommandContext)context);
+            InternalDestroyContext(context);
         }
 
         public void Execute()
