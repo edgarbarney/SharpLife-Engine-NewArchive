@@ -174,6 +174,8 @@ namespace SharpLife.Engine.Host
                     _desiredFrameLengthSeconds = 1.0 / desiredFPS;
                 }));
 
+            CommandSystem.SharedContext.RegisterVariable("engine_builddate", () => BuildDate, "The engine's build date");
+
             //Get the build date from the generated resource file
             var assembly = typeof(Engine).Assembly;
             using (var reader = new StreamReader(assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Resources.BuildDate.txt")))
