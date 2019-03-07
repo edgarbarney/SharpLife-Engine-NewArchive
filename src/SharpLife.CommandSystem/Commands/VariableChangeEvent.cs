@@ -19,7 +19,7 @@ namespace SharpLife.CommandSystem.Commands
 {
     public struct VariableChangeEvent<T>
     {
-        private readonly Variable<T> _variable;
+        private readonly BaseVariable<T> _variable;
 
         public IVariable<T> Variable => _variable;
 
@@ -36,7 +36,7 @@ namespace SharpLife.CommandSystem.Commands
         /// </summary>
         public bool Different => !_variable.Proxy.Comparer.Equals(Value, OldValue);
 
-        internal VariableChangeEvent(Variable<T> variable, T oldValue)
+        internal VariableChangeEvent(BaseVariable<T> variable, T oldValue)
         {
             _variable = variable ?? throw new ArgumentNullException(nameof(variable));
             OldValue = oldValue;

@@ -17,6 +17,7 @@ using Serilog;
 using SharpLife.CommandSystem.Commands;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace SharpLife.CommandSystem
 {
@@ -145,11 +146,32 @@ namespace SharpLife.CommandSystem
 
             var typeProxy = _commandSystem.GetTypeProxy<T>();
 
-            var variable = new Variable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, typeProxy, info.Filters, info.ChangeHandlers, info.Tag);
+            var variable = new VirtualVariable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, typeProxy, info.Filters, info.ChangeHandlers, info.Tag);
 
             _commands.Add(variable.Name, variable);
 
             return variable;
+        }
+
+        public void RegisterVariable<T>(string name, Expression<Func<T>> expression)
+        {
+            if (!(expression.Body is MemberExpression memberAccess))
+            {
+                throw new ArgumentException("Invalid Expression. Expression should consist of a property or field access only", nameof(expression));
+            }
+
+            var instance = Expression.Lambda<Func<object>>(memberAccess.Expression).Compile()();
+
+            if (instance == null)
+            {
+                throw new ArgumentException("Cannot register a variable on a null object", nameof(expression));
+            }
+
+            var memberInfo = memberAccess.Member;
+
+            var typeProxy = _commandSystem.GetTypeProxy<T>();
+
+            var variable = new ProxyVariable<T>(this, name, CommandFlags.None, "", instance, memberInfo, typeProxy);
         }
 
         public void SetAlias(string aliasName, string commandText)

@@ -13,28 +13,24 @@
 *
 ****/
 
-using SharpLife.CommandSystem.Commands.VariableFilters;
 using SharpLife.CommandSystem.TypeProxies;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SharpLife.CommandSystem.Commands
 {
-    internal class Variable<T> : BaseCommand, IVariable<T>
+    internal abstract class BaseVariable<T> : BaseCommand, IVariable<T>
     {
-        private readonly IVariableFilter<T>[] _filters;
+        public object InitialValueObject => InitialValue;
 
-        public object InitialValueObject { get; }
-
-        public string InitialValueString { get; }
+        public string InitialValueString => Proxy.ToString(InitialValue, _commandContext._commandSystem._provider);
 
         public T InitialValue { get; }
 
         public object ValueObject
         {
             get => Value;
-            set => Value = (T)value;
+            set => SetValue((T)value);
         }
 
         public string ValueString
@@ -43,26 +39,21 @@ namespace SharpLife.CommandSystem.Commands
             set => SetString(value);
         }
 
-        public T Value { get; set; }
+        public abstract T Value { get; set; }
 
         public ITypeProxy<T> Proxy { get; }
 
         public event VariableChangeHandler<T> OnChange;
 
-        public Variable(CommandContext commandContext, string name, in T value, CommandFlags flags, string helpInfo,
+        protected BaseVariable(CommandContext commandContext, string name, in T initialValue, CommandFlags flags, string helpInfo,
             ITypeProxy<T> typeProxy,
-            IReadOnlyList<IVariableFilter<T>> filters,
             IReadOnlyList<VariableChangeHandler<T>> changeHandlers,
             object tag = null)
             : base(commandContext, name, flags, helpInfo, tag)
         {
             Proxy = typeProxy ?? throw new ArgumentNullException(nameof(typeProxy));
 
-            SetValue(value, true);
-
-            InitialValue = value;
-
-            _filters = filters?.ToArray();
+            InitialValue = initialValue;
 
             if (changeHandlers != null)
             {
@@ -90,24 +81,16 @@ namespace SharpLife.CommandSystem.Commands
             }
         }
 
-        internal void SetValue(T value, bool suppressChangeMessage = false)
+        internal virtual void SetValue(T value, bool suppressChangeMessage = false, bool invokeChangeHandlers = true)
         {
-            if (_filters != null)
-            {
-                foreach (var filter in _filters)
-                {
-                    if (!filter.Filter(this, ref value))
-                    {
-                        return;
-                    }
-                }
-            }
-
             var changeEvent = new VariableChangeEvent<T>(this, Value);
 
             Value = value;
 
-            OnChange?.Invoke(ref changeEvent);
+            if (invokeChangeHandlers)
+            {
+                OnChange?.Invoke(ref changeEvent);
+            }
 
             if (!suppressChangeMessage
                 && (Flags & CommandFlags.UnLogged) == 0
@@ -120,7 +103,7 @@ namespace SharpLife.CommandSystem.Commands
             }
         }
 
-        internal override void OnCommand(ICommandArgs command)
+        internal sealed override void OnCommand(ICommandArgs command)
         {
             if (command.Count == 0)
             {
