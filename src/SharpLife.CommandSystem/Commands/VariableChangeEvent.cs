@@ -23,11 +23,8 @@ namespace SharpLife.CommandSystem.Commands
 
         public IVariable<T> Variable => _variable;
 
-        public T Value
-        {
-            get => _variable.Value;
-            set => _variable.SetValue(value, true);
-        }
+        //Store the new value here to avoid the overhead involved with changing it in the actual variable
+        public T Value { get; set; }
 
         public T OldValue { get; }
 
@@ -45,6 +42,7 @@ namespace SharpLife.CommandSystem.Commands
         internal VariableChangeEvent(Variable<T> variable, T oldValue)
         {
             _variable = variable ?? throw new ArgumentNullException(nameof(variable));
+            Value = _variable.Value;
             OldValue = oldValue;
 
             Veto = false;

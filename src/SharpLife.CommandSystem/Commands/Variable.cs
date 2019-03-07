@@ -101,14 +101,18 @@ namespace SharpLife.CommandSystem.Commands
                 }
             }
 
-            if (!suppressChangeMessage
-                && (Flags & CommandFlags.UnLogged) == 0
-                && changeEvent.Different)
+            if (changeEvent.Different)
             {
-                //If none of the change handlers reverted the change, print a change message
-                var newValue = (Flags & CommandFlags.Protected) != 0 ? _commandContext.ProtectedVariableChangeString : ValueString;
+                Value = changeEvent.Value;
 
-                _commandContext._logger.Information($"\"{Name}\" changed to \"{newValue}\"");
+                if (!suppressChangeMessage
+                    && (Flags & CommandFlags.UnLogged) == 0)
+                {
+                    //If none of the change handlers reverted the change, print a change message
+                    var newValue = (Flags & CommandFlags.Protected) != 0 ? _commandContext.ProtectedVariableChangeString : ValueString;
+
+                    _commandContext._logger.Information($"\"{Name}\" changed to \"{newValue}\"");
+                }
             }
         }
 
