@@ -21,6 +21,8 @@ namespace SharpLife.CommandSystem.Commands
 {
     internal abstract class Variable<T> : BaseCommand, IVariable<T>
     {
+        public Type Type => typeof(T);
+
         public object InitialValueObject => InitialValue;
 
         public string InitialValueString => Proxy.ToString(InitialValue, _commandContext._commandSystem._provider);

@@ -13,10 +13,17 @@
 *
 ****/
 
+using System;
+
 namespace SharpLife.CommandSystem.Commands
 {
     public interface IVariable : IBaseCommand
     {
+        /// <summary>
+        /// The type of the variable
+        /// </summary>
+        Type Type { get; }
+
         /// <summary>
         /// The initial value assigned to this variable as an object
         /// </summary>
