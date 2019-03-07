@@ -16,6 +16,7 @@
 using SharpLife.CommandSystem.Commands;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace SharpLife.CommandSystem
 {
@@ -40,6 +41,11 @@ namespace SharpLife.CommandSystem
         IReadOnlyDictionary<string, IBaseCommand> Commands { get; }
 
         IReadOnlyDictionary<string, string> Aliases { get; }
+
+        /// <summary>
+        /// Invoked when a command has been added
+        /// </summary>
+        event Action<IBaseCommand> CommandAdded;
 
         TCommand FindCommand<TCommand>(string name) where TCommand : class, IBaseCommand;
 

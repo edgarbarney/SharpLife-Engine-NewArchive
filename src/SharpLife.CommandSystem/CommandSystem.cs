@@ -36,7 +36,7 @@ namespace SharpLife.CommandSystem
 
         private readonly List<CommandContext> _commandContexts = new List<CommandContext>();
 
-        private readonly SharedCommandContext _sharedContext;
+        private readonly CommandContext _sharedContext;
 
         /// <summary>
         /// Creates a new command system
@@ -67,7 +67,10 @@ namespace SharpLife.CommandSystem
 
             _queue = new CommandQueue(_logger);
 
-            _sharedContext = new SharedCommandContext(_logger, this, "SharedContext");
+            //Shared context that informs the command system of all command additions to add them to other contexts
+            _sharedContext = new CommandContext(_logger, this, "SharedContext");
+
+            _sharedContext.CommandAdded += OnSharedAddCommand;
 
             _commandContexts.Add(_sharedContext);
 

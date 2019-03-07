@@ -21,7 +21,7 @@ using System.Linq.Expressions;
 
 namespace SharpLife.CommandSystem
 {
-    internal class CommandContext : ICommandContext
+    internal sealed class CommandContext : ICommandContext
     {
         private const string DefaultProtectedVariableChangeString = "***PROTECTED***";
 
@@ -41,6 +41,8 @@ namespace SharpLife.CommandSystem
         private readonly Dictionary<string, IBaseCommand> _commands = new Dictionary<string, IBaseCommand>();
 
         private readonly Dictionary<string, string> _aliases = new Dictionary<string, string>();
+
+        public event Action<IBaseCommand> CommandAdded;
 
         public CommandContext(ILogger logger, CommandSystem commandSystem, string name, object tag = null, string protectedVariableChangeString = null)
         {
@@ -113,7 +115,7 @@ namespace SharpLife.CommandSystem
             return false;
         }
 
-        public virtual ICommand RegisterCommand(CommandInfo info)
+        public ICommand RegisterCommand(CommandInfo info)
         {
             if (info == null)
             {
@@ -129,10 +131,12 @@ namespace SharpLife.CommandSystem
 
             _commands.Add(command.Name, command);
 
+            CommandAdded?.Invoke(command);
+
             return command;
         }
 
-        public virtual IVariable<T> RegisterVariable<T>(VariableInfo<T> info)
+        public IVariable<T> RegisterVariable<T>(VariableInfo<T> info)
         {
             if (info == null)
             {
@@ -184,6 +188,8 @@ namespace SharpLife.CommandSystem
             var variable = new ProxyVariable<T>(this, name, CommandFlags.None, "", instance, memberInfo, typeProxy);
 
             _commands.Add(variable.Name, variable);
+
+            CommandAdded?.Invoke(variable);
 
             return variable;
         }
