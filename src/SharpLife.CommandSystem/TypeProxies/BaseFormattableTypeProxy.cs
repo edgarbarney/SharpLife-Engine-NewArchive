@@ -19,7 +19,7 @@ namespace SharpLife.CommandSystem.TypeProxies
 {
     public abstract class BaseFormattableTypeProxy<T> : BaseTypeProxy<T>
     {
-        public delegate string ToStringDelegate(T value, IFormatProvider provider);
+        public delegate string ToStringDelegate(ref T value, IFormatProvider provider);
 
         private readonly ToStringDelegate _toStringMethod;
 
@@ -33,7 +33,7 @@ namespace SharpLife.CommandSystem.TypeProxies
         {
         }
 
-        public override string ToString(T value, IFormatProvider provider) => _toStringMethod(value, provider);
+        public override string ToString(T value, IFormatProvider provider) => _toStringMethod(ref value, provider);
 
         private static ToStringDelegate CreateDelegate(string toStringMethodName)
         {
@@ -49,7 +49,7 @@ namespace SharpLife.CommandSystem.TypeProxies
                 throw new ArgumentException($"No such ToString method \"{toStringMethodName}\" takes takes an {nameof(IFormatProvider)} argument", nameof(toStringMethodName));
             }
 
-            return (ToStringDelegate)Delegate.CreateDelegate(typeof(ToStringDelegate), typeof(T), method);
+            return (ToStringDelegate)Delegate.CreateDelegate(typeof(ToStringDelegate), null, method);
         }
     }
 }
