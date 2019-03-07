@@ -18,14 +18,14 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// <summary>
     /// Variable change filter
     /// </summary>
-    public interface IVariableFilter
+    public interface IVariableFilter<T>
     {
         /// <summary>
         /// Invoked when a variable is about to change values, filters the new values
         /// </summary>
-        /// <param name="stringValue">New string value</param>
-        /// <param name="floatValue">New float value</param>
+        /// <param name="variable"></param>
+        /// <param name="value">New value</param>
         /// <returns>Whether to allow the change at all</returns>
-        bool Filter(ref string stringValue, ref float floatValue);
+        bool Filter(IVariable<T> variable, ref T value);
     }
 }

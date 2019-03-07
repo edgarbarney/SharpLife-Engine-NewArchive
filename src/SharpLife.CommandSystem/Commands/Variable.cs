@@ -14,96 +14,48 @@
 ****/
 
 using SharpLife.CommandSystem.Commands.VariableFilters;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace SharpLife.CommandSystem.Commands
 {
-    internal class Variable : BaseCommand, IVariable
+    internal class Variable<T> : BaseCommand, IVariable<T>
     {
-        public string InitialValue { get; private set; }
+        private readonly IVariableFilter<T>[] _filters;
 
-        private string _stringValue = string.Empty;
+        public object InitialValueObject { get; }
 
-        private float _floatValue;
+        public string InitialValueString { get; }
 
-        public string String
+        public T InitialValue { get; }
+
+        public object ValueObject
         {
-            get => _stringValue;
-            set => SetString(value, false);
+            get => Value;
+            set => Value = (T)value;
         }
 
-        public float Float
+        public string ValueString
         {
-            get => _floatValue;
-            set
-            {
-                SetFloat(value, false);
-            }
+            get => Value.ToString();
+            set => SetString(value);
         }
 
-        public int Integer
-        {
-            get => (int)_floatValue;
-            set
-            {
-                SetInteger(value, false);
-            }
-        }
+        public T Value { get; set; }
 
-        public bool Boolean
-        {
-            get => _floatValue != 0;
-            set
-            {
-                SetBoolean(value, false);
-            }
-        }
+        public event VariableChangeHandler<T> OnChange;
 
-        private List<IVariableFilter> _filters;
-
-        public event VariableChangeHandler OnChange;
-
-        public Variable(CommandContext commandContext, string name, string value, CommandFlags flags, string helpInfo,
-            IReadOnlyList<IVariableFilter> filters,
-            IReadOnlyList<VariableChangeHandler> changeHandlers,
+        public Variable(CommandContext commandContext, string name, in T value, CommandFlags flags, string helpInfo,
+            IReadOnlyList<IVariableFilter<T>> filters,
+            IReadOnlyList<VariableChangeHandler<T>> changeHandlers,
             object tag = null)
             : base(commandContext, name, flags, helpInfo, tag)
         {
-            SetString(value, true);
+            SetValue(value, true);
 
-            Construct(filters, changeHandlers);
-        }
+            InitialValue = value;
 
-        public Variable(CommandContext commandContext, string name, float value, CommandFlags flags, string helpInfo,
-            IReadOnlyList<IVariableFilter> filters,
-            IReadOnlyList<VariableChangeHandler> changeHandlers,
-            object tag = null)
-            : base(commandContext, name, flags, helpInfo, tag)
-        {
-            SetFloat(value, true);
-
-            Construct(filters, changeHandlers);
-        }
-
-        public Variable(CommandContext commandContext, string name, int value, CommandFlags flags, string helpInfo,
-            IReadOnlyList<IVariableFilter> filters,
-            IReadOnlyList<VariableChangeHandler> changeHandlers,
-            object tag = null)
-            : base(commandContext, name, flags, helpInfo, tag)
-        {
-            SetInteger(value, true);
-
-            Construct(filters, changeHandlers);
-        }
-
-        private void Construct(IReadOnlyList<IVariableFilter> filters, IReadOnlyList<VariableChangeHandler> changeHandlers)
-        {
-            InitialValue = String;
-
-            _filters = filters?.ToList();
+            _filters = filters?.ToArray();
 
             if (changeHandlers != null)
             {
@@ -116,58 +68,39 @@ namespace SharpLife.CommandSystem.Commands
 
         public void RevertToInitialValue()
         {
-            String = InitialValue;
+            Value = InitialValue;
         }
 
-        internal void SetString(string value, bool suppressChangeMessage)
+        private void SetString(string stringValue, bool suppressChangeMessage = false)
         {
-            float.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var floatValue);
-
-            SetValue(value, floatValue, suppressChangeMessage: suppressChangeMessage);
+            //TODO
         }
 
-        internal void SetFloat(float value, bool suppressChangeMessage)
-        {
-            SetValue(CommandUtils.FloatToVariableString(value), value, suppressChangeMessage);
-        }
-
-        internal void SetInteger(int value, bool suppressChangeMessage)
-        {
-            SetValue(value.ToString(), value, suppressChangeMessage);
-        }
-
-        internal void SetBoolean(bool value, bool suppressChangeMessage)
-        {
-            var intValue = value ? 1 : 0;
-            SetValue(intValue.ToString(), intValue, suppressChangeMessage);
-        }
-
-        private void SetValue(string stringValue, float floatValue, bool suppressChangeMessage = false)
+        internal void SetValue(T value, bool suppressChangeMessage = false)
         {
             if (_filters != null)
             {
                 foreach (var filter in _filters)
                 {
-                    if (!filter.Filter(ref stringValue, ref floatValue))
+                    if (!filter.Filter(this, ref value))
                     {
                         return;
                     }
                 }
             }
 
-            var changeEvent = new VariableChangeEvent(this, String, Float, Integer, Boolean);
+            var changeEvent = new VariableChangeEvent<T>(this, Value);
 
-            _stringValue = stringValue ?? throw new ArgumentNullException(nameof(stringValue));
-            _floatValue = floatValue;
+            Value = value;
 
             OnChange?.Invoke(ref changeEvent);
 
             if (!suppressChangeMessage
                 && (Flags & CommandFlags.UnLogged) == 0
-                && String != changeEvent.OldString)
+                && changeEvent.Different)
             {
                 //If none of the change handlers reverted the change, print a change message
-                var newValue = (Flags & CommandFlags.Protected) != 0 ? _commandContext.ProtectedVariableChangeString : String;
+                var newValue = (Flags & CommandFlags.Protected) != 0 ? _commandContext.ProtectedVariableChangeString : ValueString;
 
                 _commandContext._logger.Information($"\"{Name}\" changed to \"{newValue}\"");
             }
@@ -177,7 +110,7 @@ namespace SharpLife.CommandSystem.Commands
         {
             if (command.Count == 0)
             {
-                _commandContext._logger.Information($"\"{Name}\" is \"{String}\"");
+                _commandContext._logger.Information($"\"{Name}\" is \"{ValueString}\"");
                 return;
             }
 

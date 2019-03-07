@@ -13,12 +13,15 @@
 *
 ****/
 
+using System;
+
 namespace SharpLife.CommandSystem.Commands.VariableFilters
 {
     /// <summary>
     /// Denies any numeric inputs that are either positive or negative
     /// </summary>
-    public class NumberSignFilter : IVariableFilter
+    public class NumberSignFilter<T> : IVariableFilter<T>
+        where T : IComparable<T>
     {
         private readonly bool _positive;
 
@@ -31,9 +34,11 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _positive = positive;
         }
 
-        public bool Filter(ref string stringValue, ref float floatValue)
+        public bool Filter(IVariable<T> variable, ref T value)
         {
-            return (floatValue < 0) ^ _positive;
+            //This takes advantage of the fact that default values are 0 for numeric types
+            //Will not work quite as well for other types
+            return (value.CompareTo(default) < 0) ^ _positive;
         }
     }
 }

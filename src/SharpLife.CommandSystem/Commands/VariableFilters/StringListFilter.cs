@@ -22,7 +22,7 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// <summary>
     /// Denies any inputs that are not found in a given list
     /// </summary>
-    public class StringListFilter : IVariableFilter
+    public class StringListFilter : IVariableFilter<string>
     {
         private readonly List<string> _strings;
 
@@ -40,9 +40,9 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _strings = strings.ToList();
         }
 
-        public bool Filter(ref string stringValue, ref float floatValue)
+        public bool Filter(IVariable<string> variable, ref string value)
         {
-            return _strings.Contains(stringValue);
+            return _strings.Contains(value);
         }
     }
 }

@@ -20,9 +20,9 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// <summary>
     /// Filter that delegates the filter task to a delegate
     /// </summary>
-    public class DelegateFilter : IVariableFilter
+    public class DelegateFilter<T> : IVariableFilter<T>
     {
-        public delegate bool FilterDelegate(ref string stringValue, ref float floatValue);
+        public delegate bool FilterDelegate(IVariable<T> variable, ref T value);
 
         private readonly FilterDelegate _delegate;
 
@@ -31,9 +31,9 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _delegate = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
         }
 
-        public bool Filter(ref string stringValue, ref float floatValue)
+        public bool Filter(IVariable<T> variable, ref T value)
         {
-            return _delegate(ref stringValue, ref floatValue);
+            return _delegate(variable, ref value);
         }
     }
 }

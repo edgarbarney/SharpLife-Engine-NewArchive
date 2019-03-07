@@ -17,56 +17,29 @@ using System;
 
 namespace SharpLife.CommandSystem.Commands
 {
-    public struct VariableChangeEvent
+    public struct VariableChangeEvent<T>
     {
-        private readonly Variable _variable;
+        private readonly Variable<T> _variable;
 
-        public IVariable Variable => _variable;
+        public IVariable<T> Variable => _variable;
 
-        public string String
+        public T Value
         {
-            get => _variable.String;
-            set => _variable.SetString(value, true);
+            get => _variable.Value;
+            set => _variable.SetValue(value, true);
         }
 
-        public float Float
-        {
-            get => _variable.Float;
-            set => _variable.SetFloat(value, true);
-        }
-
-        public int Integer
-        {
-            get => _variable.Integer;
-            set => _variable.SetInteger(value, true);
-        }
-
-        public bool Boolean
-        {
-            get => _variable.Boolean;
-            set => _variable.SetBoolean(value, true);
-        }
-
-        public string OldString { get; }
-
-        public float OldFloat { get; }
-
-        public int OldInteger { get; }
-
-        public bool OldBoolean { get; }
+        public T OldValue { get; }
 
         /// <summary>
         /// Indicates whether the variable is different from its old value
         /// </summary>
-        public bool Different => Variable.String != OldString;
+        public bool Different => !Variable.Value.Equals(OldValue);
 
-        internal VariableChangeEvent(Variable variable, string oldString, float oldFloat, int oldInteger, bool oldBoolean)
+        internal VariableChangeEvent(Variable<T> variable, T oldValue)
         {
             _variable = variable ?? throw new ArgumentNullException(nameof(variable));
-            OldString = oldString ?? throw new ArgumentNullException(nameof(oldString));
-            OldFloat = oldFloat;
-            OldInteger = oldInteger;
-            OldBoolean = oldBoolean;
+            OldValue = oldValue;
         }
     }
 }

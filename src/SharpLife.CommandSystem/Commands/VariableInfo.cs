@@ -21,80 +21,39 @@ namespace SharpLife.CommandSystem.Commands
 {
     /// <summary>
     /// Contains information about a command variable
-    /// A command variable can only have a value of one type at any given time, changing value types resets the other types
+    /// A command variable has a value of a specific type, specified as type parameter <typeparamref name="T"/>
     /// </summary>
-    public sealed class VariableInfo : BaseCommandInfo<VariableInfo>
+    public sealed class VariableInfo<T> : BaseCommandInfo<VariableInfo<T>>
     {
-        //Default to empty string value
-        public string StringValue { get; private set; } = string.Empty;
+        public T Value { get; }
 
-        public float? FloatValue { get; private set; }
+        private List<IVariableFilter<T>> _filters;
 
-        public int? IntegerValue { get; private set; }
+        public IReadOnlyList<IVariableFilter<T>> Filters => _filters;
 
-        private List<IVariableFilter> _filters;
+        private readonly List<VariableChangeHandler<T>> _onChangeDelegates = new List<VariableChangeHandler<T>>();
 
-        public IReadOnlyList<IVariableFilter> Filters => _filters;
+        public IReadOnlyList<VariableChangeHandler<T>> ChangeHandlers => _onChangeDelegates;
 
-        private readonly List<VariableChangeHandler> _onChangeDelegates = new List<VariableChangeHandler>();
-
-        public IReadOnlyList<VariableChangeHandler> ChangeHandlers => _onChangeDelegates;
-
-        public VariableInfo(string name)
+        public VariableInfo(string name, in T defaultValue = default)
             : base(name)
         {
+            Value = defaultValue;
         }
 
-        public VariableInfo WithValue(string value)
-        {
-            StringValue = value ?? throw new ArgumentNullException(nameof(value));
-
-            FloatValue = null;
-            IntegerValue = null;
-
-            return this;
-        }
-
-        public VariableInfo WithValue(float value)
-        {
-            FloatValue = value;
-            StringValue = null;
-            IntegerValue = null;
-
-            return this;
-        }
-
-        public VariableInfo WithValue(int value)
-        {
-            IntegerValue = value;
-            StringValue = null;
-            FloatValue = null;
-
-            return this;
-        }
-
-        public VariableInfo WithValue(bool value)
-        {
-            IntegerValue = value ? 1 : 0;
-            StringValue = null;
-            FloatValue = null;
-
-            return this;
-        }
-
-        public VariableInfo WithFilter(IVariableFilter filter)
+        public VariableInfo<T> WithFilter(IVariableFilter<T> filter)
         {
             if (filter == null)
             {
                 throw new ArgumentNullException(nameof(filter));
             }
 
-            (_filters ?? (_filters = new List<IVariableFilter>())).Add(filter);
+            (_filters ?? (_filters = new List<IVariableFilter<T>>())).Add(filter);
 
             return this;
         }
 
-        public VariableInfo WithChangeHandler(VariableChangeHandler changeHandler)
+        public VariableInfo<T> WithChangeHandler(VariableChangeHandler<T> changeHandler)
         {
             if (changeHandler == null)
             {

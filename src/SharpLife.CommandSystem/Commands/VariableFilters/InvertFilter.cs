@@ -20,18 +20,18 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// <summary>
     /// Filter to invert the result of another filter
     /// </summary>
-    public class InvertFilter : IVariableFilter
+    public class InvertFilter<T> : IVariableFilter<T>
     {
-        private readonly IVariableFilter _filter;
+        private readonly IVariableFilter<T> _filter;
 
-        public InvertFilter(IVariableFilter filter)
+        public InvertFilter(IVariableFilter<T> filter)
         {
             _filter = filter ?? throw new ArgumentNullException(nameof(filter));
         }
 
-        public bool Filter(ref string stringValue, ref float floatValue)
+        public bool Filter(IVariable<T> variable, ref T value)
         {
-            return !_filter.Filter(ref stringValue, ref floatValue);
+            return !_filter.Filter(variable, ref value);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// <summary>
     /// Denies any inputs that don't match a regular expression
     /// </summary>
-    public class RegexFilter : IVariableFilter
+    public class RegexFilter : IVariableFilter<string>
     {
         private readonly Regex _regex;
 
@@ -30,9 +30,9 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _regex = regex ?? throw new ArgumentNullException(nameof(regex));
         }
 
-        public bool Filter(ref string stringValue, ref float floatValue)
+        public bool Filter(IVariable<string> variable, ref string value)
         {
-            return _regex.IsMatch(stringValue);
+            return _regex.IsMatch(value);
         }
     }
 }

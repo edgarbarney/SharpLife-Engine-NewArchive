@@ -18,11 +18,11 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// <summary>
     /// Strips whitespace from the start and end of string values
     /// </summary>
-    internal class StripWhitespaceFilter : IVariableFilter
+    internal class StripWhitespaceFilter : IVariableFilter<string>
     {
-        public bool Filter(ref string stringValue, ref float floatValue)
+        public bool Filter(IVariable<string> variable, ref string value)
         {
-            stringValue = stringValue.Trim();
+            value = value.Trim();
 
             return true;
         }

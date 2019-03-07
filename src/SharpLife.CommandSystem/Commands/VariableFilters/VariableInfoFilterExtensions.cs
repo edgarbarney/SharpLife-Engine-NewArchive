@@ -13,6 +13,7 @@
 *
 ****/
 
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -23,74 +24,60 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// </summary>
     public static class VariableInfoFilterExtensions
     {
-        public static VariableInfo WithBooleanFilter(this VariableInfo @this)
-        {
-            return @this.WithFilter(new BooleanFilter());
-        }
-
-        /// <summary>
-        /// <see cref="NumberFilter(bool)"/>
-        /// </summary>
-        /// <param name="this"></param>
-        /// <param name="integerOnly"></param>
-        /// <returns></returns>
-        public static VariableInfo WithNumberFilter(this VariableInfo @this, bool integerOnly = false)
-        {
-            return @this.WithFilter(new NumberFilter(integerOnly));
-        }
-
         /// <summary>
         /// <see cref="NumberSignFilter(bool)"/>
         /// </summary>
         /// <param name="this"></param>
         /// <param name="positive"></param>
         /// <returns></returns>
-        public static VariableInfo WithNumberSignFilter(this VariableInfo @this, bool positive)
+        public static VariableInfo<T> WithNumberSignFilter<T>(this VariableInfo<T> @this, bool positive)
+            where T : IComparable<T>
         {
-            return @this.WithFilter(new NumberSignFilter(positive));
+            return @this.WithFilter(new NumberSignFilter<T>(positive));
         }
 
-        public static VariableInfo WithMinMaxFilter(this VariableInfo @this, float? min, float? max, bool denyOutOfRangeValues = false)
+        public static VariableInfo<T> WithMinMaxFilter<T>(this VariableInfo<T> @this, T? min, T? max, bool denyOutOfRangeValues = false)
+            where T : struct, IComparable<T>, IEquatable<T>
         {
-            return @this.WithFilter(new MinMaxFilter(min, max, denyOutOfRangeValues));
+            return @this.WithFilter(new MinMaxFilter<T>(min, max, denyOutOfRangeValues));
         }
 
-        public static VariableInfo WithRegexFilter(this VariableInfo @this, Regex regex)
+        public static VariableInfo<string> WithRegexFilter(this VariableInfo<string> @this, Regex regex)
         {
             return @this.WithFilter(new RegexFilter(regex));
         }
 
-        public static VariableInfo WithRegexFilter(this VariableInfo @this, string pattern)
+        public static VariableInfo<string> WithRegexFilter(this VariableInfo<string> @this, string pattern)
         {
             return @this.WithFilter(new RegexFilter(new Regex(pattern)));
         }
 
-        public static VariableInfo WithStringListFilter(this VariableInfo @this, IReadOnlyList<string> strings)
+        public static VariableInfo<string> WithStringListFilter(this VariableInfo<string> @this, IReadOnlyList<string> strings)
         {
             return @this.WithFilter(new StringListFilter(strings));
         }
 
-        public static VariableInfo WithStringListFilter(this VariableInfo @this, params string[] strings)
+        public static VariableInfo<string> WithStringListFilter(this VariableInfo<string> @this, params string[] strings)
         {
             return @this.WithFilter(new StringListFilter(strings));
         }
 
-        public static VariableInfo WithInvertedFilter(this VariableInfo @this, IVariableFilter filter)
+        public static VariableInfo<T> WithInvertedFilter<T>(this VariableInfo<T> @this, IVariableFilter<T> filter)
         {
-            return @this.WithFilter(new InvertFilter(filter));
+            return @this.WithFilter(new InvertFilter<T>(filter));
         }
 
-        public static VariableInfo WithDelegateFilter(this VariableInfo @this, DelegateFilter.FilterDelegate @delegate)
+        public static VariableInfo<T> WithDelegateFilter<T>(this VariableInfo<T> @this, DelegateFilter<T>.FilterDelegate @delegate)
         {
-            return @this.WithFilter(new DelegateFilter(@delegate));
+            return @this.WithFilter(new DelegateFilter<T>(@delegate));
         }
 
-        public static VariableInfo WithPrintableCharactersFilter(this VariableInfo @this, string emptyValue = "")
+        public static VariableInfo<string> WithPrintableCharactersFilter(this VariableInfo<string> @this, string emptyValue = "")
         {
             return @this.WithFilter(new UnprintableCharactersFilter(emptyValue));
         }
 
-        public static VariableInfo WithWhitespaceFilter(this VariableInfo @this)
+        public static VariableInfo<string> WithWhitespaceFilter(this VariableInfo<string> @this)
         {
             return @this.WithFilter(new StripWhitespaceFilter());
         }

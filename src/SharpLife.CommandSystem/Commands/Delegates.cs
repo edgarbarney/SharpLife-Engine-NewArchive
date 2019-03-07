@@ -25,5 +25,5 @@ namespace SharpLife.CommandSystem.Commands
     /// Variable change handler
     /// </summary>
     /// <param name="changeEvent">Contains information about which variable changed and what the old value was</param>
-    public delegate void VariableChangeHandler(ref VariableChangeEvent changeEvent);
+    public delegate void VariableChangeHandler<T>(ref VariableChangeEvent<T> changeEvent);
 }

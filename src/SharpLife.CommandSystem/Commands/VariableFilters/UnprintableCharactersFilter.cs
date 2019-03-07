@@ -21,7 +21,7 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
     /// <summary>
     /// Filters string input and removes unprintable characters
     /// </summary>
-    public class UnprintableCharactersFilter : IVariableFilter
+    public class UnprintableCharactersFilter : IVariableFilter<string>
     {
         private readonly string _emptyValue;
 
@@ -34,11 +34,11 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             _emptyValue = emptyValue ?? throw new ArgumentNullException(nameof(emptyValue));
         }
 
-        public bool Filter(ref string stringValue, ref float floatValue)
+        public bool Filter(IVariable<string> variable, ref string value)
         {
             var builder = new StringBuilder();
 
-            foreach (var c in stringValue)
+            foreach (var c in value)
             {
                 if (!char.IsControl(c) || char.IsWhiteSpace(c))
                 {
@@ -46,11 +46,11 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
                 }
             }
 
-            stringValue = builder.ToString();
+            value = builder.ToString();
 
-            if (stringValue.Length == 0)
+            if (value.Length == 0)
             {
-                stringValue = _emptyValue;
+                value = _emptyValue;
             }
 
             return true;

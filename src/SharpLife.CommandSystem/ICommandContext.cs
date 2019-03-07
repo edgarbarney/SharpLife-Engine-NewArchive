@@ -44,7 +44,7 @@ namespace SharpLife.CommandSystem
 
         ICommand RegisterCommand(CommandInfo info);
 
-        IVariable RegisterVariable(VariableInfo info);
+        IVariable RegisterVariable<T>(VariableInfo<T> info);
 
         /// <summary>
         /// Sets an alias to the given command text

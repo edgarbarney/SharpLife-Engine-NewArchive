@@ -18,13 +18,14 @@ using System;
 namespace SharpLife.CommandSystem.Commands.VariableFilters
 {
     /// <summary>
-    /// Clamps an input value to a numeric range
+    /// Clamps an input value to a range
     /// </summary>
-    public class MinMaxFilter : IVariableFilter
+    public class MinMaxFilter<T> : IVariableFilter<T>
+        where T : struct, IComparable<T>, IEquatable<T>
     {
-        public float? Min { get; }
+        public T? Min { get; }
 
-        public float? Max { get; }
+        public T? Max { get; }
 
         public bool DenyOutOfRangeValues { get; }
 
@@ -35,14 +36,14 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
         /// <param name="min">Optional. Minimum value to clamp to</param>
         /// <param name="max">Optional. Maximum value to clamp to</param>
         /// <param name="denyOutOfRangeValues">If true, values out of range are denied instead of clamping them</param>
-        public MinMaxFilter(float? min, float? max, bool denyOutOfRangeValues = false)
+        public MinMaxFilter(T? min, T? max, bool denyOutOfRangeValues = false)
         {
             if (min == null && max == null)
             {
-                throw new ArgumentException($"{nameof(MinMaxFilter)} has no purpose if both values are null", nameof(min));
+                throw new ArgumentException($"{nameof(MinMaxFilter<T>)} has no purpose if both values are null", nameof(min));
             }
 
-            if (min.HasValue && max.HasValue && max.Value <= min.Value)
+            if (min.HasValue && max.HasValue && max.Value.CompareTo(min.Value) <= 0)
             {
                 throw new ArgumentOutOfRangeException("Minimum value must be less than maximum value");
             }
@@ -52,30 +53,46 @@ namespace SharpLife.CommandSystem.Commands.VariableFilters
             DenyOutOfRangeValues = denyOutOfRangeValues;
         }
 
-        public bool Filter(ref string stringValue, ref float floatValue)
+        private static T Clamp(in T value, in T min, in T max)
         {
-            var min = Min ?? floatValue;
-            var max = Max ?? floatValue;
+            var result = value;
+
+            if (result.CompareTo(min) < 0)
+            {
+                result = min;
+            }
+
+            if (result.CompareTo(max) > 0)
+            {
+                result = max;
+            }
+
+            return result;
+        }
+
+        public bool Filter(IVariable<T> variable, ref T value)
+        {
+            var min = Min ?? value;
+            var max = Max ?? value;
 
             //For unbounded clamps make sure the range is correct
-            if (max < min)
+            if (max.CompareTo(min) < 0)
             {
                 var temp = min;
                 min = max;
                 max = temp;
             }
 
-            var clampedValue = Math.Clamp(floatValue, min, max);
+            var clampedValue = Clamp(value, min, max);
 
-            if (clampedValue != floatValue)
+            if (!clampedValue.Equals(value))
             {
                 if (DenyOutOfRangeValues)
                 {
                     return false;
                 }
 
-                stringValue = CommandUtils.FloatToVariableString(floatValue);
-                floatValue = clampedValue;
+                value = clampedValue;
             }
 
             return true;

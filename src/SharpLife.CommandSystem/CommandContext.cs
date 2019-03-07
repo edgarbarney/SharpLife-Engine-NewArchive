@@ -131,7 +131,7 @@ namespace SharpLife.CommandSystem
             return command;
         }
 
-        public virtual IVariable RegisterVariable(VariableInfo info)
+        public virtual IVariable RegisterVariable<T>(VariableInfo<T> info)
         {
             if (info == null)
             {
@@ -143,24 +143,7 @@ namespace SharpLife.CommandSystem
                 return existingCommand;
             }
 
-            Variable variable = null;
-
-            if (info.StringValue != null)
-            {
-                variable = new Variable(this, info.Name, info.StringValue, info.Flags, info.HelpInfo, info.Filters, info.ChangeHandlers, info.Tag);
-            }
-            else if (info.FloatValue != null)
-            {
-                variable = new Variable(this, info.Name, info.FloatValue.Value, info.Flags, info.HelpInfo, info.Filters, info.ChangeHandlers, info.Tag);
-            }
-            else if (info.IntegerValue != null)
-            {
-                variable = new Variable(this, info.Name, info.IntegerValue.Value, info.Flags, info.HelpInfo, info.Filters, info.ChangeHandlers, info.Tag);
-            }
-            else
-            {
-                throw new ArgumentException("Command variables must have a value specified", nameof(info));
-            }
+            var variable = new Variable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, info.Filters, info.ChangeHandlers, info.Tag);
 
             _commands.Add(variable.Name, variable);
 
