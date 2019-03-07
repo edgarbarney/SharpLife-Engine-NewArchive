@@ -22,7 +22,7 @@ namespace SharpLife.CommandSystem.Commands
     /// <summary>
     /// A variable that acts as a proxy for a variable or property in an object
     /// </summary>
-    internal sealed class ProxyVariable<T> : BaseVariable<T>
+    internal sealed class ProxyVariable<T> : Variable<T>
     {
         private readonly ObjectAccessor _accessor;
         private readonly MemberInfo _member;

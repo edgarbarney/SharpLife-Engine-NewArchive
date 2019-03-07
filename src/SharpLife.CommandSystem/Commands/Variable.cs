@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace SharpLife.CommandSystem.Commands
 {
-    internal abstract class BaseVariable<T> : BaseCommand, IVariable<T>
+    internal abstract class Variable<T> : BaseCommand, IVariable<T>
     {
         public object InitialValueObject => InitialValue;
 
@@ -45,7 +45,7 @@ namespace SharpLife.CommandSystem.Commands
 
         public event VariableChangeHandler<T> OnChange;
 
-        protected BaseVariable(CommandContext commandContext, string name, in T initialValue, CommandFlags flags, string helpInfo,
+        protected Variable(CommandContext commandContext, string name, in T initialValue, CommandFlags flags, string helpInfo,
             ITypeProxy<T> typeProxy,
             IReadOnlyList<VariableChangeHandler<T>> changeHandlers,
             object tag = null)

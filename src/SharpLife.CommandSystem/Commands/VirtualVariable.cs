@@ -22,7 +22,7 @@ namespace SharpLife.CommandSystem.Commands
     /// A variable that is managed by the command system
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal sealed class VirtualVariable<T> : BaseVariable<T>
+    internal sealed class VirtualVariable<T> : Variable<T>
     {
         public override T Value { get; set; }
 
