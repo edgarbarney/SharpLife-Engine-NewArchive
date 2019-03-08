@@ -160,11 +160,11 @@ namespace SharpLife.Engine.Host
 
             EventUtils.RegisterEvents(EventSystem, new EngineEvents());
 
-            CommonCommands.AddStuffCmds(EngineContext, Logger, CommandLine);
-            CommonCommands.AddExec(EngineContext, Logger, FileSystem, ExecPathIDs);
-            CommonCommands.AddEcho(EngineContext, Logger);
-            CommonCommands.AddAlias(EngineContext, Logger);
-            CommonCommands.AddFind(EngineContext, Logger);
+            EngineContext.AddStuffCmds(Logger, CommandLine);
+            EngineContext.AddExec(Logger, FileSystem, ExecPathIDs);
+            EngineContext.AddEcho(Logger);
+            EngineContext.AddAlias(Logger);
+            EngineContext.AddFind(Logger);
 
             _fpsMax = EngineContext.RegisterVariable(
                 new VirtualVariableInfo<uint>("fps_max", DefaultFPS)

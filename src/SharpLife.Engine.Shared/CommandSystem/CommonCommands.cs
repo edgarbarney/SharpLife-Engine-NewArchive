@@ -30,7 +30,7 @@ namespace SharpLife.Engine.Shared.CommandSystem
     /// </summary>
     public static class CommonCommands
     {
-        public static ICommand AddStuffCmds(ICommandContext commandContext, ILogger logger, ICommandLine commandLine)
+        public static ICommand AddStuffCmds(this ICommandContext commandContext, ILogger logger, ICommandLine commandLine)
         {
             if (commandContext == null)
             {
@@ -83,7 +83,7 @@ namespace SharpLife.Engine.Shared.CommandSystem
         /// <param name="fileSystem"></param>
         /// <param name="gameConfigPathIDs">he game config path IDs to use for the exec command</param>
         /// <returns></returns>
-        public static ICommand AddExec(ICommandContext commandContext, ILogger logger, IFileSystem fileSystem, IReadOnlyList<string> gameConfigPathIDs)
+        public static ICommand AddExec(this ICommandContext commandContext, ILogger logger, IFileSystem fileSystem, IReadOnlyList<string> gameConfigPathIDs)
         {
             if (commandContext == null)
             {
@@ -169,7 +169,7 @@ namespace SharpLife.Engine.Shared.CommandSystem
             .WithHelpInfo("Executes a file containing commands"));
         }
 
-        public static ICommand AddEcho(ICommandContext commandContext, ILogger logger)
+        public static ICommand AddEcho(this ICommandContext commandContext, ILogger logger)
         {
             if (commandContext == null)
             {
@@ -185,7 +185,7 @@ namespace SharpLife.Engine.Shared.CommandSystem
                 .WithHelpInfo("Echoes the arguments to the console"));
         }
 
-        public static ICommand AddAlias(ICommandContext commandContext, ILogger logger)
+        public static ICommand AddAlias(this ICommandContext commandContext, ILogger logger)
         {
             if (commandContext == null)
             {
@@ -215,7 +215,7 @@ namespace SharpLife.Engine.Shared.CommandSystem
             .WithHelpInfo("Aliases a command to a name"));
         }
 
-        public static ICommand AddFind(ICommandContext commandContext, ILogger logger)
+        public static ICommand AddFind(this ICommandContext commandContext, ILogger logger)
         {
             if (commandContext == null)
             {
