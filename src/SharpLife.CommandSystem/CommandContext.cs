@@ -26,6 +26,15 @@ namespace SharpLife.CommandSystem
     {
         private const string DefaultProtectedVariableChangeString = "***PROTECTED***";
 
+        internal readonly ILogger _logger;
+        internal readonly CommandSystem _commandSystem;
+
+        private readonly Dictionary<string, IBaseCommand> _commands = new Dictionary<string, IBaseCommand>();
+
+        private readonly Dictionary<string, string> _aliases = new Dictionary<string, string>();
+
+        internal bool _destroyed;
+
         public string Name { get; }
 
         public object Tag { get; }
@@ -35,15 +44,6 @@ namespace SharpLife.CommandSystem
         public IReadOnlyDictionary<string, IBaseCommand> Commands => _commands;
 
         public IReadOnlyDictionary<string, string> Aliases => _aliases;
-
-        internal readonly ILogger _logger;
-        internal readonly CommandSystem _commandSystem;
-
-        private readonly Dictionary<string, IBaseCommand> _commands = new Dictionary<string, IBaseCommand>();
-
-        private readonly Dictionary<string, string> _aliases = new Dictionary<string, string>();
-
-        internal bool _destroyed;
 
         public event Action<IBaseCommand> CommandAdded;
 

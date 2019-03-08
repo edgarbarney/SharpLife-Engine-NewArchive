@@ -23,10 +23,6 @@ namespace SharpLife.CommandSystem
 {
     public sealed class CommandSystem : ICommandSystem
     {
-        public ICommandQueue Queue => _queue;
-
-        public ICommandContext SharedContext => _sharedContext;
-
         internal readonly ILogger _logger;
         internal readonly IFormatProvider _provider;
 
@@ -37,6 +33,10 @@ namespace SharpLife.CommandSystem
         private readonly List<CommandContext> _commandContexts = new List<CommandContext>();
 
         private readonly CommandContext _sharedContext;
+
+        public ICommandQueue Queue => _queue;
+
+        public ICommandContext SharedContext => _sharedContext;
 
         /// <summary>
         /// Creates a new command system

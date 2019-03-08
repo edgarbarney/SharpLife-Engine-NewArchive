@@ -23,6 +23,8 @@ namespace SharpLife.CommandSystem.Commands
 {
     public class CommandArgs : ICommandArgs
     {
+        private readonly IList<string> _arguments;
+
         public ICommandContext Context { get; }
 
         public string Name { get; }
@@ -30,8 +32,6 @@ namespace SharpLife.CommandSystem.Commands
         public int Count => _arguments.Count;
 
         public string this[int index] => _arguments[index];
-
-        private readonly IList<string> _arguments;
 
         IList<string> ICommandArgs.Arguments => _arguments.ToList();
 
@@ -50,6 +50,25 @@ namespace SharpLife.CommandSystem.Commands
         }
 
         public string ArgumentsString => ArgumentsAsString(0);
+
+        public CommandArgs(ICommandContext context, string name, IList<string> arguments)
+        {
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException(nameof(name));
+            }
+
+            Name = name;
+
+            _arguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
+        }
 
         private StringBuilder AddArguments(StringBuilder builder, int firstArgumentIndex = 0)
         {
@@ -70,25 +89,6 @@ namespace SharpLife.CommandSystem.Commands
             }
 
             return builder;
-        }
-
-        public CommandArgs(ICommandContext context, string name, IList<string> arguments)
-        {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
-
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException(nameof(name));
-            }
-
-            Name = name;
-
-            _arguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
         }
 
         public string ArgumentsAsString(int firstArgumentIndex)

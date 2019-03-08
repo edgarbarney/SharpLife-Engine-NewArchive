@@ -22,16 +22,16 @@ namespace SharpLife.CommandSystem
 {
     internal sealed class CommandQueue : ICommandQueue
     {
-        public int QueuedCommandCount => _commandsToExecute.Count;
-
-        public bool Wait { get; set; }
-
         private readonly ILogger _logger;
 
         /// <summary>
         /// Commands that have been queued up for execution
         /// </summary>
         private readonly List<ICommandArgs> _commandsToExecute = new List<ICommandArgs>();
+
+        public int QueuedCommandCount => _commandsToExecute.Count;
+
+        public bool Wait { get; set; }
 
         public CommandQueue(ILogger logger)
         {
