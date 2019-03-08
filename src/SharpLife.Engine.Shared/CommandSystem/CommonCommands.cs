@@ -215,6 +215,45 @@ namespace SharpLife.Engine.Shared.CommandSystem
             .WithHelpInfo("Aliases a command to a name"));
         }
 
+        private sealed class FindCommands
+        {
+            private readonly ICommandContext _context;
+            private readonly ILogger _logger;
+
+            public FindCommands(ICommandContext context, ILogger logger)
+            {
+                _context = context ?? throw new ArgumentNullException(nameof(context));
+                _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            }
+
+            public void Find(string keyword, bool searchInHelpInfo = false, bool searchInValue = false)
+            {
+                var builder = new StringBuilder();
+
+                builder.AppendLine("Find results:");
+
+                var flags = FindCommandFlag.None;
+
+                if (searchInHelpInfo)
+                {
+                    flags |= FindCommandFlag.SearchInHelpInfo;
+                }
+
+                if (searchInValue)
+                {
+                    flags |= FindCommandFlag.SearchInValue;
+                }
+
+                foreach (var command in _context.FindCommands(keyword, flags))
+                {
+                    command.WriteCommandInfo(builder);
+                    builder.AppendLine();
+                }
+
+                _logger.Information(builder.ToString());
+            }
+        }
+
         public static ICommand AddFind(this ICommandContext commandContext, ILogger logger)
         {
             if (commandContext == null)
@@ -227,29 +266,8 @@ namespace SharpLife.Engine.Shared.CommandSystem
                 throw new ArgumentNullException(nameof(logger));
             }
 
-            return commandContext.RegisterCommand(new CommandInfo("find", arguments =>
-            {
-                if (arguments.Count != 1)
-                {
-                    logger.Information("Usage: find <keyword>");
-                    return;
-                }
-
-                var keyword = arguments[0];
-
-                var builder = new StringBuilder();
-
-                builder.AppendLine("Find results:");
-
-                foreach (var command in commandContext.FindCommands(keyword, true))
-                {
-                    command.WriteCommandInfo(builder);
-                    builder.AppendLine();
-                }
-
-                logger.Information(builder.ToString());
-            })
-            .WithHelpInfo("Finds commands and variables"));
+            return commandContext.RegisterCommand(new ProxyCommandInfo<Action<string, bool, bool>>("find", new FindCommands(commandContext, logger).Find)
+                .WithHelpInfo("Finds commands and variables"));
         }
     }
 }

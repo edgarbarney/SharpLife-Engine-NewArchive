@@ -26,7 +26,7 @@ namespace SharpLife.CommandSystem
         public static IVariable<T> RegisterVariable<T>(this ICommandContext context, string name, Expression<Func<T>> expression, string helpInfo = "")
             => context.RegisterVariable(new ProxyVariableInfo<T>(name, expression).WithHelpInfo(helpInfo));
 
-        public static IEnumerable<IBaseCommand> FindCommands(this ICommandContext context, string keyword, bool searchInHelpInfo = true)
+        public static IEnumerable<IBaseCommand> FindCommands(this ICommandContext context, string keyword, FindCommandFlag flags = FindCommandFlag.None)
         {
             if (keyword == null)
             {
@@ -45,7 +45,8 @@ namespace SharpLife.CommandSystem
                 foreach (var command in context.Commands.Values)
                 {
                     if (keyword.WildcardMatch(command.Name, true)
-                        || (searchInHelpInfo && keyword.WildcardMatch(command.HelpInfo, true)))
+                        || ((flags & FindCommandFlag.SearchInHelpInfo) != 0 && keyword.WildcardMatch(command.HelpInfo, true))
+                        || ((flags & FindCommandFlag.SearchInValue) != 0 && command is IVariable variable && keyword.WildcardMatch(variable.ValueString, true)))
                     {
                         yield return command;
                     }
