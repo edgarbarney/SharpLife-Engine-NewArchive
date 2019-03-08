@@ -18,6 +18,7 @@ using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.TypeProxies;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SharpLife.CommandSystem
 {
@@ -35,8 +36,6 @@ namespace SharpLife.CommandSystem
         private readonly CommandContext _sharedContext;
 
         public ICommandQueue Queue => _queue;
-
-        public ICommandContext SharedContext => _sharedContext;
 
         /// <summary>
         /// Creates a new command system
@@ -69,14 +68,12 @@ namespace SharpLife.CommandSystem
             _queue = new CommandQueue(_logger);
 
             //Shared context that informs the command system of all command additions to add them to other contexts
-            _sharedContext = new CommandContext(_logger, this, "SharedContext");
-
-            _sharedContext.CommandAdded += OnSharedAddCommand;
+            _sharedContext = new CommandContext(_logger, this, "SharedCommandContext", null, null);
 
             _commandContexts.Add(_sharedContext);
 
             //Add as a shared command
-            SharedContext.RegisterCommand(new CommandInfo("wait", _ => _queue.Wait = true)
+            _sharedContext.RegisterCommand(new CommandInfo("wait", _ => _queue.Wait = true)
                 .WithHelpInfo("Delay execution of remaining commands until the next execution"));
         }
 
@@ -115,33 +112,16 @@ namespace SharpLife.CommandSystem
             _typeProxies.Add(typeof(T), typeProxy);
         }
 
-        public ICommandContext CreateContext(string name, object tag = null, string protectedVariableChangeString = null)
+        public ICommandContext CreateContext(string name, object tag = null, string protectedVariableChangeString = null, params ICommandContext[] sharedContexts)
         {
-            var context = new CommandContext(_logger, this, name, tag, protectedVariableChangeString);
+            //The command system context should always be shared
+            var completeSharedContexts = sharedContexts.Cast<CommandContext>().Prepend(_sharedContext).ToArray();
+
+            var context = new CommandContext(_logger, this, name, tag, protectedVariableChangeString, completeSharedContexts);
 
             _commandContexts.Add(context);
 
-            //Add all existing shared commands
-            foreach (var command in _sharedContext.Commands.Values)
-            {
-                context.AddSharedCommand((BaseCommand)command);
-            }
-
             return context;
-        }
-
-        private void InternalDestroyContext(ICommandContext context)
-        {
-            var internalContext = (CommandContext)context;
-
-            if (!_commandContexts.Contains(internalContext))
-            {
-                throw new ArgumentException(nameof(context));
-            }
-
-            _commandContexts.Remove(internalContext);
-
-            internalContext._destroyed = true;
         }
 
         public void DestroyContext(ICommandContext context)
@@ -151,31 +131,36 @@ namespace SharpLife.CommandSystem
                 throw new ArgumentNullException(nameof(context));
             }
 
-            //Don't allow users to destroy the shared context
-            if (ReferenceEquals(context, _sharedContext))
+            var internalContext = (CommandContext)context;
+
+            if (internalContext._destroyed)
+            {
+                throw new ArgumentException("Tried to destroy an already destroyed context", nameof(context));
+            }
+
+            if (internalContext._sharedCount > 0)
+            {
+                throw new ArgumentException("Cannot destroy context that is shared with another context", nameof(context));
+            }
+
+            if (!_commandContexts.Contains(internalContext))
             {
                 throw new ArgumentException(nameof(context));
             }
 
-            InternalDestroyContext(context);
+            _commandContexts.Remove(internalContext);
+
+            internalContext._destroyed = true;
+
+            foreach (var sharedContext in internalContext._sharedContexts)
+            {
+                --sharedContext._sharedCount;
+            }
         }
 
         public void Execute()
         {
             _queue.Execute();
-        }
-
-        internal void OnSharedAddCommand(IBaseCommand command)
-        {
-            var internalCommand = (BaseCommand)command;
-
-            foreach (var context in _commandContexts)
-            {
-                if (!ReferenceEquals(context, _sharedContext))
-                {
-                    context.AddSharedCommand(internalCommand);
-                }
-            }
         }
     }
 }

@@ -35,7 +35,7 @@ namespace SharpLife.Engine.Client
         {
             _engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-            CommandContext = _engine.CommandSystem.CreateContext("ClientContext");
+            CommandContext = _engine.CommandSystem.CreateContext("ClientContext", _engine.EngineContext);
 
             var gameWindowName = _engine.EngineConfiguration.DefaultGameName;
 

@@ -75,6 +75,11 @@ namespace SharpLife.Engine.Host
         public ICommandSystem CommandSystem { get; }
 
         /// <summary>
+        /// Gets the engine command context, shared with the client and server
+        /// </summary>
+        public ICommandContext EngineContext { get; }
+
+        /// <summary>
         /// The client system, if this is a client instance
         /// </summary>
         public EngineClient Client { get; }
@@ -143,6 +148,8 @@ namespace SharpLife.Engine.Host
 
             CommandSystem = new CommandSystem.CommandSystem(Logger, CultureInfo.InvariantCulture);
 
+            EngineContext = CommandSystem.CreateContext("EngineContext");
+
             //create the game window if this is a client
             if (_hostType == HostType.Client)
             {
@@ -153,12 +160,12 @@ namespace SharpLife.Engine.Host
 
             EventUtils.RegisterEvents(EventSystem, new EngineEvents());
 
-            CommonCommands.AddStuffCmds(CommandSystem.SharedContext, Logger, CommandLine);
-            CommonCommands.AddExec(CommandSystem.SharedContext, Logger, FileSystem, ExecPathIDs);
-            CommonCommands.AddEcho(CommandSystem.SharedContext, Logger);
-            CommonCommands.AddAlias(CommandSystem.SharedContext, Logger);
+            CommonCommands.AddStuffCmds(EngineContext, Logger, CommandLine);
+            CommonCommands.AddExec(EngineContext, Logger, FileSystem, ExecPathIDs);
+            CommonCommands.AddEcho(EngineContext, Logger);
+            CommonCommands.AddAlias(EngineContext, Logger);
 
-            _fpsMax = CommandSystem.SharedContext.RegisterVariable(
+            _fpsMax = EngineContext.RegisterVariable(
                 new VirtualVariableInfo<uint>("fps_max", DefaultFPS)
                 .WithHelpInfo("Sets the maximum frames per second")
                 //Avoid negative maximum
@@ -174,7 +181,7 @@ namespace SharpLife.Engine.Host
                     _desiredFrameLengthSeconds = 1.0 / desiredFPS;
                 }));
 
-            CommandSystem.SharedContext.RegisterVariable("engine_builddate", () => BuildDate, "The engine's build date");
+            EngineContext.RegisterVariable("engine_builddate", () => BuildDate, "The engine's build date");
 
             //Get the build date from the generated resource file
             var assembly = typeof(Engine).Assembly;

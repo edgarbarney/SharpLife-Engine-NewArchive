@@ -29,6 +29,13 @@ namespace SharpLife.CommandSystem
         internal readonly ILogger _logger;
         internal readonly CommandSystem _commandSystem;
 
+        internal readonly CommandContext[] _sharedContexts;
+
+        /// <summary>
+        /// How many other contexts we're shared with
+        /// </summary>
+        internal int _sharedCount;
+
         private readonly Dictionary<string, IBaseCommand> _commands = new Dictionary<string, IBaseCommand>();
 
         private readonly Dictionary<string, string> _aliases = new Dictionary<string, string>();
@@ -47,7 +54,7 @@ namespace SharpLife.CommandSystem
 
         public event Action<IBaseCommand> CommandAdded;
 
-        public CommandContext(ILogger logger, CommandSystem commandSystem, string name, object tag = null, string protectedVariableChangeString = null)
+        public CommandContext(ILogger logger, CommandSystem commandSystem, string name, object tag, string protectedVariableChangeString, params CommandContext[] sharedContexts)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _commandSystem = commandSystem ?? throw new ArgumentNullException(nameof(commandSystem));
@@ -72,6 +79,27 @@ namespace SharpLife.CommandSystem
             }
 
             ProtectedVariableChangeString = protectedVariableChangeString;
+
+            _sharedContexts = sharedContexts;
+
+            foreach (var sharedContext in _sharedContexts)
+            {
+                if (sharedContext == null)
+                {
+                    throw new ArgumentException("Shared contexts may not be null", nameof(sharedContexts));
+                }
+
+                //Add all existing shared commands
+                foreach (var command in sharedContext.Commands.Values)
+                {
+                    //Need to check for duplicates since shared contexts may have overlapping command names
+                    AddSharedCommand(command);
+                }
+
+                sharedContext.CommandAdded += AddSharedCommand;
+
+                ++sharedContext._sharedCount;
+            }
         }
 
         public TCommand FindCommand<TCommand>(string name)
@@ -98,7 +126,6 @@ namespace SharpLife.CommandSystem
         /// <typeparam name="TCommand"></typeparam>
         /// <param name="name"></param>
         /// <param name="existingCommand"></param>
-        /// <returns></returns>
         private bool CheckForCommandExistence<TCommand>(string name, out TCommand existingCommand)
             where TCommand : class
         {
@@ -285,11 +312,17 @@ namespace SharpLife.CommandSystem
             _commandSystem._queue.InternalInsertCommands(this, commandText, index);
         }
 
-        public void AddSharedCommand(BaseCommand command)
+        private void AddSharedCommand(IBaseCommand command)
         {
-            if (_commands.ContainsKey(command.Name))
+            if (_commands.TryGetValue(command.Name, out var existing))
             {
-                throw new ArgumentException($"A command with the name {command.Name} already exists in context {Name}", nameof(command));
+                //It's possible for multiple shared contexts to contain the same command, so just ignore these cases
+                if (ReferenceEquals(command, existing))
+                {
+                    return;
+                }
+
+                throw new ArgumentException($"A different command with the name {command.Name} already exists in context {Name}", nameof(command));
             }
 
             _commands.Add(command.Name, command);

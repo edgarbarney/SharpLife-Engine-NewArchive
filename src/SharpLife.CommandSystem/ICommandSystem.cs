@@ -22,13 +22,6 @@ namespace SharpLife.CommandSystem
         ICommandQueue Queue { get; }
 
         /// <summary>
-        /// The shared context
-        /// All commands added to this context will be shared between all contexts
-        /// Shared commands will only be able to execute commands in the context that they were executed in
-        /// </summary>
-        ICommandContext SharedContext { get; }
-
-        /// <summary>
         /// Adds a new type proxy
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -42,8 +35,11 @@ namespace SharpLife.CommandSystem
         /// <param name="name"></param>
         /// <param name="tag">Optional tag object</param>
         /// <param name="protectedVariableChangeString">Optional string to display in logs when a protected variable is changed</param>
-        /// <returns></returns>
-        ICommandContext CreateContext(string name, object tag = null, string protectedVariableChangeString = null);
+        /// <param name="sharedContexts">
+        /// List of contexts whose commands should be shared with this context
+        /// Shared commands will only be able to execute commands in the context that they were executed in
+        /// </param>
+        ICommandContext CreateContext(string name, object tag = null, string protectedVariableChangeString = null, params ICommandContext[] sharedContexts);
 
         void DestroyContext(ICommandContext context);
 
