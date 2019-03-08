@@ -78,5 +78,10 @@ namespace SharpLife.CommandSystem.Commands
 
             return (T)accessor[member.Name];
         }
+
+        public override string ToString()
+        {
+            return $"Proxy variable {Name}: {ValueString}";
+        }
     }
 }

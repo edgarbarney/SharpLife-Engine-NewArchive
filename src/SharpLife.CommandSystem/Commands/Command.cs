@@ -42,5 +42,10 @@ namespace SharpLife.CommandSystem.Commands
         {
             OnExecute?.Invoke(command);
         }
+
+        public override string ToString()
+        {
+            return $"Command {Name}";
+        }
     }
 }

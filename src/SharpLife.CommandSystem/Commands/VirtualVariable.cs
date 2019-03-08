@@ -37,5 +37,10 @@ namespace SharpLife.CommandSystem.Commands
         {
             SetValue(value, true, false);
         }
+
+        public override string ToString()
+        {
+            return $"Virtual variable {Name}: {ValueString}";
+        }
     }
 }

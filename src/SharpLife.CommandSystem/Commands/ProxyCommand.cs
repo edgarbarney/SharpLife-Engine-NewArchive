@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SharpLife.CommandSystem.Commands
 {
@@ -87,6 +88,11 @@ namespace SharpLife.CommandSystem.Commands
             ExecuteProxy(command);
 
             base.OnCommand(command);
+        }
+
+        public override string ToString()
+        {
+            return $"Proxy command {Name}({string.Join(',', _delegate.Method.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}"))})";
         }
     }
 }
