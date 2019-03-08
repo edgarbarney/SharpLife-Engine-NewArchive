@@ -38,10 +38,8 @@ namespace SharpLife.CommandSystem.Commands
             _delegate = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
         }
 
-        internal override void OnCommand(ICommandArgs command)
+        private void ExecuteProxy(ICommandArgs command)
         {
-            base.OnCommand(command);
-
             //Resolve each argument and attempt to convert it
             var parameters = _delegate.Method.GetParameters();
             var argumentCount = parameters.Length;
@@ -72,7 +70,23 @@ namespace SharpLife.CommandSystem.Commands
                 arguments[i] = result;
             }
 
-            _delegate.DynamicInvoke(arguments);
+            //TODO: this is a bit overkill, need to decide on how this needs to be handled
+            try
+            {
+                _delegate.DynamicInvoke(arguments);
+            }
+            catch (Exception e)
+            {
+                _commandContext._logger.Error(e, "An error occurred while executing a proxy command");
+            }
+        }
+
+        internal override void OnCommand(ICommandArgs command)
+        {
+            //Execute the proxy before the other handlers to maintain consistency with non-proxy commands
+            ExecuteProxy(command);
+
+            base.OnCommand(command);
         }
     }
 }
