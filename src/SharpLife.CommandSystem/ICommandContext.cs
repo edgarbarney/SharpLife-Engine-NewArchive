@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace SharpLife.CommandSystem
 {
-    public interface ICommandContext
+    public interface ICommandContext : IDisposable
     {
         /// <summary>
         /// Name of this context

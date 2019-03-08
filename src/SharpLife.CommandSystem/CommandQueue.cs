@@ -40,9 +40,9 @@ namespace SharpLife.CommandSystem
 
         private bool CheckValidContext(CommandContext context)
         {
-            if (context._destroyed)
+            if (context._disposed)
             {
-                _logger.Information("Attempted to queue commands for destroyed context {ContextName}", context.Name);
+                _logger.Information("Attempted to queue commands for disposed context {ContextName}", context.Name);
                 return false;
             }
 

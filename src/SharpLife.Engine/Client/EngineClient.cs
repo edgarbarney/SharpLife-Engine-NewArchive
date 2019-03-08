@@ -68,6 +68,8 @@ namespace SharpLife.Engine.Client
         public void Shutdown()
         {
             UserInterface.Shutdown();
+
+            CommandContext.Dispose();
         }
     }
 }

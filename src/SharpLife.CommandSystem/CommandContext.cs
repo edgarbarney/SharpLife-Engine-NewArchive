@@ -40,7 +40,7 @@ namespace SharpLife.CommandSystem
 
         private readonly Dictionary<string, string> _aliases = new Dictionary<string, string>();
 
-        internal bool _destroyed;
+        internal bool _disposed;
 
         public string Name { get; }
 
@@ -100,6 +100,46 @@ namespace SharpLife.CommandSystem
 
                 ++sharedContext._sharedCount;
             }
+        }
+
+        ~CommandContext()
+        {
+            Dispose(false);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                if (_sharedCount > 0)
+                {
+                    throw new InvalidOperationException("Cannot destroy context that is shared with another context");
+                }
+
+                if (!_commandSystem.RemoveContext(this))
+                {
+                    //This should never happen
+                    throw new InvalidOperationException("Context was not known to the command system");
+                }
+
+                foreach (var sharedContext in _sharedContexts)
+                {
+                    --sharedContext._sharedCount;
+                }
+            }
+
+            _disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public TCommand FindCommand<TCommand>(string name)

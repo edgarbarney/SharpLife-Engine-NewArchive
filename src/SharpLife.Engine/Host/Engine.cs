@@ -259,6 +259,9 @@ namespace SharpLife.Engine.Host
             Client?.Shutdown();
 
             EventUtils.UnregisterEvents(EventSystem, new EngineEvents());
+
+            EngineContext.Dispose();
+            CommandSystem.Dispose();
         }
 
         private void SetupFileSystem(string gameDirectory)

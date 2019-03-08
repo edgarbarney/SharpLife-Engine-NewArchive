@@ -14,10 +14,11 @@
 ****/
 
 using SharpLife.CommandSystem.TypeProxies;
+using System;
 
 namespace SharpLife.CommandSystem
 {
-    public interface ICommandSystem
+    public interface ICommandSystem : IDisposable
     {
         ICommandQueue Queue { get; }
 
@@ -40,8 +41,6 @@ namespace SharpLife.CommandSystem
         /// Shared commands will only be able to execute commands in the context that they were executed in
         /// </param>
         ICommandContext CreateContext(string name, object tag = null, string protectedVariableChangeString = null, params ICommandContext[] sharedContexts);
-
-        void DestroyContext(ICommandContext context);
 
         void Execute();
     }

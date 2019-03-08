@@ -33,7 +33,9 @@ namespace SharpLife.CommandSystem
 
         private readonly List<CommandContext> _commandContexts = new List<CommandContext>();
 
-        private readonly CommandContext _sharedContext;
+        private bool _disposed;
+
+        private CommandContext _sharedContext;
 
         public ICommandQueue Queue => _queue;
 
@@ -75,6 +77,50 @@ namespace SharpLife.CommandSystem
             //Add as a shared command
             _sharedContext.RegisterCommand(new CommandInfo("wait", _ => _queue.Wait = true)
                 .WithHelpInfo("Delay execution of remaining commands until the next execution"));
+        }
+
+        ~CommandSystem()
+        {
+            Dispose(false);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _sharedContext = null;
+            }
+
+            //Dispose all remaining contexts, starting with those that are not being shared
+            while (_commandContexts.Count > 0)
+            {
+                for (var i = 0; i < _commandContexts.Count;)
+                {
+                    var context = _commandContexts[i];
+
+                    if (context._sharedCount == 0)
+                    {
+                        context.Dispose();
+                    }
+                    else
+                    {
+                        ++i;
+                    }
+                }
+            }
+
+            _disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public ITypeProxy<T> GetTypeProxy<T>()
@@ -124,35 +170,35 @@ namespace SharpLife.CommandSystem
             return context;
         }
 
-        public void DestroyContext(ICommandContext context)
+        internal bool RemoveContext(CommandContext context) => _commandContexts.Remove(context);
+
+        internal void DestroyContext(CommandContext context)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var internalContext = (CommandContext)context;
-
-            if (internalContext._destroyed)
+            if (context._disposed)
             {
                 throw new ArgumentException("Tried to destroy an already destroyed context", nameof(context));
             }
 
-            if (internalContext._sharedCount > 0)
+            if (context._sharedCount > 0)
             {
                 throw new ArgumentException("Cannot destroy context that is shared with another context", nameof(context));
             }
 
-            if (!_commandContexts.Contains(internalContext))
+            if (!_commandContexts.Contains(context))
             {
                 throw new ArgumentException(nameof(context));
             }
 
-            _commandContexts.Remove(internalContext);
+            _commandContexts.Remove(context);
 
-            internalContext._destroyed = true;
+            context._disposed = true;
 
-            foreach (var sharedContext in internalContext._sharedContexts)
+            foreach (var sharedContext in context._sharedContexts)
             {
                 --sharedContext._sharedCount;
             }
