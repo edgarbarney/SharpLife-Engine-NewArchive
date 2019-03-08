@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="FastMember" Version="1.4.1" />
     <PackageReference Include="Serilog" Version="2.8.0" />
+    <PackageReference Include="WildcardMatch" Version="1.0.6" />
   </ItemGroup>
 
   <ItemGroup>

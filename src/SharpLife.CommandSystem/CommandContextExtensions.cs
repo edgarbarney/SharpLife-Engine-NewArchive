@@ -17,6 +17,7 @@ using SharpLife.CommandSystem.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using WildcardMatch;
 
 namespace SharpLife.CommandSystem
 {
@@ -36,8 +37,6 @@ namespace SharpLife.CommandSystem
 
             IEnumerable<IBaseCommand> FindCommandsIterator()
             {
-                keyword = keyword.Trim();
-
                 if (keyword.Length == 0)
                 {
                     yield break;
@@ -45,10 +44,8 @@ namespace SharpLife.CommandSystem
 
                 foreach (var command in context.Commands.Values)
                 {
-                    //TODO: proper wildcard handling
-                    if (keyword == "*"
-                        || command.Name.Contains(keyword, StringComparison.InvariantCultureIgnoreCase)
-                        || (searchInHelpInfo && command.HelpInfo.Contains(keyword, StringComparison.InvariantCultureIgnoreCase)))
+                    if (keyword.WildcardMatch(command.Name, true)
+                        || (searchInHelpInfo && keyword.WildcardMatch(command.HelpInfo, true)))
                     {
                         yield return command;
                     }
