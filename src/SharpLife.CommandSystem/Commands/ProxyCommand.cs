@@ -29,6 +29,8 @@ namespace SharpLife.CommandSystem.Commands
     {
         private readonly TDelegate _delegate;
 
+        private readonly int _defaultValueCount;
+
         public ProxyCommand(CommandContext commandContext, string name,
             IReadOnlyList<CommandExecutor> executors,
             TDelegate @delegate,
@@ -37,6 +39,9 @@ namespace SharpLife.CommandSystem.Commands
             : base(commandContext, name, executors, flags, helpInfo, tag)
         {
             _delegate = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
+
+            //Determine how many arguments have default values
+            _defaultValueCount = _delegate.Method.GetParameters().Count(p => p.HasDefaultValue);
         }
 
         private void ExecuteProxy(ICommandArgs command)
@@ -44,10 +49,11 @@ namespace SharpLife.CommandSystem.Commands
             //Resolve each argument and attempt to convert it
             var parameters = _delegate.Method.GetParameters();
             var argumentCount = parameters.Length;
+            var minimumArgumentCount = argumentCount - _defaultValueCount;
 
-            if (command.Count < argumentCount)
+            if (command.Count < minimumArgumentCount)
             {
-                _commandContext._logger.Information("Not enough arguments for proxy command {Name}: {ExpectedCount} expected, got {ReceivedCount}", Name, argumentCount, command.Count);
+                _commandContext._logger.Information("Not enough arguments for proxy command {Name}: at least {ExpectedCount} expected (maximum {MaximumCount}, got {ReceivedCount}", Name, minimumArgumentCount, argumentCount, command.Count);
                 return;
             }
             else if (command.Count > argumentCount)
@@ -58,7 +64,9 @@ namespace SharpLife.CommandSystem.Commands
 
             var arguments = argumentCount > 0 ? new object[argumentCount] : null;
 
-            for (var i = 0; i < argumentCount; ++i)
+            int i;
+
+            for (i = 0; i < command.Count; ++i)
             {
                 var proxy = _commandContext._commandSystem.GetTypeProxy(parameters[i].ParameterType);
 
@@ -69,6 +77,12 @@ namespace SharpLife.CommandSystem.Commands
                 }
 
                 arguments[i] = result;
+            }
+
+            //Set any default arguments
+            for (; i < argumentCount; ++i)
+            {
+                arguments[i] = parameters[i].DefaultValue;
             }
 
             //TODO: this is a bit overkill, need to decide on how this needs to be handled
@@ -92,7 +106,7 @@ namespace SharpLife.CommandSystem.Commands
 
         public override string ToString()
         {
-            return $"Proxy command {Name}({string.Join(", ", _delegate.Method.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}"))})";
+            return $"Proxy command {Name}({string.Join(", ", _delegate.Method.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}" + (p.HasDefaultValue ? $" = {p.DefaultValue}" : "")))})";
         }
     }
 }
