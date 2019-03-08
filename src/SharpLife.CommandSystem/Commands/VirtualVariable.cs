@@ -15,6 +15,7 @@
 
 using SharpLife.CommandSystem.TypeProxies;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SharpLife.CommandSystem.Commands
 {
@@ -53,6 +54,16 @@ namespace SharpLife.CommandSystem.Commands
         {
             _value = value;
             IsReadOnly = isReadOnly;
+        }
+
+        public override void WriteCommandInfo(StringBuilder builder)
+        {
+            if (IsReadOnly)
+            {
+                builder.Append("Read Only ");
+            }
+
+            builder.AppendFormat("Virtual Variable {0} {1} = {2}", Type.Name, Name, ValueString);
         }
 
         public override string ToString()

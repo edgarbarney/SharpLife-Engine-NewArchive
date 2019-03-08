@@ -21,6 +21,7 @@ using SharpLife.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace SharpLife.Engine.Shared.CommandSystem
 {
@@ -212,6 +213,43 @@ namespace SharpLife.Engine.Shared.CommandSystem
                 commandContext.SetAlias(arguments[0], arguments.ArgumentsAsString(1));
             })
             .WithHelpInfo("Aliases a command to a name"));
+        }
+
+        public static ICommand AddFind(ICommandContext commandContext, ILogger logger)
+        {
+            if (commandContext == null)
+            {
+                throw new ArgumentNullException(nameof(commandContext));
+            }
+
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            return commandContext.RegisterCommand(new CommandInfo("find", arguments =>
+            {
+                if (arguments.Count != 1)
+                {
+                    logger.Information("Usage: find <keyword>");
+                    return;
+                }
+
+                var keyword = arguments[0];
+
+                var builder = new StringBuilder();
+
+                builder.AppendLine("Find results:");
+
+                foreach (var command in commandContext.FindCommands(keyword, true))
+                {
+                    command.WriteCommandInfo(builder);
+                    builder.AppendLine();
+                }
+
+                logger.Information(builder.ToString());
+            })
+            .WithHelpInfo("Finds commands and variables"));
         }
     }
 }

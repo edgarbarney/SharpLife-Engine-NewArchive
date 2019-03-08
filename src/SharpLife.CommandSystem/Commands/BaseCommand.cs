@@ -14,6 +14,7 @@
 ****/
 
 using System;
+using System.Text;
 
 namespace SharpLife.CommandSystem.Commands
 {
@@ -57,5 +58,7 @@ namespace SharpLife.CommandSystem.Commands
         /// <param name="command"></param>
         /// <exception cref="InvalidCommandSyntaxException">When the command is invoked with the wrong syntax</exception>
         internal abstract void OnCommand(ICommandArgs command);
+
+        public abstract void WriteCommandInfo(StringBuilder builder);
     }
 }

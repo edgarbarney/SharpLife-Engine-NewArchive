@@ -92,7 +92,7 @@ namespace SharpLife.CommandSystem.Commands
 
         public override string ToString()
         {
-            return $"Proxy command {Name}({string.Join(',', _delegate.Method.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}"))})";
+            return $"Proxy command {Name}({string.Join(", ", _delegate.Method.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}"))})";
         }
     }
 }

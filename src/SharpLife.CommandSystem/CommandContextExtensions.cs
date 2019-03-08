@@ -15,6 +15,7 @@
 
 using SharpLife.CommandSystem.Commands;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace SharpLife.CommandSystem
@@ -23,5 +24,36 @@ namespace SharpLife.CommandSystem
     {
         public static IVariable<T> RegisterVariable<T>(this ICommandContext context, string name, Expression<Func<T>> expression, string helpInfo = "")
             => context.RegisterVariable(new ProxyVariableInfo<T>(name, expression).WithHelpInfo(helpInfo));
+
+        public static IEnumerable<IBaseCommand> FindCommands(this ICommandContext context, string keyword, bool searchInHelpInfo = true)
+        {
+            if (keyword == null)
+            {
+                throw new ArgumentNullException(nameof(keyword));
+            }
+
+            return FindCommandsIterator();
+
+            IEnumerable<IBaseCommand> FindCommandsIterator()
+            {
+                keyword = keyword.Trim();
+
+                if (keyword.Length == 0)
+                {
+                    yield break;
+                }
+
+                foreach (var command in context.Commands.Values)
+                {
+                    //TODO: proper wildcard handling
+                    if (keyword == "*"
+                        || command.Name.Contains(keyword, StringComparison.InvariantCultureIgnoreCase)
+                        || (searchInHelpInfo && command.HelpInfo.Contains(keyword, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        yield return command;
+                    }
+                }
+            }
+        }
     }
 }

@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SharpLife.CommandSystem.Commands
 {
@@ -41,6 +42,11 @@ namespace SharpLife.CommandSystem.Commands
         internal override void OnCommand(ICommandArgs command)
         {
             OnExecute?.Invoke(command);
+        }
+
+        public sealed override void WriteCommandInfo(StringBuilder builder)
+        {
+            builder.AppendFormat(ToString());
         }
 
         public override string ToString()

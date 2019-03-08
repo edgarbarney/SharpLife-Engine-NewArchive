@@ -13,6 +13,8 @@
 *
 ****/
 
+using System.Text;
+
 namespace SharpLife.CommandSystem.Commands
 {
     public interface IBaseCommand
@@ -29,5 +31,12 @@ namespace SharpLife.CommandSystem.Commands
         string HelpInfo { get; }
 
         object Tag { get; }
+
+        /// <summary>
+        /// Write information about the command to a given builder
+        /// This should be information that describes only instance-specific elements
+        /// </summary>
+        /// <param name="builder"></param>
+        void WriteCommandInfo(StringBuilder builder);
     }
 }

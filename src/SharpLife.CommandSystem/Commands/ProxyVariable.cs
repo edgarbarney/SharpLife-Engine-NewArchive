@@ -17,6 +17,7 @@ using FastMember;
 using SharpLife.CommandSystem.TypeProxies;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 
 namespace SharpLife.CommandSystem.Commands
 {
@@ -87,6 +88,16 @@ namespace SharpLife.CommandSystem.Commands
             accessor = ObjectAccessor.Create(instance);
 
             return (T)accessor[member.Name];
+        }
+
+        public override void WriteCommandInfo(StringBuilder builder)
+        {
+            if (IsReadOnly)
+            {
+                builder.Append("Read Only ");
+            }
+
+            builder.AppendFormat("Proxy Variable {0} {1} = {2}", Type.Name, Name, ValueString);
         }
 
         public override string ToString()
