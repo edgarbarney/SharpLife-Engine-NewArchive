@@ -18,27 +18,20 @@ using System.Collections.Generic;
 
 namespace SharpLife.CommandSystem.Commands
 {
-    /// <summary>
-    /// Contains information about a command
-    /// </summary>
-    public class CommandInfo : BaseCommandInfo<CommandInfo>
+    public abstract class AbstractCommandInfo<TDerived> : BaseCommandInfo<TDerived>
+        where TDerived : AbstractCommandInfo<TDerived>
     {
         private readonly List<CommandExecutor> _onExecuteDelegates = new List<CommandExecutor>();
 
         public IReadOnlyList<CommandExecutor> Executors => _onExecuteDelegates;
 
-        /// <summary>
-        /// Creates a new info instance
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="executor">Must be valid</param>
-        public CommandInfo(string name, CommandExecutor executor)
+        protected AbstractCommandInfo(string name, CommandExecutor executor)
             : base(name)
         {
             _onExecuteDelegates.Add(executor ?? throw new ArgumentNullException(nameof(executor)));
         }
 
-        protected CommandInfo(string name)
+        protected AbstractCommandInfo(string name)
             : base(name)
         {
         }
@@ -47,16 +40,31 @@ namespace SharpLife.CommandSystem.Commands
         /// Adds another executor
         /// </summary>
         /// <param name="executor">Must be valid</param>
-        /// <returns></returns>
-        public CommandInfo WithCallback(CommandExecutor executor)
+        public TDerived WithCallback(CommandExecutor executor)
         {
             _onExecuteDelegates.Add(executor ?? throw new ArgumentNullException(nameof(executor)));
 
-            return this;
+            return this as TDerived;
         }
     }
 
-    public sealed class ProxyCommandInfo<TDelegate> : CommandInfo
+    /// <summary>
+    /// Contains information about a command
+    /// </summary>
+    public sealed class CommandInfo : AbstractCommandInfo<CommandInfo>
+    {
+        /// <summary>
+        /// Creates a new info instance
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="executor">Must be valid</param>
+        public CommandInfo(string name, CommandExecutor executor)
+            : base(name, executor)
+        {
+        }
+    }
+
+    public sealed class ProxyCommandInfo<TDelegate> : AbstractCommandInfo<ProxyCommandInfo<TDelegate>>
         where TDelegate : Delegate
     {
         public TDelegate Delegate { get; }
