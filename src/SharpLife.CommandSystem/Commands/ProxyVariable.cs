@@ -48,7 +48,8 @@ namespace SharpLife.CommandSystem.Commands
         }
 
         public ProxyVariable(CommandContext commandContext, string name, CommandFlags flags, string helpInfo,
-            object instance, MemberInfo member, ITypeProxy<T> typeProxy,
+            object instance, MemberInfo member, bool? isReadOnly,
+            ITypeProxy<T> typeProxy,
             IReadOnlyList<VariableChangeHandler<T>> changeHandlers,
             object tag = null)
             : base(commandContext, name, CreateAccessorAndGetValue(instance, member, out var accessor), flags, helpInfo, typeProxy, changeHandlers, tag)
@@ -56,19 +57,28 @@ namespace SharpLife.CommandSystem.Commands
             _accessor = accessor;
             _member = member;
 
-            switch (_member)
+            if (isReadOnly.HasValue)
             {
-                case FieldInfo field:
-                    {
-                        IsReadOnly = field.IsLiteral || field.IsInitOnly;
-                        break;
-                    }
+                IsReadOnly = isReadOnly.Value;
+            }
+            else
+            {
+                //TODO: maybe convert this into an extension method
+                switch (_member)
+                {
+                    case FieldInfo field:
+                        {
+                            IsReadOnly = field.IsLiteral || field.IsInitOnly;
+                            break;
+                        }
 
-                case PropertyInfo prop:
-                    {
-                        IsReadOnly = !prop.CanWrite;
-                        break;
-                    }
+                    case PropertyInfo prop:
+                        {
+                            //Treat properties with non-public setters as read only
+                            IsReadOnly = prop.GetSetMethod(false) == null;
+                            break;
+                        }
+                }
             }
         }
 

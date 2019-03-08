@@ -29,6 +29,8 @@ namespace SharpLife.CommandSystem.Commands
     {
         internal readonly List<VariableChangeHandler<T>> _onChangeDelegates = new List<VariableChangeHandler<T>>();
 
+        internal bool? _isReadOnly;
+
         public IReadOnlyList<VariableChangeHandler<T>> ChangeHandlers => _onChangeDelegates;
 
         internal VariableFiltersBuilder<T> _filters;
@@ -46,6 +48,13 @@ namespace SharpLife.CommandSystem.Commands
             }
 
             _onChangeDelegates.Add(changeHandler);
+
+            return this as TDerived;
+        }
+
+        public TDerived MakeReadOnly()
+        {
+            _isReadOnly = true;
 
             return this as TDerived;
         }

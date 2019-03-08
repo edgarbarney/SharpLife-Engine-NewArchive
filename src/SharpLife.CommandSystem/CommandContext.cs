@@ -242,7 +242,7 @@ namespace SharpLife.CommandSystem
 
             var typeProxy = _commandSystem.GetTypeProxy<T>();
 
-            var variable = new VirtualVariable<T>(this, info.Name, info.Value, info.Flags, info.HelpInfo, typeProxy, info.CreateChangeHandlerList(), info.Tag);
+            var variable = new VirtualVariable<T>(this, info.Name, info.Value, info._isReadOnly ?? false, info.Flags, info.HelpInfo, typeProxy, info.CreateChangeHandlerList(), info.Tag);
 
             _commands.Add(variable.Name, variable);
 
@@ -293,19 +293,11 @@ namespace SharpLife.CommandSystem
                 {
                     throw new ArgumentException($"The property {prop.Name} of type {prop.DeclaringType.FullName} has a non-public get accessor", nameof(expression));
                 }
-
-                var setter = prop.GetSetMethod(true);
-
-                //Allow null setters (read only)
-                if (setter?.IsPublic == false)
-                {
-                    throw new ArgumentException($"The property {prop.Name} of type {prop.DeclaringType.FullName} has a non-public set accessor", nameof(expression));
-                }
             }
 
             var typeProxy = _commandSystem.GetTypeProxy<T>();
 
-            var variable = new ProxyVariable<T>(this, info.Name, info.Flags, info.HelpInfo, instance, memberInfo, typeProxy, info.CreateChangeHandlerList(), info.Tag);
+            var variable = new ProxyVariable<T>(this, info.Name, info.Flags, info.HelpInfo, instance, memberInfo, info._isReadOnly, typeProxy, info.CreateChangeHandlerList(), info.Tag);
 
             _commands.Add(variable.Name, variable);
 
