@@ -39,10 +39,10 @@ namespace SharpLife.CommandSystem.Commands
         /// </summary>
         public bool Veto { get; set; }
 
-        internal VariableChangeEvent(Variable<T> variable, T oldValue)
+        internal VariableChangeEvent(Variable<T> variable, in T newValue, in T oldValue)
         {
             _variable = variable ?? throw new ArgumentNullException(nameof(variable));
-            Value = _variable.Value;
+            Value = newValue;
             OldValue = oldValue;
 
             Veto = false;
