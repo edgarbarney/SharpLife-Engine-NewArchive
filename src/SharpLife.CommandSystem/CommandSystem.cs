@@ -172,38 +172,6 @@ namespace SharpLife.CommandSystem
 
         internal bool RemoveContext(CommandContext context) => _commandContexts.Remove(context);
 
-        internal void DestroyContext(CommandContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (context._disposed)
-            {
-                throw new ArgumentException("Tried to destroy an already destroyed context", nameof(context));
-            }
-
-            if (context._sharedCount > 0)
-            {
-                throw new ArgumentException("Cannot destroy context that is shared with another context", nameof(context));
-            }
-
-            if (!_commandContexts.Contains(context))
-            {
-                throw new ArgumentException(nameof(context));
-            }
-
-            _commandContexts.Remove(context);
-
-            context._disposed = true;
-
-            foreach (var sharedContext in context._sharedContexts)
-            {
-                --sharedContext._sharedCount;
-            }
-        }
-
         public void Execute()
         {
             _queue.Execute();
