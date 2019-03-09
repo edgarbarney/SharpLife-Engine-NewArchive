@@ -270,5 +270,51 @@ namespace SharpLife.Engine.Shared.CommandSystem
             return commandContext.RegisterCommand(new ProxyCommandInfo<Action<string, bool, bool>>("find", new FindCommands(commandContext, logger).Find)
                 .WithHelpInfo("Finds commands and variables"));
         }
+
+        private sealed class HelpCommand
+        {
+            private readonly ICommandContext _context;
+            private readonly ILogger _logger;
+
+            public HelpCommand(ICommandContext context, ILogger logger)
+            {
+                _context = context ?? throw new ArgumentNullException(nameof(context));
+                _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            }
+
+            public void Help(string commandName)
+            {
+                var command = _context.FindCommand<IBaseCommand>(commandName);
+
+                if (command != null)
+                {
+                    var builder = new StringBuilder();
+
+                    command.WriteCommandInfo(builder);
+
+                    _logger.Information("{CommandName}: {Description}\n{HelpInfo}", command.Name, builder.ToString(), command.HelpInfo);
+                }
+                else
+                {
+                    _logger.Information("No such command {CommandName}", commandName);
+                }
+            }
+        }
+
+        public static ICommand AddHelp(this ICommandContext commandContext, ILogger logger)
+        {
+            if (commandContext == null)
+            {
+                throw new ArgumentNullException(nameof(commandContext));
+            }
+
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            return commandContext.RegisterCommand(new ProxyCommandInfo<Action<string>>("help", new HelpCommand(commandContext, logger).Help)
+                .WithHelpInfo("Displays the help info for a given command"));
+        }
     }
 }

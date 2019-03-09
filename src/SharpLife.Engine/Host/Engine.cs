@@ -164,6 +164,7 @@ namespace SharpLife.Engine.Host
             EngineContext.AddEcho(Logger);
             EngineContext.AddAlias(Logger);
             EngineContext.AddFind(Logger);
+            EngineContext.AddHelp(Logger);
 
             _fpsMax = EngineContext.RegisterVariable(
                 new VirtualVariableInfo<uint>("fps_max", DefaultFPS)
