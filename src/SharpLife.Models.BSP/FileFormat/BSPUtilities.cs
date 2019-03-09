@@ -91,7 +91,7 @@ namespace SharpLife.Models.BSP.FileFormat
         {
             if (string.IsNullOrWhiteSpace(entities))
             {
-                throw new ArgumentException(nameof(entities));
+                throw new ArgumentException("Entities string must be valid", nameof(entities));
             }
 
             //Scan the worldspawn entity for the wad keyvalue

@@ -35,7 +35,7 @@ namespace SharpLife.Utility.Events
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException(nameof(name));
+                throw new ArgumentException("Event name must be valid", nameof(name));
             }
         }
 

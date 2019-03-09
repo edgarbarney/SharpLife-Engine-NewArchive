@@ -43,7 +43,7 @@ namespace SharpLife.CommandSystem.Commands
 
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException(nameof(name));
+                throw new ArgumentException("Command name must be valid", nameof(name));
             }
 
             Name = name;

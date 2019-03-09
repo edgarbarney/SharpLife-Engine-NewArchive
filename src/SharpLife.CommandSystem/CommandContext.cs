@@ -315,7 +315,7 @@ namespace SharpLife.CommandSystem
 
             if (string.IsNullOrWhiteSpace(aliasName))
             {
-                throw new ArgumentException(nameof(aliasName));
+                throw new ArgumentException("Alias name must be valid", nameof(aliasName));
             }
 
             if (commandText == null)

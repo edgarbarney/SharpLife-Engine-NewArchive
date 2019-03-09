@@ -54,7 +54,7 @@ namespace SharpLife.Renderer.Utility
         {
             if (newImageData == null)
             {
-                throw new ArgumentException(nameof(newImageData));
+                throw new ArgumentNullException(nameof(newImageData));
             }
 
             if (newImageData.Width > _image.Width)

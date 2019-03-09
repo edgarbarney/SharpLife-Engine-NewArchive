@@ -44,27 +44,27 @@ namespace SharpLife.Utility.FileSystem
         {
             if (string.IsNullOrWhiteSpace(baseDirectory))
             {
-                throw new ArgumentException(nameof(baseDirectory));
+                throw new ArgumentException("Filesystem base directory must be valid", nameof(baseDirectory));
             }
 
             if (string.IsNullOrWhiteSpace(defaultGameDirectory))
             {
-                throw new ArgumentException(nameof(defaultGameDirectory));
+                throw new ArgumentException("Filesystem default game directory must be valid", nameof(defaultGameDirectory));
             }
 
             if (string.IsNullOrWhiteSpace(gameDirectory))
             {
-                throw new ArgumentException(nameof(gameDirectory));
+                throw new ArgumentException("Filesystem game directory must be valid", nameof(gameDirectory));
             }
 
             if (string.IsNullOrWhiteSpace(defaultLanguage))
             {
-                throw new ArgumentException(nameof(defaultLanguage));
+                throw new ArgumentException("Filesystem default language must be valid", nameof(defaultLanguage));
             }
 
             if (string.IsNullOrWhiteSpace(language))
             {
-                throw new ArgumentException(nameof(language));
+                throw new ArgumentException("Filesystem language must be valid", nameof(language));
             }
 
             var addLanguage = language != defaultLanguage;
