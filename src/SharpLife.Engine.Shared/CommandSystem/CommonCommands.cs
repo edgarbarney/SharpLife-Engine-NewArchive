@@ -248,6 +248,7 @@ namespace SharpLife.Engine.Shared.CommandSystem
                 {
                     command.WriteCommandInfo(builder);
                     builder.AppendLine();
+                    builder.AppendLine(command.HelpInfo);
                 }
 
                 _logger.Information(builder.ToString());
