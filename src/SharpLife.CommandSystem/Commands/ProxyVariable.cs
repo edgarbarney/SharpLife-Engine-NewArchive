@@ -31,21 +31,10 @@ namespace SharpLife.CommandSystem.Commands
 
         public override bool IsReadOnly { get; }
 
-        public override T Value
+        protected override T InternalValue
         {
             get => (T)_accessor[_member.Name];
-
-            set
-            {
-                if (!IsReadOnly)
-                {
-                    _accessor[_member.Name] = value;
-                }
-                else
-                {
-                    LogReadOnlyMessage();
-                }
-            }
+            set => _accessor[_member.Name] = value;
         }
 
         public ProxyVariable(CommandContext commandContext, string name, CommandFlags flags, string helpInfo,

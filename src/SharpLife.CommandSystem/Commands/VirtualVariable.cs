@@ -25,26 +25,9 @@ namespace SharpLife.CommandSystem.Commands
     /// <typeparam name="T"></typeparam>
     internal sealed class VirtualVariable<T> : Variable<T>
     {
-        private T _value;
-
         public override bool IsReadOnly { get; }
 
-        public override T Value
-        {
-            get => _value;
-
-            set
-            {
-                if (!IsReadOnly)
-                {
-                    _value = value;
-                }
-                else
-                {
-                    LogReadOnlyMessage();
-                }
-            }
-        }
+        protected override T InternalValue { get; set; }
 
         public VirtualVariable(CommandContext commandContext, string name, in T value, bool isReadOnly, CommandFlags flags, string helpInfo,
             ITypeProxy<T> typeProxy,
@@ -52,7 +35,7 @@ namespace SharpLife.CommandSystem.Commands
             object tag = null)
             : base(commandContext, name, value, flags, helpInfo, typeProxy, changeHandlers, tag)
         {
-            _value = value;
+            InternalValue = value;
             IsReadOnly = isReadOnly;
         }
 

@@ -43,7 +43,24 @@ namespace SharpLife.CommandSystem.Commands
             set => SetString(value);
         }
 
-        public abstract T Value { get; set; }
+        public T Value
+        {
+            get => InternalValue;
+
+            set
+            {
+                if (!IsReadOnly)
+                {
+                    SetValue(value);
+                }
+                else
+                {
+                    LogReadOnlyMessage();
+                }
+            }
+        }
+
+        protected abstract T InternalValue { get; set; }
 
         public ITypeProxy<T> Proxy { get; }
 
@@ -73,7 +90,7 @@ namespace SharpLife.CommandSystem.Commands
             Value = InitialValue;
         }
 
-        protected void LogReadOnlyMessage() => _commandContext._logger.Information("The variable {Name} is read only", Name);
+        private void LogReadOnlyMessage() => _commandContext._logger.Information("The variable {Name} is read only", Name);
 
         private void SetString(string stringValue, bool suppressChangeMessage = false)
         {
@@ -124,7 +141,7 @@ namespace SharpLife.CommandSystem.Commands
 
             if (changeEvent.Different)
             {
-                Value = changeEvent.Value;
+                InternalValue = changeEvent.Value;
 
                 if (!suppressChangeMessage
                     && (Flags & CommandFlags.UnLogged) == 0)
