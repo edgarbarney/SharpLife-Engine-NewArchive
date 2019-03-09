@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.CommandSystem.Commands.VariableFilters;
+using SharpLife.CommandSystem.TypeProxies;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -30,6 +31,8 @@ namespace SharpLife.CommandSystem.Commands
         internal readonly List<VariableChangeHandler<T>> _onChangeDelegates = new List<VariableChangeHandler<T>>();
 
         internal bool? _isReadOnly;
+
+        internal ITypeProxy<T> _typeProxy;
 
         public IReadOnlyList<VariableChangeHandler<T>> ChangeHandlers => _onChangeDelegates;
 
@@ -55,6 +58,13 @@ namespace SharpLife.CommandSystem.Commands
         public TDerived MakeReadOnly()
         {
             _isReadOnly = true;
+
+            return this as TDerived;
+        }
+
+        public TDerived WithTypeProxy(ITypeProxy<T> typeProxy)
+        {
+            _typeProxy = typeProxy ?? throw new ArgumentNullException(nameof(typeProxy));
 
             return this as TDerived;
         }

@@ -246,7 +246,7 @@ namespace SharpLife.CommandSystem
                 return existingCommand;
             }
 
-            var typeProxy = _commandSystem.GetTypeProxy<T>();
+            var typeProxy = info._typeProxy ?? _commandSystem.GetTypeProxy<T>();
 
             var variable = new VirtualVariable<T>(this, info.Name, info.Value, info._isReadOnly ?? false, info.Flags, info.HelpInfo, typeProxy, info.CreateChangeHandlerList(), info.Tag);
 
@@ -301,7 +301,7 @@ namespace SharpLife.CommandSystem
                 }
             }
 
-            var typeProxy = _commandSystem.GetTypeProxy<T>();
+            var typeProxy = info._typeProxy ?? _commandSystem.GetTypeProxy<T>();
 
             var variable = new ProxyVariable<T>(this, info.Name, info.Flags, info.HelpInfo, instance, memberInfo, info._isReadOnly, typeProxy, info.CreateChangeHandlerList(), info.Tag);
 
