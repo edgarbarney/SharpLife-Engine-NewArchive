@@ -27,6 +27,8 @@ namespace SharpLife.CommandSystem
         internal readonly ILogger _logger;
         internal readonly IFormatProvider _provider;
 
+        private readonly Dictionary<Type, ITypeProxy> _parameterTypeProxies = new Dictionary<Type, ITypeProxy>();
+
         private readonly Dictionary<Type, ITypeProxy> _typeProxies = new Dictionary<Type, ITypeProxy>();
 
         internal readonly CommandQueue _queue;
@@ -143,6 +145,19 @@ namespace SharpLife.CommandSystem
             throw new ArgumentException($"No type proxy for type {type.FullName}", nameof(type));
         }
 
+        internal ITypeProxy GetParameterTypeProxy(Type type)
+        {
+            if (!_parameterTypeProxies.TryGetValue(type, out var proxy))
+            {
+                //Attempt to construct it
+                proxy = (ITypeProxy)Activator.CreateInstance(type);
+
+                _parameterTypeProxies.Add(type, proxy);
+            }
+
+            return proxy;
+        }
+
         public void AddTypeProxy<T>(ITypeProxy<T> typeProxy)
         {
             if (typeProxy == null)
@@ -156,6 +171,8 @@ namespace SharpLife.CommandSystem
             }
 
             _typeProxies.Add(typeof(T), typeProxy);
+
+            _parameterTypeProxies.Add(typeProxy.GetType(), typeProxy);
         }
 
         public ICommandContext CreateContext(string name, object tag = null, string protectedVariableChangeString = null, params ICommandContext[] sharedContexts)

@@ -13,9 +13,11 @@
 *
 ****/
 
+using SharpLife.CommandSystem.TypeProxies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace SharpLife.CommandSystem.Commands
 {
@@ -29,6 +31,8 @@ namespace SharpLife.CommandSystem.Commands
     {
         private readonly TDelegate _delegate;
 
+        private readonly ITypeProxy[] _typeProxies;
+
         private readonly int _defaultValueCount;
 
         public ProxyCommand(CommandContext commandContext, string name,
@@ -40,8 +44,31 @@ namespace SharpLife.CommandSystem.Commands
         {
             _delegate = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
 
+            _typeProxies = _delegate.Method.GetParameters().Select(GetProxy).ToArray();
+
             //Determine how many arguments have default values
             _defaultValueCount = _delegate.Method.GetParameters().Count(p => p.HasDefaultValue);
+        }
+
+        private ITypeProxy GetProxy(ParameterInfo info)
+        {
+            var customProxy = info.GetCustomAttribute<TypeProxyAttribute>();
+
+            if (customProxy != null)
+            {
+                var type = customProxy.Type;
+
+                var interfaceType = typeof(ITypeProxy<>).MakeGenericType(info.ParameterType);
+
+                if (!interfaceType.IsAssignableFrom(type))
+                {
+                    throw new ArgumentException($"Custom type proxy {type.FullName} must implement ITypeProxy<{info.ParameterType.FullName}>");
+                }
+
+                return _commandContext._commandSystem.GetParameterTypeProxy(type);
+            }
+
+            return _commandContext._commandSystem.GetTypeProxy(info.ParameterType);
         }
 
         private void ExecuteProxy(ICommandArgs command)
@@ -68,7 +95,7 @@ namespace SharpLife.CommandSystem.Commands
 
             for (i = 0; i < command.Count; ++i)
             {
-                var proxy = _commandContext._commandSystem.GetTypeProxy(parameters[i].ParameterType);
+                var proxy = _typeProxies[i];
 
                 if (!proxy.TryParse(command[i], _commandContext._commandSystem._provider, out var result))
                 {
