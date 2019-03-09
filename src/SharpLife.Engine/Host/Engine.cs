@@ -16,7 +16,6 @@
 using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
-using SharpLife.CommandSystem.Commands.VariableFilters;
 using SharpLife.Engine.Client;
 using SharpLife.Engine.Shared;
 using SharpLife.Engine.Shared.CommandSystem;
@@ -169,16 +168,17 @@ namespace SharpLife.Engine.Host
             _fpsMax = EngineContext.RegisterVariable(
                 new VirtualVariableInfo<uint>("fps_max", DefaultFPS)
                 .WithHelpInfo("Sets the maximum frames per second")
-                //Avoid negative maximum
-                .ConfigureFilters(filters => filters.WithMinMaxFilter(0, MaximumFPS))
                 .WithChangeHandler((ref VariableChangeEvent<uint> @event) =>
                 {
+                    @event.Value = Math.Min(@event.Value, MaximumFPS);
+
                     var desiredFPS = @event.Value;
 
                     if (desiredFPS == 0)
                     {
                         desiredFPS = MaximumFPS;
                     }
+
                     _desiredFrameLengthSeconds = 1.0 / desiredFPS;
                 }));
 
