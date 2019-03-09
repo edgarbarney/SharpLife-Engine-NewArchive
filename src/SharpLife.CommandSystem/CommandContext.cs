@@ -17,6 +17,7 @@ using Serilog;
 using SharpLife.CommandSystem.Commands;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -81,6 +82,11 @@ namespace SharpLife.CommandSystem
             ProtectedVariableChangeString = protectedVariableChangeString;
 
             _sharedContexts = sharedContexts;
+
+            if (_sharedContexts.Length != _sharedContexts.Distinct().Count())
+            {
+                throw new ArgumentException("Cannot specify the same context for sharing multiple times when creating contexts", nameof(sharedContexts));
+            }
 
             foreach (var sharedContext in _sharedContexts)
             {
