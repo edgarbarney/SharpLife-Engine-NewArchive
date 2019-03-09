@@ -101,7 +101,7 @@ namespace SharpLife.CommandSystem.Commands
                 return;
             }
 
-            var changeEvent = new VariableChangeEvent<T>(this, Value, value);
+            var changeEvent = new VariableChangeEvent<T>(this, value, Value);
 
             if (invokeChangeHandlers)
             {
