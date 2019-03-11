@@ -23,7 +23,7 @@ namespace SharpLife.CommandSystem.TypeProxies
         public override bool TryParse(string value, IFormatProvider provider, out bool result) => bool.TryParse(value, out result);
     }
 
-    public class CharTypeProxy : BaseFormattableTypeProxy<char>
+    public class CharTypeProxy : BaseTypeProxy<char>
     {
         public override bool TryParse(string value, IFormatProvider provider, out char result) => char.TryParse(value, out result);
     }
