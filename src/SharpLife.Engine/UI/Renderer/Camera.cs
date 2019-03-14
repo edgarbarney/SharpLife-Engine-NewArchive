@@ -192,8 +192,13 @@ namespace SharpLife.Engine.UI.Renderer
     public struct CameraInfo
     {
         public Vector3 CameraPosition_WorldSpace;
+#pragma warning disable CS0169 // Remove unused member declaration.
         private float _padding1;
+#pragma warning restore CS0169 // Remove unused member declaration.
+
         public Vector3 CameraLookDirection;
+#pragma warning disable CS0169 // Remove unused member declaration.
         private float _padding2;
+#pragma warning restore CS0169 // Remove unused member declaration.
     }
 }
