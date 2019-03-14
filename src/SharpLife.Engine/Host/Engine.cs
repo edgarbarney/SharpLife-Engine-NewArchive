@@ -29,7 +29,6 @@ using SharpLife.Utility;
 using SharpLife.Utility.Events;
 using SharpLife.Utility.FileSystem;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -42,7 +41,7 @@ namespace SharpLife.Engine.Host
     /// </summary>
     internal sealed class Engine
     {
-        private static readonly List<string> ExecPathIDs = new List<string>
+        private static readonly string[] ExecPathIDs = new[]
         {
             FileSystemConstants.PathID.GameConfig,
             FileSystemConstants.PathID.Game,

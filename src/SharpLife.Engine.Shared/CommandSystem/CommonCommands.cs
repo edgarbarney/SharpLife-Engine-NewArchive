@@ -21,6 +21,7 @@ using SharpLife.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace SharpLife.Engine.Shared.CommandSystem
@@ -83,7 +84,7 @@ namespace SharpLife.Engine.Shared.CommandSystem
         /// <param name="fileSystem"></param>
         /// <param name="gameConfigPathIDs">he game config path IDs to use for the exec command</param>
         /// <returns></returns>
-        public static ICommand AddExec(this ICommandContext commandContext, ILogger logger, IFileSystem fileSystem, IReadOnlyList<string> gameConfigPathIDs)
+        public static ICommand AddExec(this ICommandContext commandContext, ILogger logger, IFileSystem fileSystem, IEnumerable<string> gameConfigPathIDs)
         {
             if (commandContext == null)
             {
@@ -100,7 +101,7 @@ namespace SharpLife.Engine.Shared.CommandSystem
                 throw new ArgumentNullException(nameof(gameConfigPathIDs));
             }
 
-            if (gameConfigPathIDs.Count == 0)
+            if (!gameConfigPathIDs.Any())
             {
                 throw new ArgumentException("You must provide at least one game config path ID", nameof(gameConfigPathIDs));
             }
