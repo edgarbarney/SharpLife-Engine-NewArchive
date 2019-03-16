@@ -15,6 +15,7 @@
 
 using Serilog;
 using SharpLife.CommandSystem;
+using SharpLife.Engine.Client;
 using SharpLife.Engine.UI.Renderer.Objects;
 using SharpLife.FileSystem;
 using SharpLife.Utility;
@@ -36,8 +37,6 @@ namespace SharpLife.Engine.UI.Renderer
 
         private readonly SceneContext _sc;
 
-        private readonly ImGuiRenderable _imguiRenderable;
-
         private readonly FinalPass _finalPass;
 
         private readonly CommandList _frameCommands;
@@ -48,8 +47,15 @@ namespace SharpLife.Engine.UI.Renderer
 
         public Scene Scene { get; }
 
-        public Renderer(ILogger logger, ITime engineTime, ICommandContext commandContext, IFileSystem fileSystem, UserInterface userInterface, string shadersDirectory)
+        public ImGuiRenderable ImGui { get; }
+
+        public Renderer(ILogger logger, ITime engineTime, ICommandContext commandContext, IFileSystem fileSystem, UserInterface userInterface, EngineClient client, string shadersDirectory)
         {
+            if (client == null)
+            {
+                throw new ArgumentNullException(nameof(client));
+            }
+
             _userInterface = userInterface ?? throw new ArgumentNullException(nameof(userInterface));
             _engineTime = engineTime ?? throw new ArgumentNullException(nameof(engineTime));
 
@@ -58,21 +64,21 @@ namespace SharpLife.Engine.UI.Renderer
             //It isn't needed right now so it should be disabled for the time being
             var options = new GraphicsDeviceOptions(false, null/*PixelFormat.R8_G8_B8_A8_UNorm*/, false, ResourceBindingModel.Improved, true, true);
 
-            _gd = GraphicsDeviceUtils.CreateGraphicsDevice(logger, userInterface.Window, options, GraphicsBackend.OpenGL);
+            _gd = GraphicsDeviceUtils.CreateGraphicsDevice(logger, _userInterface.Window, options, GraphicsBackend.OpenGL);
 
             _gd.SyncToVerticalBlank = false;
 
-            userInterface.Window.GetSize(out var width, out var height);
+            _userInterface.Window.GetSize(out var width, out var height);
 
-            Scene = new Scene(userInterface.InputSystem, commandContext, _gd, width, height);
+            Scene = new Scene(_userInterface.InputSystem, commandContext, _gd, width, height);
 
-            _imguiRenderable = new ImGuiRenderable(userInterface.InputSystem, width, height);
+            ImGui = new ImGuiRenderable(_userInterface.InputSystem, width, height, logger, client);
 
-            _resizeHandled += _imguiRenderable.WindowResized;
+            _resizeHandled += ImGui.WindowResized;
 
-            Scene.AddContainer(_imguiRenderable);
-            Scene.AddRenderable(_imguiRenderable);
-            Scene.AddUpdateable(_imguiRenderable);
+            Scene.AddContainer(ImGui);
+            Scene.AddRenderable(ImGui);
+            Scene.AddUpdateable(ImGui);
 
             //Needed so the result can be properly adjusted to the target coordinate system
             //Without this, nothing will be visible on-screen
@@ -95,7 +101,7 @@ namespace SharpLife.Engine.UI.Renderer
             _gd.SubmitCommands(initCL);
             initCL.Dispose();
 
-            userInterface.Window.Resized += WindowResized;
+            _userInterface.Window.Resized += WindowResized;
         }
 
         private void WindowResized()

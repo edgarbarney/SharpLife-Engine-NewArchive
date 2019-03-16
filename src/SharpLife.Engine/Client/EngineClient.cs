@@ -15,6 +15,7 @@
 
 using SDL2;
 using SharpLife.CommandSystem;
+using SharpLife.Engine.Shared.Logging;
 using SharpLife.Engine.UI;
 using System;
 
@@ -31,6 +32,12 @@ namespace SharpLife.Engine.Client
 
         public UserInterface UserInterface { get; }
 
+        public ILogListener LogListener
+        {
+            get => _engine.LogTextWriter.Listener;
+            set => _engine.LogTextWriter.Listener = value;
+        }
+
         public EngineClient(Host.Engine engine)
         {
             _engine = engine ?? throw new ArgumentNullException(nameof(engine));
@@ -44,7 +51,7 @@ namespace SharpLife.Engine.Client
                 gameWindowName = _engine.EngineConfiguration.GameName;
             }
 
-            UserInterface = new UserInterface(_engine.Logger, _engine.EngineTime, _engine.FileSystem, CommandContext,
+            UserInterface = new UserInterface(_engine.Logger, _engine.EngineTime, _engine.FileSystem, CommandContext, this,
                 _engine.CommandLine.Contains("-noontop"), gameWindowName, _engine.CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
 
             UserInterface.Quit += _engine.Exit;

@@ -16,6 +16,7 @@
 using SDL2;
 using Serilog;
 using SharpLife.CommandSystem;
+using SharpLife.Engine.Client;
 using SharpLife.Engine.Shared;
 using SharpLife.FileSystem;
 using SharpLife.Input;
@@ -44,7 +45,7 @@ namespace SharpLife.Engine.UI
         /// </summary>
         public event Action Quit;
 
-        public UserInterface(ILogger logger, ITime engineTime, IFileSystem fileSystem, ICommandContext commandContext,
+        public UserInterface(ILogger logger, ITime engineTime, IFileSystem fileSystem, ICommandContext commandContext, EngineClient client,
             bool noOnTop, string windowTitle, SDL.SDL_WindowFlags additionalFlags = 0)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -67,7 +68,7 @@ namespace SharpLife.Engine.UI
 
             Window.Center();
 
-            _renderer = new Renderer.Renderer(logger, engineTime, commandContext, fileSystem, this, Framework.Path.Shaders);
+            _renderer = new Renderer.Renderer(logger, engineTime, commandContext, fileSystem, this, client, Framework.Path.Shaders);
         }
 
         /// <summary>

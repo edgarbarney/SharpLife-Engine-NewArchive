@@ -14,6 +14,8 @@
 ****/
 
 using ImGuiNET;
+using Serilog;
+using SharpLife.Engine.Client;
 using SharpLife.Input;
 using SharpLife.Renderer;
 using System.Diagnostics;
@@ -22,18 +24,22 @@ using Veldrid;
 
 namespace SharpLife.Engine.UI.Renderer
 {
-    public class ImGuiRenderable : ResourceContainer, IUpdateable, IRenderable
+    internal sealed class ImGuiRenderable : ResourceContainer, IUpdateable, IRenderable
     {
         private readonly IInputSystem _inputSystem;
         private ImGuiRenderer _imguiRenderer;
         private readonly int _width;
         private readonly int _height;
 
-        public ImGuiRenderable(IInputSystem inputSystem, int width, int height)
+        private readonly ImGuiInterface _imGuiInterface;
+
+        public ImGuiRenderable(IInputSystem inputSystem, int width, int height, ILogger logger, EngineClient client)
         {
             _inputSystem = inputSystem;
             _width = width;
             _height = height;
+
+            _imGuiInterface = new ImGuiInterface(logger, client);
         }
 
         public void WindowResized(int width, int height) => _imguiRenderer.WindowResized(width, height);
@@ -75,6 +81,9 @@ namespace SharpLife.Engine.UI.Renderer
         public void Render(GraphicsDevice gd, CommandList cl, SceneContext sc, RenderPasses renderPass)
         {
             Debug.Assert(renderPass == RenderPasses.Overlay);
+
+            _imGuiInterface.Draw();
+
             _imguiRenderer.Render(gd, cl);
         }
 
@@ -83,6 +92,8 @@ namespace SharpLife.Engine.UI.Renderer
         public void Update(float deltaSeconds)
         {
             _imguiRenderer.Update(deltaSeconds, _inputSystem.Snapshot);
+
+            _imGuiInterface.Update(deltaSeconds);
         }
     }
 }
