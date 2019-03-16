@@ -34,13 +34,12 @@ namespace SharpLife.CommandSystem
         /// Creates a new context
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="tag">Optional tag object</param>
         /// <param name="protectedVariableChangeString">Optional string to display in logs when a protected variable is changed</param>
         /// <param name="sharedContexts">
         /// List of contexts whose commands should be shared with this context
         /// Shared commands will only be able to execute commands in the context that they were executed in
         /// </param>
-        ICommandContext CreateContext(string name, object tag = null, string protectedVariableChangeString = null, params ICommandContext[] sharedContexts);
+        ICommandContext CreateContext(string name, string protectedVariableChangeString = null, params ICommandContext[] sharedContexts);
 
         void Execute();
     }

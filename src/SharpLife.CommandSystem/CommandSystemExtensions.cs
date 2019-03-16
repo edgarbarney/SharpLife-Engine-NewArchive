@@ -18,6 +18,6 @@ namespace SharpLife.CommandSystem
     public static class CommandSystemExtensions
     {
         public static ICommandContext CreateContext(this ICommandSystem commandSystem, string name, params ICommandContext[] sharedContexts)
-            => commandSystem.CreateContext(name, tag: null, protectedVariableChangeString: null, sharedContexts);
+            => commandSystem.CreateContext(name, protectedVariableChangeString: null, sharedContexts);
     }
 }

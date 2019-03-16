@@ -45,8 +45,6 @@ namespace SharpLife.CommandSystem
 
         public string Name { get; }
 
-        public object Tag { get; }
-
         public string ProtectedVariableChangeString { get; }
 
         public IReadOnlyDictionary<string, IBaseCommand> Commands => _commands;
@@ -55,7 +53,7 @@ namespace SharpLife.CommandSystem
 
         public event Action<IBaseCommand> CommandAdded;
 
-        public CommandContext(ILogger logger, CommandSystem commandSystem, string name, object tag, string protectedVariableChangeString, params CommandContext[] sharedContexts)
+        public CommandContext(ILogger logger, CommandSystem commandSystem, string name, string protectedVariableChangeString, params CommandContext[] sharedContexts)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _commandSystem = commandSystem ?? throw new ArgumentNullException(nameof(commandSystem));
@@ -71,7 +69,6 @@ namespace SharpLife.CommandSystem
             }
 
             Name = name;
-            Tag = tag;
 
             //Allow empty strings
             if (protectedVariableChangeString == null)

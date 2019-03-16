@@ -72,7 +72,7 @@ namespace SharpLife.CommandSystem
             _queue = new CommandQueue(_logger);
 
             //Shared context that informs the command system of all command additions to add them to other contexts
-            _sharedContext = new CommandContext(_logger, this, "SharedCommandContext", null, null);
+            _sharedContext = new CommandContext(_logger, this, "SharedCommandContext", null);
 
             _commandContexts.Add(_sharedContext);
 
@@ -175,12 +175,12 @@ namespace SharpLife.CommandSystem
             _parameterTypeProxies.Add(typeProxy.GetType(), typeProxy);
         }
 
-        public ICommandContext CreateContext(string name, object tag = null, string protectedVariableChangeString = null, params ICommandContext[] sharedContexts)
+        public ICommandContext CreateContext(string name, string protectedVariableChangeString = null, params ICommandContext[] sharedContexts)
         {
             //The command system context should always be shared
             var completeSharedContexts = sharedContexts.Cast<CommandContext>().Prepend(_sharedContext).ToArray();
 
-            var context = new CommandContext(_logger, this, name, tag, protectedVariableChangeString, completeSharedContexts);
+            var context = new CommandContext(_logger, this, name, protectedVariableChangeString, completeSharedContexts);
 
             _commandContexts.Add(context);
 

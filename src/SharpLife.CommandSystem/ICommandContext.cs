@@ -28,11 +28,6 @@ namespace SharpLife.CommandSystem
         string Name { get; }
 
         /// <summary>
-        /// Optional user-provided tag object
-        /// </summary>
-        object Tag { get; }
-
-        /// <summary>
         /// The string to display when changes to protected variables are logged
         /// </summary>
         string ProtectedVariableChangeString { get; }
