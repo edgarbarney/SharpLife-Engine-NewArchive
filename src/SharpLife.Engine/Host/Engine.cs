@@ -17,6 +17,7 @@ using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.Engine.Client;
+using SharpLife.Engine.Server;
 using SharpLife.Engine.Shared;
 using SharpLife.Engine.Shared.CommandSystem;
 using SharpLife.Engine.Shared.Configuration;
@@ -81,6 +82,12 @@ namespace SharpLife.Engine.Host
         /// The client system, if this is a client instance
         /// </summary>
         public EngineClient Client { get; }
+
+        /// <summary>
+        /// The server system
+        /// Always exists, but only used when hosting servers (singleplayer, listen server, dedicated server)
+        /// </summary>
+        public EngineServer Server { get; }
 
         /// <summary>
         /// Gets the user interface component
@@ -153,6 +160,8 @@ namespace SharpLife.Engine.Host
             {
                 Client = new EngineClient(this);
             }
+
+            Server = new EngineServer(this);
 
             _engineTimeStopwatch.Start();
 
@@ -257,6 +266,8 @@ namespace SharpLife.Engine.Host
 
         private void Shutdown()
         {
+            Server.Shutdown();
+
             Client?.Shutdown();
 
             EventUtils.UnregisterEvents(EventSystem, new EngineEvents());
