@@ -15,7 +15,6 @@
 
 using ImGuiNET;
 using Serilog;
-using SharpLife.Engine.Client;
 using SharpLife.Engine.Shared.Logging;
 using SharpLife.Utility;
 using System;
@@ -61,12 +60,12 @@ namespace SharpLife.Engine.Client.UI
             _client.LogListener = this;
         }
 
-        public void Update(float deltaSeconds/*, IViewState viewState*/)
+        public void Update(float deltaSeconds)
         {
             _fta.AddTime(deltaSeconds);
         }
 
-        public void Draw(/*IViewState viewState*/)
+        public void Draw()
         {
             if (ImGui.BeginMainMenuBar())
             {
@@ -79,7 +78,10 @@ namespace SharpLife.Engine.Client.UI
 
                 ImGui.Text(_fta.CurrentAverageFramesPerSecond.ToString("000.0 fps / ") + _fta.CurrentAverageFrameTimeMilliseconds.ToString("#00.00 ms"));
 
-                //ImGui.TextUnformatted($"Camera Position: {viewState.Origin} Camera Angles: Pitch {viewState.Angles.X} Yaw {viewState.Angles.Y}");
+                //TODO: probably should get the scene from somewhere else
+                var viewState = _client.UserInterface.Renderer.Scene;
+
+                ImGui.TextUnformatted($"Camera Position: {viewState.Origin} Camera Angles: Pitch {viewState.Angles.X} Yaw {viewState.Angles.Y}");
 
                 ImGui.EndMainMenuBar();
             }
