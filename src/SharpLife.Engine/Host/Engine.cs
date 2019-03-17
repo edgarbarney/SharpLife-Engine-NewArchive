@@ -17,7 +17,6 @@ using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.Engine.Client;
-using SharpLife.Engine.Client.UI;
 using SharpLife.Engine.GameWorld;
 using SharpLife.Engine.Server;
 using SharpLife.Engine.Shared;
@@ -90,12 +89,6 @@ namespace SharpLife.Engine.Host
         /// Always exists, but only used when hosting servers (singleplayer, listen server, dedicated server)
         /// </summary>
         public EngineServer Server { get; }
-
-        /// <summary>
-        /// Gets the user interface component
-        /// This component is optional and is only created for clients
-        /// </summary>
-        public UserInterface UserInterface => Client?.UserInterface;
 
         private readonly Stopwatch _engineTimeStopwatch = new Stopwatch();
 
