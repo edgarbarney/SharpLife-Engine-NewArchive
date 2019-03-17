@@ -13,28 +13,21 @@
 *
 ****/
 
-using SharpLife.Game.Models.BSP;
+using SharpLife.Engine.UI.Renderer.Models.BSP;
+using SharpLife.Engine.UI.Renderer.Models.MDL;
+using SharpLife.Engine.UI.Renderer.Models.SPR;
 
-namespace SharpLife.Game.Maps
+namespace SharpLife.Engine.UI.Renderer.Models
 {
     /// <summary>
-    /// Provides access to map info
+    /// Renders models
     /// </summary>
-    public interface IMapInfo
+    public interface IModelRenderer
     {
-        /// <summary>
-        /// The name of the map, excluding directory and extension
-        /// </summary>
-        string Name { get; }
+        void RenderSpriteModel(ref SpriteModelRenderData renderData);
 
-        /// <summary>
-        /// Name of the previous map that was loaded, or null if no previous map was loaded
-        /// </summary>
-        string PreviousMapName { get; }
+        void RenderStudioModel(ref StudioModelRenderData renderData);
 
-        /// <summary>
-        /// The map model
-        /// </summary>
-        BSPModel Model { get; }
+        void RenderBrushModel(ref BrushModelRenderData renderData);
     }
 }

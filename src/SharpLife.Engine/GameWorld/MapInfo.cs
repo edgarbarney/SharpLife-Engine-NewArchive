@@ -13,20 +13,29 @@
 *
 ****/
 
-using SharpLife.Game.Models.BSP;
+using SharpLife.Engine.Models.BSP;
 using System;
 
-namespace SharpLife.Game.Maps
+namespace SharpLife.Engine.GameWorld
 {
     /// <summary>
-    /// Read-only map info
+    /// Contains the state of the world for a particular map
     /// </summary>
-    public sealed class MapInfo : IMapInfo
+    public sealed class MapInfo
     {
+        /// <summary>
+        /// The name of the map, without directory or extension
+        /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// The name of the map loaded prior to this one, if any
+        /// </summary>
         public string PreviousMapName { get; }
 
+        /// <summary>
+        /// The map model
+        /// </summary>
         public BSPModel Model { get; }
 
         public MapInfo(string name, string previousMapName, BSPModel model)

@@ -13,22 +13,18 @@
 *
 ****/
 
-using SharpLife.Models;
-using SharpLife.Models.MDL.FileFormat;
-using System;
-using System.Numerics;
-
-namespace SharpLife.Game.Models.MDL
+namespace SharpLife.Engine.Models
 {
-    public sealed class StudioModel : BaseModel
+    public enum RenderMode
     {
-        public StudioFile StudioFile { get; }
+        Normal,             // src
+        TransColor,         // c*a+dest*(1-a)
+        TransTexture,       // src*a+dest*(1-a)
+        Glow,               // src*a+dest -- No Z buffer checks
+        TransAlpha,         // src*srca+dest*(1-srca)
+        TransAdd,		    // src*a+dest
 
-        public StudioModel(string name, uint crc, StudioFile studioFile)
-            //TODO: figure out if models have a preset size
-            : base(name, crc, Vector3.Zero, Vector3.Zero)
-        {
-            StudioFile = studioFile ?? throw new ArgumentNullException(nameof(studioFile));
-        }
+        First = Normal,
+        Last = TransAdd,
     }
 }

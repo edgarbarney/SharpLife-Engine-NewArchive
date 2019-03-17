@@ -13,8 +13,13 @@
 *
 ****/
 
+using Serilog;
 using SharpLife.CommandSystem;
+using SharpLife.Engine.Shared.Events;
+using SharpLife.Utility;
+using SharpLife.Utility.Events;
 using System;
+using System.Diagnostics;
 
 namespace SharpLife.Engine.Server
 {
@@ -25,11 +30,22 @@ namespace SharpLife.Engine.Server
     {
         private readonly Host.Engine _engine;
 
+        private readonly ILogger _logger;
+
+        private int _spawnCount;
+
+        private readonly SnapshotTime _gameTime = new SnapshotTime();
+
         public ICommandContext CommandContext { get; }
 
-        public EngineServer(Host.Engine engine)
+        public IEventSystem EventSystem => _engine.EventSystem;
+
+        public bool Active { get; private set; }
+
+        public EngineServer(Host.Engine engine, ILogger logger)
         {
             _engine = engine ?? throw new ArgumentNullException(nameof(engine));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             CommandContext = _engine.CommandSystem.CreateContext("ServerContext", _engine.EngineContext);
         }
@@ -37,6 +53,121 @@ namespace SharpLife.Engine.Server
         public void Shutdown()
         {
             CommandContext.Dispose();
+        }
+
+        public bool Start(string mapName, string startSpot = null, ServerStartFlags flags = ServerStartFlags.None)
+        {
+            //TODO: start transitioning clients
+
+            _logger.Information($"Loading map \"{mapName}\"");
+
+            //TODO: print server vars
+
+            //TODO: set hostname
+
+            if (startSpot != null)
+            {
+                _logger.Debug($"Spawn Server {mapName}: [{startSpot}]\n");
+            }
+            else
+            {
+                _logger.Debug($"Spawn Server {mapName}\n");
+            }
+
+            ++_spawnCount;
+
+            //TODO: clear custom data if size exceeds maximum
+
+            //TODO: allocate client memory
+
+            EventSystem.DispatchEvent(EngineEvents.ServerMapDataStartLoad);
+
+            if (!TryMapLoadBegin(mapName, flags))
+            {
+                Stop();
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TryMapLoadBegin(string mapName, ServerStartFlags flags)
+        {
+            //Reset timers
+            _gameTime.ElapsedTime = _engine.EngineTime.ElapsedTime;
+            _gameTime.FrameTime = 0;
+
+            _engine.EventSystem.DispatchEvent(new MapStartedLoading(
+                mapName,
+                _engine.World.MapInfo?.Name,
+                (flags & ServerStartFlags.ChangeLevel) != 0,
+                (flags & ServerStartFlags.LoadGame) != 0));
+
+            if (!_engine.World.TryLoadMap(mapName))
+            {
+                return false;
+            }
+
+            //TODO: initialize sky
+
+            return true;
+        }
+
+        public void InitializeMap(ServerStartFlags flags)
+        {
+            /*
+            _game.MapLoadContinue((flags & ServerStartFlags.LoadGame) != 0);
+
+            //Engine can handle map load stuff here if needed
+
+            _game.MapLoadFinished();
+            */
+        }
+
+        public void Activate()
+        {
+            Debug.Assert(!Active);
+
+            //_game.Activate();
+
+            //TODO: implement
+            Active = true;
+
+            //_game.PostActivate();
+        }
+
+        public void Deactivate()
+        {
+            //TODO: implement
+            //TODO: notify Steam
+
+            /*
+            if (_game != null)
+            {
+                if (Active)
+                {
+                    _game.Deactivate();
+                }
+            }
+            */
+        }
+
+        public void Stop()
+        {
+            //TODO: implement
+            if (Active)
+            {
+                Deactivate();
+
+                Active = false;
+
+                /*
+                foreach (var client in _netServer.ClientList)
+                {
+                    _netServer.DropClient(client, NetMessages.ServerShutdownMessage);
+                }
+                */
+            }
         }
     }
 }

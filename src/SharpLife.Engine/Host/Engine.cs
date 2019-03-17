@@ -17,6 +17,7 @@ using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.Engine.Client;
+using SharpLife.Engine.GameWorld;
 using SharpLife.Engine.Server;
 using SharpLife.Engine.Shared;
 using SharpLife.Engine.Shared.CommandSystem;
@@ -76,6 +77,8 @@ namespace SharpLife.Engine.Host
         /// Gets the engine command context, shared with the client and server
         /// </summary>
         public ICommandContext EngineContext { get; }
+
+        public WorldState World { get; }
 
         /// <summary>
         /// The client system, if this is a client instance
@@ -152,13 +155,15 @@ namespace SharpLife.Engine.Host
 
             EngineContext = CommandSystem.CreateContext("EngineContext");
 
+            World = new WorldState(Logger, EventSystem, FileSystem);
+
             //create the game window if this is a client
             if (_hostType == HostType.Client)
             {
                 Client = new EngineClient(this);
             }
 
-            Server = new EngineServer(this);
+            Server = new EngineServer(this, Logger);
 
             _engineTimeStopwatch.Start();
 
@@ -189,6 +194,8 @@ namespace SharpLife.Engine.Host
                 }));
 
             EngineContext.RegisterVariable("engine_builddate", () => BuildDate, "The engine's build date");
+
+            EngineContext.RegisterCommand(new CommandInfo("map", StartNewMap).WithHelpInfo("Loads the specified map"));
 
             //Get the build date from the generated resource file
             var assembly = typeof(Engine).Assembly;
@@ -296,6 +303,78 @@ namespace SharpLife.Engine.Host
         private void ClearMemory()
         {
             //Done here so server and client don't wipe eachother's data while loading
+            World.Clear();
+        }
+
+        /// <summary>
+        /// Start a new map, loading entities from the map entity data string
+        /// </summary>
+        /// <param name="command"></param>
+        private void StartNewMap(ICommandArgs command)
+        {
+            if (command.Count == 0)
+            {
+                Logger.Information("map <levelname> : changes server to specified map");
+                return;
+            }
+
+            Client?.Disconnect(false);
+
+            ClearMemory();
+
+            var mapName = command[0];
+
+            //Remove BSP extension
+            if (mapName.EndsWith(FileExtensionUtils.AsExtension(Framework.Extension.BSP)))
+            {
+                mapName = Path.GetFileNameWithoutExtension(mapName);
+            }
+
+            EventSystem.DispatchEvent(EngineEvents.EngineNewMapRequest);
+
+            if (!World.IsMapValid(mapName))
+            {
+                Logger.Error($"map change failed: '{mapName}' not found on server.");
+                return;
+            }
+
+            Server.Stop();
+
+            EventSystem.DispatchEvent(EngineEvents.EngineStartingServer);
+
+            //Reset time
+            //TODO: define constant for initial time
+            _engineTime.ElapsedTime = 1;
+            _engineTime.FrameTime = 0;
+
+            const ServerStartFlags flags = ServerStartFlags.None;
+
+            if (!Server.Start(mapName, null, flags))
+            {
+                return;
+            }
+
+            FinishLoadMap(null, flags);
+
+            //Listen server hosts need to connect to their own server
+            if (Client != null)
+            {
+                //Client.CommandContext.QueueCommands($"connect {NetAddresses.Local}");
+                //TODO: set up client
+                Client.LocalConnect();
+            }
+        }
+
+        /// <summary>
+        /// Finishes loading a map and activates the server
+        /// </summary>
+        /// <param name="startSpot"></param>
+        /// <param name="flags"></param>
+        private void FinishLoadMap(string startSpot = null, ServerStartFlags flags = ServerStartFlags.None)
+        {
+            Server.InitializeMap(flags);
+
+            Server.Activate();
         }
     }
 }

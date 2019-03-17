@@ -16,6 +16,7 @@
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.Commands.VariableFilters;
+using SharpLife.Engine.Models.BSP;
 using SharpLife.Input;
 using SharpLife.Models.BSP.FileFormat;
 using SharpLife.Models.BSP.Rendering;
@@ -33,7 +34,7 @@ using Veldrid.Utilities;
 
 namespace SharpLife.Engine.UI.Renderer
 {
-    public class Scene //: IViewState
+    public class Scene : IViewState
     {
         private const int LightScaleRange = 256;
         public const int MaxDLights = 32;
@@ -43,17 +44,17 @@ namespace SharpLife.Engine.UI.Renderer
         private readonly List<IUpdateable> _updateables = new List<IUpdateable>();
         private readonly List<IRenderable> _renderables = new List<IRenderable>();
 
-        private readonly IVariable _mainGamma;
+        private readonly IVariable<float> _mainGamma;
 
-        private readonly IVariable _textureGamma;
+        private readonly IVariable<float> _textureGamma;
 
-        private readonly IVariable _lightingGamma;
+        private readonly IVariable<float> _lightingGamma;
 
-        private readonly IVariable _brightness;
+        private readonly IVariable<float> _brightness;
 
-        private readonly IVariable _overbright;
+        private readonly IVariable<bool> _overbright;
 
-        public IVariable Fullbright { get; }
+        public IVariable<bool> Fullbright { get; }
 
         private bool _lightingSettingChanged;
 
@@ -61,7 +62,7 @@ namespace SharpLife.Engine.UI.Renderer
 
         public Camera Camera { get; }
 
-        //public BSPModel WorldModel { get; set; }
+        public BSPModel WorldModel { get; set; }
 
         public LightStyles LightStyles { get; } = new LightStyles();
 
@@ -70,9 +71,9 @@ namespace SharpLife.Engine.UI.Renderer
         public Vector3 SkyNormal { get; set; }
 
         //TODO: initialize to zero on map start
-        //public DynamicLight[] DynamicLights { get; } = new DynamicLight[MaxDLights];
-        //
-        //public DynamicLight[] EntityLights { get; } = new DynamicLight[MaxELights];
+        public DynamicLight[] DynamicLights { get; } = new DynamicLight[MaxDLights];
+
+        public DynamicLight[] EntityLights { get; } = new DynamicLight[MaxELights];
 
         public Vector3 Origin => Camera.Position;
 
@@ -250,38 +251,36 @@ namespace SharpLife.Engine.UI.Renderer
 
         private void UpdateLightingInfo(GraphicsDevice gd, SceneContext sc)
         {
-            /*
             if (sc.LightingInfoBuffer != null)
             {
                 int lightScale;
 
-                if (_overbright.Boolean)
+                if (_overbright.Value)
                 {
                     lightScale = LightScaleRange;
                 }
                 else
                 {
                     //Round up the scale
-                    lightScale = (int)((Math.Pow(2.0, 1.0 / _lightingGamma.Float) * LightScaleRange) + 0.5);
+                    lightScale = (int)((Math.Pow(2.0, 1.0 / _lightingGamma.Value) * LightScaleRange) + 0.5);
                 }
 
                 var info = new LightingInfo
                 {
-                    MainGamma = _mainGamma.Float,
-                    TextureGamma = _textureGamma.Float,
-                    LightingGamma = _lightingGamma.Float,
-                    Brightness = _brightness.Float,
+                    MainGamma = _mainGamma.Value,
+                    TextureGamma = _textureGamma.Value,
+                    LightingGamma = _lightingGamma.Value,
+                    Brightness = _brightness.Value,
                     LightScale = lightScale,
                     //Only enable if fullbright is turned off
-                    OverbrightEnabled = (!Fullbright.Boolean && _overbright.Boolean) ? 1 : 0,
-                    Fullbright = Fullbright.Boolean ? 1 : 0,
+                    OverbrightEnabled = (!Fullbright.Value && _overbright.Value) ? 1 : 0,
+                    Fullbright = Fullbright.Value ? 1 : 0,
                 };
 
                 gd.UpdateBuffer(sc.LightingInfoBuffer, 0, ref info);
 
                 _lightingSettingChanged = false;
             }
-            */
         }
 
         private void CheckLightingInfo(GraphicsDevice gd, SceneContext sc)

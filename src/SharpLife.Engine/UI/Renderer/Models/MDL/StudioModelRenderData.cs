@@ -13,18 +13,33 @@
 *
 ****/
 
-namespace SharpLife.Game.Models
-{
-    public enum RenderMode
-    {
-        Normal,             // src
-        TransColor,         // c*a+dest*(1-a)
-        TransTexture,       // src*a+dest*(1-a)
-        Glow,               // src*a+dest -- No Z buffer checks
-        TransAlpha,         // src*srca+dest*(1-srca)
-        TransAdd,		    // src*a+dest
+using SharpLife.Engine.Models.MDL;
+using SharpLife.Models.MDL.Rendering;
 
-        First = Normal,
-        Last = TransAdd,
+namespace SharpLife.Engine.UI.Renderer.Models.MDL
+{
+    public unsafe struct StudioModelRenderData
+    {
+        public StudioModel Model;
+
+        public SharedModelRenderData Shared;
+
+        public double CurrentTime;
+
+        public uint Sequence;
+
+        public float LastTime;
+
+        public float Frame;
+
+        public float FrameRate;
+
+        public uint Body;
+
+        public uint Skin;
+
+        public BoneData BoneData;
+
+        public int RenderFXLightMultiplier;
     }
 }

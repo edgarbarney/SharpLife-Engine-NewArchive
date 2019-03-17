@@ -18,7 +18,7 @@ using SharpLife.Models.SPR.FileFormat;
 using System;
 using System.Numerics;
 
-namespace SharpLife.Game.Models.SPR
+namespace SharpLife.Engine.Models.SPR
 {
     public sealed class SpriteModel : BaseModel
     {

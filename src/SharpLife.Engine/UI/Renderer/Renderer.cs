@@ -16,10 +16,25 @@
 using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.Engine.Client;
+using SharpLife.Engine.Models.BSP;
+using SharpLife.Engine.Models.MDL;
+using SharpLife.Engine.Models.SPR;
+using SharpLife.Engine.Shared;
+using SharpLife.Engine.UI.Renderer.Models;
+using SharpLife.Engine.UI.Renderer.Models.BSP;
+using SharpLife.Engine.UI.Renderer.Models.MDL;
+using SharpLife.Engine.UI.Renderer.Models.SPR;
 using SharpLife.Engine.UI.Renderer.Objects;
+using SharpLife.FileFormats.WAD;
 using SharpLife.FileSystem;
+using SharpLife.Models;
+using SharpLife.Models.BSP.FileFormat;
+using SharpLife.Models.BSP.Rendering;
 using SharpLife.Utility;
+using SharpLife.Utility.FileSystem;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using Veldrid;
 
 namespace SharpLife.Engine.UI.Renderer
@@ -33,6 +48,8 @@ namespace SharpLife.Engine.UI.Renderer
 
         private readonly ITime _engineTime;
 
+        private readonly IFileSystem _fileSystem;
+
         private readonly GraphicsDevice _gd;
 
         private readonly SceneContext _sc;
@@ -44,6 +61,13 @@ namespace SharpLife.Engine.UI.Renderer
         private bool _windowResized = false;
 
         private event Action<int, int> _resizeHandled;
+
+        private readonly ModelResourcesManager _modelResourcesManager;
+        private readonly ModelRenderer _modelRenderer;
+
+        private CoordinateAxes _coordinateAxes;
+
+        private Skybox2D _skyboxRenderable;
 
         public Scene Scene { get; }
 
@@ -58,6 +82,7 @@ namespace SharpLife.Engine.UI.Renderer
 
             _userInterface = userInterface ?? throw new ArgumentNullException(nameof(userInterface));
             _engineTime = engineTime ?? throw new ArgumentNullException(nameof(engineTime));
+            _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 
             //Configure Veldrid graphics device
             //Don't use a swap chain depth format, it won't render anything on Vulkan
@@ -86,7 +111,31 @@ namespace SharpLife.Engine.UI.Renderer
             Scene.AddContainer(_finalPass);
             Scene.AddRenderable(_finalPass);
 
-            _sc = new SceneContext(fileSystem, commandContext, shadersDirectory);
+            var spriteRenderer = new SpriteModelRenderer(logger);
+            var studioRenderer = new StudioModelRenderer(commandContext);
+            var brushRenderer = new BrushModelRenderer();
+
+            _modelResourcesManager = new ModelResourcesManager(new Dictionary<Type, ModelResourcesManager.ResourceFactory>
+            {
+                {typeof(SpriteModel), model => new SpriteModelResourceContainer((SpriteModel)model) },
+                { typeof(StudioModel), model => new StudioModelResourceContainer((StudioModel)model)  },
+                { typeof(BSPModel), model => new BSPModelResourceContainer((BSPModel)model)  }
+            });
+
+            _modelRenderer = new ModelRenderer(
+                _modelResourcesManager,
+                spriteRenderer,
+                studioRenderer,
+                brushRenderer
+                );
+
+            Scene.AddRenderable(_modelRenderer);
+
+            Scene.AddContainer(spriteRenderer);
+            Scene.AddContainer(studioRenderer);
+            Scene.AddContainer(brushRenderer);
+
+            _sc = new SceneContext(fileSystem, commandContext, _modelRenderer, shadersDirectory);
 
             _sc.SetCurrentScene(Scene);
 
@@ -138,6 +187,125 @@ namespace SharpLife.Engine.UI.Renderer
             Scene.RenderAllStages(_gd, _frameCommands, _sc);
 
             _gd.SwapBuffers();
+        }
+
+        private void UploadWADTextures(BSPModel worldModel)
+        {
+            //Load all WADs
+            var wadList = new WADList(_fileSystem, Framework.Extension.WAD);
+
+            var embeddedTexturesWAD = BSPUtilities.CreateWADFromBSP(worldModel.BSPFile);
+
+            wadList.Add(worldModel.Name + FileExtensionUtils.AsExtension(Framework.Extension.WAD), embeddedTexturesWAD);
+
+            var wadPath = BSPUtilities.ExtractWADPathKeyValue(worldModel.BSPFile.Entities);
+
+            foreach (var wadName in wadPath.Split(';', StringSplitOptions.RemoveEmptyEntries))
+            {
+                var baseName = Path.GetFileNameWithoutExtension(wadName);
+
+                //Never allow these to be loaded, they contain spray decals
+                //TODO: refactor into blacklist
+                if (baseName != "pldecal" && baseName != "tempdecal")
+                {
+                    //WAD loading only needs to consider the filename; the directory part is mapper specific
+                    var fileName = Path.GetFileName(wadName);
+                    wadList.Load(fileName);
+                }
+            }
+
+            //Upload all used textures
+            var usedTextures = BSPUtilities.GetUsedTextures(worldModel.BSPFile, wadList);
+
+            WADUtilities.UploadTextures(usedTextures, _sc.TextureLoader, _gd, _sc.MapResourceCache);
+        }
+
+        /// <summary>
+        /// Loads all models in the model manager
+        /// This is when BSP models are loaded
+        /// </summary>
+        /// <param name="worldModel"></param>
+        /// <param name="modelManager"></param>
+        public void LoadModels(BSPModel worldModel, IModelManager modelManager)
+        {
+            if (worldModel == null)
+            {
+                throw new ArgumentNullException(nameof(worldModel));
+            }
+
+            if (modelManager == null)
+            {
+                throw new ArgumentNullException(nameof(modelManager));
+            }
+
+            ClearBSP();
+
+            Scene.WorldModel = worldModel;
+
+            //Reset light styles
+            Scene.InitializeLightStyles();
+
+            UploadWADTextures(worldModel);
+
+            foreach (var model in modelManager)
+            {
+                var modelRenderable = _modelResourcesManager.CreateResources(model);
+
+                Scene.AddContainer(modelRenderable);
+            }
+
+            _coordinateAxes = new CoordinateAxes();
+            Scene.AddContainer(_coordinateAxes);
+            Scene.AddRenderable(_coordinateAxes);
+
+            //TODO: define default in config
+            _skyboxRenderable = Skybox2D.LoadDefaultSkybox(_fileSystem, Framework.Path.EnvironmentMaps, "2desert");
+            Scene.AddContainer(_skyboxRenderable);
+            Scene.AddRenderable(_skyboxRenderable);
+
+            //Set up graphics data
+            CommandList initCL = _gd.ResourceFactory.CreateCommandList();
+            initCL.Name = "Model Initialization Command List";
+            initCL.Begin();
+
+            Scene.CreateAllDeviceObjects(_gd, initCL, _sc, ResourceScope.Map);
+
+            initCL.End();
+            _gd.SubmitCommands(initCL);
+            initCL.Dispose();
+        }
+
+        public void ClearBSP()
+        {
+            Scene.DestroyAllDeviceObjects(ResourceScope.Map);
+
+            foreach (var resource in _modelResourcesManager)
+            {
+                Scene.RemoveContainer(resource);
+            }
+
+            _modelResourcesManager.FreeAllResources();
+
+            if (_skyboxRenderable != null)
+            {
+                Scene.RemoveContainer(_skyboxRenderable);
+                Scene.RemoveRenderable(_skyboxRenderable);
+                _skyboxRenderable.Dispose();
+                _skyboxRenderable = null;
+            }
+
+            if (_coordinateAxes != null)
+            {
+                Scene.RemoveContainer(_coordinateAxes);
+                Scene.RemoveRenderable(_coordinateAxes);
+                _coordinateAxes.Dispose();
+                _coordinateAxes = null;
+            }
+
+            //Clear all graphics data
+            _sc.MapResourceCache.DestroyAllDeviceObjects();
+
+            Scene.WorldModel = null;
         }
     }
 }

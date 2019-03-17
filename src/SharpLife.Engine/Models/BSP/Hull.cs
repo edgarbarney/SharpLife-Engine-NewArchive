@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace SharpLife.Game.Models.BSP
+namespace SharpLife.Engine.Models.BSP
 {
     public class Hull
     {

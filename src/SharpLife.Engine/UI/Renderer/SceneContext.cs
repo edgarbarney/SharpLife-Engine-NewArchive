@@ -14,10 +14,13 @@
 ****/
 
 using SharpLife.CommandSystem;
+using SharpLife.Engine.UI.Renderer.Models;
 using SharpLife.FileSystem;
+using SharpLife.Models.BSP;
 using SharpLife.Models.BSP.FileFormat;
 using SharpLife.Renderer;
 using SharpLife.Renderer.Utility;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -35,6 +38,8 @@ namespace SharpLife.Engine.UI.Renderer
         public ResourceCache MapResourceCache { get; }
 
         public TextureLoader TextureLoader { get; }
+
+        public ModelRenderer ModelRenderer { get; }
 
         public DeviceBuffer ProjectionMatrixBuffer { get; private set; }
         public DeviceBuffer ViewMatrixBuffer { get; private set; }
@@ -66,17 +71,18 @@ namespace SharpLife.Engine.UI.Renderer
 
         public Camera Camera { get; set; }
 
-        //public IViewState ViewState { get; set; }
+        public IViewState ViewState { get; set; }
 
         public Scene Scene { get; set; }
 
         public TextureSampleCount MainSceneSampleCount { get; internal set; }
 
-        public SceneContext(IFileSystem fileSystem, ICommandContext commandContext, string shadersDirectory)
+        public SceneContext(IFileSystem fileSystem, ICommandContext commandContext, ModelRenderer modelRenderer, string shadersDirectory)
         {
             GlobalResourceCache = new ResourceCache(fileSystem, shadersDirectory);
             MapResourceCache = new ResourceCache(fileSystem, shadersDirectory);
             TextureLoader = new TextureLoader(commandContext);
+            ModelRenderer = modelRenderer ?? throw new ArgumentNullException(nameof(modelRenderer));
         }
 
         public virtual void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
@@ -86,7 +92,7 @@ namespace SharpLife.Engine.UI.Renderer
             ViewMatrixBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             CameraInfoBuffer = factory.CreateBuffer(new BufferDescription((uint)Unsafe.SizeOf<CameraInfo>(), BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             WorldAndInverseBuffer = factory.CreateBuffer(new BufferDescription((uint)Marshal.SizeOf<WorldAndInverse>(), BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-            //LightingInfoBuffer = factory.CreateBuffer(new BufferDescription((uint)Unsafe.SizeOf<LightingInfo>(), BufferUsage.UniformBuffer));
+            LightingInfoBuffer = factory.CreateBuffer(new BufferDescription((uint)Unsafe.SizeOf<LightingInfo>(), BufferUsage.UniformBuffer));
 
             //Float arrays are handled by padding each element up to the size of a vec4,
             //so we have to account for the padding in creating and initializing the buffer
@@ -148,7 +154,7 @@ namespace SharpLife.Engine.UI.Renderer
         public void SetCurrentScene(Scene scene)
         {
             Camera = scene.Camera;
-            //ViewState = scene;
+            ViewState = scene;
             Scene = scene;
         }
 
@@ -211,7 +217,6 @@ namespace SharpLife.Engine.UI.Renderer
             MainSceneViewResourceSet = factory.CreateResourceSet(new ResourceSetDescription(TextureSamplerResourceLayout, MainSceneResolvedColorView, gd.PointSampler));
         }
 
-#if false
         public Face SurfaceAtPoint(in Vector3 start, in Vector3 end)
         {
             return BSPModelUtils.SurfaceAtPoint(Scene.WorldModel.SubModel, Scene.WorldModel.BSPFile.Nodes[0], start, end);
@@ -246,6 +251,5 @@ namespace SharpLife.Engine.UI.Renderer
                 return new Rgb24(byte.MaxValue, byte.MaxValue, byte.MaxValue);
             }
         }
-#endif
     }
 }

@@ -78,5 +78,15 @@ namespace SharpLife.Engine.Client
 
             CommandContext.Dispose();
         }
+
+        public void LocalConnect()
+        {
+            UserInterface.Renderer.LoadModels(_engine.World.MapInfo.Model, _engine.World.Models);
+        }
+
+        public void Disconnect(bool shutdownServer)
+        {
+            //TODO
+        }
     }
 }

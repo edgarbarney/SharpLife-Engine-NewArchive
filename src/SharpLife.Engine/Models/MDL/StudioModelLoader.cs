@@ -19,7 +19,7 @@ using SharpLife.Models.MDL.FileFormat;
 using System;
 using System.IO;
 
-namespace SharpLife.Game.Models.MDL
+namespace SharpLife.Engine.Models.MDL
 {
     public sealed class StudioModelLoader : IModelLoader
     {
