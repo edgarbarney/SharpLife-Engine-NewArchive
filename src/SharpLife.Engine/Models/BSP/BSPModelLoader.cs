@@ -17,6 +17,7 @@ using SharpLife.FileSystem;
 using SharpLife.Models;
 using SharpLife.Models.BSP.FileFormat;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 
@@ -31,7 +32,7 @@ namespace SharpLife.Engine.Models.BSP
             _bspModelNamePrefix = bspModelNamePrefix ?? throw new ArgumentNullException(nameof(bspModelNamePrefix));
         }
 
-        public IModel Load(string name, IFileSystem fileSystem, BinaryReader reader, Delegates.AddModel addModelCallback, bool computeCRC)
+        public IReadOnlyList<IModel> Load(string name, IFileSystem fileSystem, BinaryReader reader, bool computeCRC)
         {
             if (reader == null)
             {
@@ -59,15 +60,18 @@ namespace SharpLife.Engine.Models.BSP
 
             var hull0 = MakeHull0(bspFile);
 
+            var models = new BSPModel[bspFile.Models.Count];
+
+            models[0] = new BSPModel(name, crc, bspFile, bspFile.Models[0], hull0);
+
             //add all of its submodels
             //First submodel (0) is the world
             for (var i = 1; i < bspFile.Models.Count; ++i)
             {
-                var subModelName = $"{_bspModelNamePrefix}{i}";
-                addModelCallback(subModelName, new BSPModel(subModelName, crc, bspFile, bspFile.Models[i], hull0));
+                models[i] = new BSPModel($"{_bspModelNamePrefix}{i}", crc, bspFile, bspFile.Models[i], hull0);
             }
 
-            return new BSPModel(name, crc, bspFile, bspFile.Models[0], hull0);
+            return models;
         }
 
         /// <summary>

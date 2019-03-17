@@ -51,22 +51,44 @@ namespace SharpLife.Models
             return _models.ContainsKey(modelName);
         }
 
-        private void AddSubModel(string modelName, IModel model)
+        private void AddModel(string modelName, IModel model)
         {
             _models.Add(modelName, model);
+
+            OnModelLoaded?.Invoke(model);
         }
 
-        internal IModel LoadModel(string modelName)
+        private IModel LoadModel(string modelName)
         {
             var reader = new BinaryReader(_fileSystem.OpenRead(modelName));
 
             foreach (var loader in _modelLoaders)
             {
-                var model = loader.Load(modelName, _fileSystem, reader, AddSubModel, true);
+                //TODO: this needs to be profiled to see if the allocations cause issues
+                //If so we'll need to optimize this
+                var models = loader.Load(modelName, _fileSystem, reader, true);
 
-                if (model != null)
+                if (models != null)
                 {
-                    return model;
+                    //This should never happen since a loader needs to return null to signal failure
+                    if (models.Count == 0)
+                    {
+                        throw new InvalidOperationException($"Model loader {loader.GetType().Name} returned empty array");
+                    }
+
+                    //Add all models
+                    foreach (var model in models)
+                    {
+                        AddModel(model.Name, model);
+                    }
+
+                    //Return first model as the model associated with this model name
+                    if (!_models.ContainsKey(modelName))
+                    {
+                        AddModel(modelName, models[0]);
+                    }
+
+                    return models[0];
                 }
             }
 
@@ -82,13 +104,7 @@ namespace SharpLife.Models
 
             model = LoadModel(modelName);
 
-            if (model != null)
-            {
-                _models.Add(modelName, model);
-
-                OnModelLoaded?.Invoke(model);
-            }
-            else
+            if (model == null)
             {
                 if (FallbackModel == null)
                 {
@@ -104,7 +120,7 @@ namespace SharpLife.Models
                 model = FallbackModel;
 
                 //Insert it anyway to avoid constant load attempts
-                _models.Add(modelName, model);
+                AddModel(modelName, model);
             }
 
             return model;

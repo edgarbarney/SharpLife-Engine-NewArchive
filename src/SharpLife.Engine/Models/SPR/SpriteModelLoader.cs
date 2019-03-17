@@ -17,13 +17,14 @@ using SharpLife.FileSystem;
 using SharpLife.Models;
 using SharpLife.Models.SPR.FileFormat;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace SharpLife.Engine.Models.SPR
 {
     public sealed class SpriteModelLoader : IModelLoader
     {
-        public IModel Load(string name, IFileSystem fileSystem, BinaryReader reader, Delegates.AddModel addModelCallback, bool computeCRC)
+        public IReadOnlyList<IModel> Load(string name, IFileSystem fileSystem, BinaryReader reader, bool computeCRC)
         {
             if (reader == null)
             {
@@ -47,7 +48,7 @@ namespace SharpLife.Engine.Models.SPR
                 crc = loader.ComputeCRC();
             }
 
-            return new SpriteModel(name, crc, spriteFile);
+            return new[] { new SpriteModel(name, crc, spriteFile) };
         }
     }
 }

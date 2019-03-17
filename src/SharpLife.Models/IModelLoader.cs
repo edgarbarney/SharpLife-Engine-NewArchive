@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.FileSystem;
+using System.Collections.Generic;
 using System.IO;
 
 namespace SharpLife.Models
@@ -24,14 +25,13 @@ namespace SharpLife.Models
     public interface IModelLoader
     {
         /// <summary>
-        /// Loads a model out of the given reader
+        /// Loads models out of the given reader
         /// </summary>
         /// <param name="name">Name to associate with the model</param>
         /// <param name="fileSystem">Filesystem to use when loading additional files</param>
         /// <param name="reader"></param>
-        /// <param name="addModelCallback">Callback to add more models if a model contains submodels</param>
         /// <param name="computeCRC">Whether to compute the CRC for this model</param>
-        /// <returns>The model and the CRC</returns>
-        IModel Load(string name, IFileSystem fileSystem, BinaryReader reader, Delegates.AddModel addModelCallback, bool computeCRC);
+        /// <returns>One or more models loaded from the reader, or null if this loader couldn't load the model</returns>
+        IReadOnlyList<IModel> Load(string name, IFileSystem fileSystem, BinaryReader reader, bool computeCRC);
     }
 }
