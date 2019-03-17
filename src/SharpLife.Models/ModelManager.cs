@@ -23,7 +23,7 @@ namespace SharpLife.Models
 {
     public sealed class ModelManager : IModelManager
     {
-        private IReadOnlyList<IModelLoader> _modelLoaders = new List<IModelLoader>();
+        private readonly IReadOnlyList<IModelLoader> _modelLoaders;
 
         private readonly IFileSystem _fileSystem;
 
@@ -37,17 +37,13 @@ namespace SharpLife.Models
 
         public event Action<IModel> OnModelLoaded;
 
-        public ModelManager(IFileSystem fileSystem)
+        public ModelManager(IFileSystem fileSystem, IReadOnlyList<IModelLoader> loaders)
         {
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            _modelLoaders = loaders ?? throw new ArgumentNullException(nameof(loaders));
 
             //Names are case insensitive to account for differences in the filesystem
             _models = new Dictionary<string, IModel>(StringComparer.OrdinalIgnoreCase);
-        }
-
-        public void SetLoaders(IReadOnlyList<IModelLoader> loaders)
-        {
-            _modelLoaders = loaders ?? throw new ArgumentNullException(nameof(loaders));
         }
 
         public bool Contains(string modelName)
