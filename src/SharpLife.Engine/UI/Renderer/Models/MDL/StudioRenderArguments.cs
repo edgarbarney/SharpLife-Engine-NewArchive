@@ -31,6 +31,8 @@ namespace SharpLife.Engine.UI.Renderer.Models.MDL
 
         public AmbientLight GlobalLight;
 
+#pragma warning disable CS0169 // Remove unused member declaration.
         private Vector4 _padding0;
+#pragma warning restore CS0169 // Remove unused member declaration.
     }
 }

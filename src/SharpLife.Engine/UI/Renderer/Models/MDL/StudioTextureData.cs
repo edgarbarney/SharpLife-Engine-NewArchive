@@ -19,8 +19,10 @@ namespace SharpLife.Engine.UI.Renderer.Models.MDL
     {
         public int FlatShade;
 
+#pragma warning disable CS0169 // Remove unused member declaration.
         private int _padding0;
         private int _padding1;
         private int _padding2;
+#pragma warning restore CS0169 // Remove unused member declaration.
     }
 }

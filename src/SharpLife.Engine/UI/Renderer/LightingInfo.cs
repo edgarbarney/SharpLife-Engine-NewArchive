@@ -27,6 +27,8 @@ namespace SharpLife.Engine.UI.Renderer
         public int OverbrightEnabled;
         public int Fullbright;
 
+#pragma warning disable CS0169 // Remove unused member declaration.
         private float padding0;
+#pragma warning restore CS0169 // Remove unused member declaration.
     }
 }
