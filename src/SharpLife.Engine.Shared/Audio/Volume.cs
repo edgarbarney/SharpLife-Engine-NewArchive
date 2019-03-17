@@ -13,7 +13,7 @@
 *
 ****/
 
-namespace SharpLife.Game.Audio
+namespace SharpLife.Engine.Shared.Audio
 {
     public static class Volume
     {

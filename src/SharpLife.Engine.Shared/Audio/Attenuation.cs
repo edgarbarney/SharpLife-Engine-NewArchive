@@ -13,21 +13,19 @@
 *
 ****/
 
-namespace SharpLife.Game.Audio
+namespace SharpLife.Engine.Shared.Audio
 {
-    /// <summary>
-    /// Common pitch values
-    /// Other values are possible - 0-255, where 255 is very high
-    /// </summary>
-    public static class Pitch
+    public static class Attenuation
     {
-        public const int Low = 95;
-
         /// <summary>
-        /// non-pitch shifted
+        /// Disables attenuation. The sound will play everywhere
         /// </summary>
-        public const int Normal = 100;
+        public const float None = 0;
 
-        public const int High = 120;
+        public const float Normal = 0.8f;
+
+        public const float Idle = 2.0f;
+
+        public const float Static = 1.25f;
     }
 }
