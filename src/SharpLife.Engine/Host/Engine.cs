@@ -25,7 +25,6 @@ using SharpLife.Engine.Shared.Events;
 using SharpLife.Engine.Shared.Logging;
 using SharpLife.Engine.UI;
 using SharpLife.FileSystem;
-using SharpLife.Models;
 using SharpLife.Utility;
 using SharpLife.Utility.Events;
 using SharpLife.Utility.FileSystem;
@@ -103,8 +102,6 @@ namespace SharpLife.Engine.Host
         /// Gets the engine time
         /// </summary>
         public ITime EngineTime => _engineTime;
-
-        public IModelManager ModelManager { get; }
 
         /// <summary>
         /// The engine wide event system
@@ -204,8 +201,6 @@ namespace SharpLife.Engine.Host
                 Logger.Information($"Exe: {BuildDate.ToString("HH:mm:ss MMM dd yyyy")}");
             }
 
-            ModelManager = new ModelManager(FileSystem);
-
             //TODO: initialize subsystems
         }
 
@@ -301,7 +296,6 @@ namespace SharpLife.Engine.Host
         private void ClearMemory()
         {
             //Done here so server and client don't wipe eachother's data while loading
-            ModelManager.Clear();
         }
     }
 }
