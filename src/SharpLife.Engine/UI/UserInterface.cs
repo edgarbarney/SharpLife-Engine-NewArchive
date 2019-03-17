@@ -34,11 +34,11 @@ namespace SharpLife.Engine.UI
 
         private readonly IFileSystem _fileSystem;
 
-        private readonly Renderer.Renderer _renderer;
-
         public IInputSystem InputSystem { get; } = new InputSystem();
 
         public Window Window { get; private set; }
+
+        public Renderer.Renderer Renderer { get; }
 
         /// <summary>
         /// Invoked when the Quit event has been received
@@ -68,7 +68,7 @@ namespace SharpLife.Engine.UI
 
             Window.Center();
 
-            _renderer = new Renderer.Renderer(logger, engineTime, commandContext, fileSystem, this, client, Framework.Path.Shaders);
+            Renderer = new Renderer.Renderer(logger, engineTime, commandContext, fileSystem, this, client, Framework.Path.Shaders);
         }
 
         /// <summary>
@@ -116,12 +116,12 @@ namespace SharpLife.Engine.UI
 
         public void Update(float deltaSeconds)
         {
-            _renderer.Update(deltaSeconds);
+            Renderer.Update(deltaSeconds);
         }
 
         public void Draw()
         {
-            _renderer.Draw();
+            Renderer.Draw();
         }
 
         /// <summary>
