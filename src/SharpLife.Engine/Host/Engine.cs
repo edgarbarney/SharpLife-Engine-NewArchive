@@ -347,7 +347,7 @@ namespace SharpLife.Engine.Host
                 return;
             }
 
-            FinishLoadMap(null, flags);
+            Server.Activate();
 
             //Listen server hosts need to connect to their own server
             if (Client != null)
@@ -356,18 +356,6 @@ namespace SharpLife.Engine.Host
                 //TODO: set up client
                 Client.LocalConnect();
             }
-        }
-
-        /// <summary>
-        /// Finishes loading a map and activates the server
-        /// </summary>
-        /// <param name="startSpot"></param>
-        /// <param name="flags"></param>
-        private void FinishLoadMap(string startSpot = null, ServerStartFlags flags = ServerStartFlags.None)
-        {
-            Server.InitializeMap(flags);
-
-            Server.Activate();
         }
     }
 }

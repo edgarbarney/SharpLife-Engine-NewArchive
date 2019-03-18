@@ -119,6 +119,11 @@ namespace SharpLife.Engine.GameWorld
             return true;
         }
 
+        public void InitializeMap(bool loadGame)
+        {
+            //TODO
+        }
+
         public void Clear()
         {
             Models.Clear();

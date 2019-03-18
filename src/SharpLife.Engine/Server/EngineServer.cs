@@ -108,20 +108,11 @@ namespace SharpLife.Engine.Server
                 return false;
             }
 
+            _engine.World.InitializeMap((flags & ServerStartFlags.LoadGame) != 0);
+
             //TODO: initialize sky
 
             return true;
-        }
-
-        public void InitializeMap(ServerStartFlags flags)
-        {
-            /*
-            _game.MapLoadContinue((flags & ServerStartFlags.LoadGame) != 0);
-
-            //Engine can handle map load stuff here if needed
-
-            _game.MapLoadFinished();
-            */
         }
 
         public void Activate()
