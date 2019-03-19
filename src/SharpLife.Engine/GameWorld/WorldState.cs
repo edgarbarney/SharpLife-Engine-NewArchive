@@ -25,7 +25,9 @@ using SharpLife.Models;
 using SharpLife.Models.BSP;
 using SharpLife.Models.BSP.FileFormat;
 using SharpLife.Utility.Events;
+using SharpLife.Utility.Text;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace SharpLife.Engine.GameWorld
@@ -135,7 +137,16 @@ namespace SharpLife.Engine.GameWorld
 
         public void InitializeMap(bool loadGame)
         {
-            //TODO
+            if (loadGame)
+            {
+                //TODO: load game
+            }
+            else
+            {
+                LoadEntities(MapInfo.Model.BSPFile.Entities);
+            }
+
+            Scene.Start();
         }
 
         public void Update(double currentTime)
@@ -153,6 +164,52 @@ namespace SharpLife.Engine.GameWorld
             {
                 Scene.Dispose();
                 Scene = null;
+            }
+        }
+
+        private void LoadEntities(string entityData)
+        {
+            var keyvalues = KeyValuesParser.ParseAll(entityData);
+
+            for (var index = 0; index < keyvalues.Count; ++index)
+            {
+                //Better error handling than the engine: if an entity couldn't be created, log it and keep going
+                try
+                {
+                    LoadEntity(keyvalues[index], index);
+                }
+                catch (EntityInstantiationException e)
+                {
+                    Logger.Error(e, $"A problem occurred while creating entity {index}");
+                }
+            }
+        }
+
+        private string GetClassName(List<KeyValuePair<string, string>> block, int index)
+        {
+            var name = block.Find(kv => kv.Key == "classname");
+
+            if (name.Key == null)
+            {
+                //The engine only handles this error if there is a classname key that the game doesn't handle
+                throw new EntityInstantiationException($"No classname for entity {index}");
+            }
+
+            if (string.IsNullOrWhiteSpace(name.Value))
+            {
+                throw new EntityInstantiationException($"Classname for entity {index} is invalid");
+            }
+
+            return name.Value;
+        }
+
+        private void LoadEntity(List<KeyValuePair<string, string>> block, int index)
+        {
+            var className = GetClassName(block, index);
+
+            if (Scene.EntityCreator.TryCreateEntity(className, block, out var entity))
+            {
+                Logger.Information("Spawning entity {ClassName} ({Index})", entity.ClassName, index);
             }
         }
     }
