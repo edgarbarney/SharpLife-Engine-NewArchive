@@ -58,7 +58,12 @@ namespace SharpLife.Engine.Entities.Components
             _referencedAssemblies.Add(assembly);
 
             //Build metadata for all instantiable types
-            foreach (var type in assembly.DefinedTypes.Where(t => typeof(Component).IsAssignableFrom(t) && t.IsPublic && !t.IsAbstract))
+            foreach (var type in assembly.DefinedTypes
+                .Where(
+                t => typeof(Component).IsAssignableFrom(t)
+                && !typeof(Component).Equals(t)
+                && t.IsPublic
+                && !t.IsAbstract))
             {
                 _metaDataBuilder.Add(type, BuildOne(type));
             }
