@@ -74,11 +74,13 @@ namespace SharpLife.Engine.Entities.Components
             //Build keyvalue map
             var builder = ImmutableDictionary.CreateBuilder<string, KeyValueMetaData>();
 
-            foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
+            foreach (var member in type
+                .GetMembers(BindingFlags.Public | BindingFlags.Instance)
+                .Where(t => t is FieldInfo || t is PropertyInfo))
             {
-                var keyValueAttr = field.GetCustomAttribute<KeyValueAttribute>();
+                var keyValueAttr = member.GetCustomAttribute<KeyValueAttribute>();
 
-                var name = field.Name;
+                var name = member.Name;
 
                 if (keyValueAttr != null)
                 {
@@ -90,9 +92,25 @@ namespace SharpLife.Engine.Entities.Components
                     throw new NotSupportedException("Using the same name for multiple keyvalues is not allowed");
                 }
 
-                var converter = GetConverter(field, keyValueAttr);
+                Type memberType;
 
-                builder.Add(name, new KeyValueMetaData(field, converter));
+                switch (member)
+                {
+                    case FieldInfo field:
+                        memberType = field.FieldType;
+                        break;
+
+                    case PropertyInfo prop:
+                        memberType = prop.PropertyType;
+                        break;
+
+                    //Shouldn't happen since we're filtering them
+                    default: throw new NotSupportedException("Unsupported member type");
+                }
+
+                var converter = GetConverter(member, memberType, keyValueAttr);
+
+                builder.Add(name, new KeyValueMetaData(member, memberType, converter));
             }
 
             ImmutableDictionary<string, KeyValueMetaData> keyValues;
@@ -109,15 +127,15 @@ namespace SharpLife.Engine.Entities.Components
             return new ComponentMetaData(type, keyValues);
         }
 
-        private IKeyValueConverter GetConverter(FieldInfo field, KeyValueAttribute keyValueAttr)
+        private IKeyValueConverter GetConverter(MemberInfo member, Type memberType, KeyValueAttribute keyValueAttr)
         {
             IKeyValueConverter converter;
 
             if (keyValueAttr.ConverterType == null)
             {
-                if (!_keyValueConverters.TryGetValue(field.FieldType, out converter))
+                if (!_keyValueConverters.TryGetValue(memberType, out converter))
                 {
-                    throw new ArgumentException($"KeyValue {field.DeclaringType.AssemblyQualifiedName}.{field.Name} uses type {field.FieldType.AssemblyQualifiedName} with no converter");
+                    throw new ArgumentException($"KeyValue {member.DeclaringType.AssemblyQualifiedName}.{member.Name} uses type {memberType.AssemblyQualifiedName} with no converter");
                 }
             }
             else

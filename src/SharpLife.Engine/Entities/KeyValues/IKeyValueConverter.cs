@@ -24,6 +24,6 @@ namespace SharpLife.Engine.Entities.KeyValues
     /// </summary>
     public interface IKeyValueConverter
     {
-        object FromString(Type destinationType, string value);
+        object FromString(Type destinationType, string key, string value);
     }
 }

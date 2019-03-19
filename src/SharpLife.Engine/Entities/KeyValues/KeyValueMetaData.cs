@@ -20,13 +20,16 @@ namespace SharpLife.Engine.Entities.KeyValues
 {
     public sealed class KeyValueMetaData
     {
-        public readonly FieldInfo Field;
+        public readonly MemberInfo Member;
 
-        public IKeyValueConverter Converter;
+        public readonly Type MemberType;
 
-        public KeyValueMetaData(FieldInfo field, IKeyValueConverter converter)
+        public readonly IKeyValueConverter Converter;
+
+        public KeyValueMetaData(MemberInfo member, Type memberType, IKeyValueConverter converter)
         {
-            Field = field ?? throw new ArgumentNullException(nameof(field));
+            Member = member ?? throw new ArgumentNullException(nameof(member));
+            MemberType = memberType ?? throw new ArgumentNullException(nameof(memberType));
             Converter = converter ?? throw new ArgumentNullException(nameof(converter));
         }
     }
