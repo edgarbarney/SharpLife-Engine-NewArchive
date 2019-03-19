@@ -23,6 +23,11 @@ namespace SharpLife.Engine.Entities.KeyValues
         /// <summary>
         /// The type that this converter operates on
         /// </summary>
-        public Type Type { get; set; }
+        public Type Type { get; }
+
+        public KeyValueConverterAttribute(Type type)
+        {
+            Type = type;
+        }
     }
 }
