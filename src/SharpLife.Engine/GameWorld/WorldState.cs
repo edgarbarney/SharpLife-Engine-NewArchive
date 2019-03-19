@@ -18,6 +18,7 @@ using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.Models.MDL;
 using SharpLife.Engine.Models.SPR;
 using SharpLife.Engine.Shared;
+using SharpLife.Engine.Shared.Entities;
 using SharpLife.Engine.Shared.Events;
 using SharpLife.FileSystem;
 using SharpLife.Models;
@@ -41,9 +42,13 @@ namespace SharpLife.Engine.GameWorld
 
         public BSPModelUtils BSPUtils { get; }
 
+        public EntitySystemMetaData EntitySystemMetaData { get; }
+
         public MapInfo MapInfo { get; private set; }
 
-        public WorldState(ILogger logger, IEventSystem eventSystem, IFileSystem fileSystem)
+        public Scene Scene { get; private set; }
+
+        public WorldState(ILogger logger, IEventSystem eventSystem, IFileSystem fileSystem, EntitySystemMetaData entitySystemMetaData)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _eventSystem = eventSystem ?? throw new ArgumentNullException(nameof(eventSystem));
@@ -59,6 +64,8 @@ namespace SharpLife.Engine.GameWorld
             });
 
             BSPUtils = new BSPModelUtils(Framework.BSPModelNamePrefix, Framework.Directory.Maps, Framework.Extension.BSP);
+
+            EntitySystemMetaData = entitySystemMetaData ?? throw new ArgumentNullException(nameof(entitySystemMetaData));
         }
 
         /// <summary>
@@ -115,6 +122,8 @@ namespace SharpLife.Engine.GameWorld
 
             //Load the fallback model now to ensure that BSP indices are matched up
             Models.LoadFallbackModel(Framework.FallbackModelName);
+
+            Scene = new Scene(EntitySystemMetaData);
 
             return true;
         }

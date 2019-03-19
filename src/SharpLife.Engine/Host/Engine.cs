@@ -148,7 +148,7 @@ namespace SharpLife.Engine.Host
 
             EngineContext = CommandSystem.CreateContext("EngineContext");
 
-            World = new WorldState(Logger, EventSystem, FileSystem);
+            var startupState = new EngineStartupState(Logger);
 
             //create the game window if this is a client
             if (_hostType == HostType.Client)
@@ -156,7 +156,9 @@ namespace SharpLife.Engine.Host
                 Client = new EngineClient(this);
             }
 
-            Server = new EngineServer(this, Logger);
+            Server = new EngineServer(this, Logger, startupState);
+
+            World = new WorldState(Logger, EventSystem, FileSystem, startupState.EntitySystemMetaData.Build());
 
             _engineTimeStopwatch.Start();
 

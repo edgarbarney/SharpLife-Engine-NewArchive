@@ -15,7 +15,9 @@
 
 using Serilog;
 using SharpLife.CommandSystem;
+using SharpLife.Engine.Host;
 using SharpLife.Engine.Shared.Events;
+using SharpLife.Game;
 using SharpLife.Utility;
 using SharpLife.Utility.Events;
 using System;
@@ -42,12 +44,14 @@ namespace SharpLife.Engine.Server
 
         public bool Active { get; private set; }
 
-        public EngineServer(Host.Engine engine, ILogger logger)
+        public EngineServer(Host.Engine engine, ILogger logger, EngineStartupState startupState)
         {
             _engine = engine ?? throw new ArgumentNullException(nameof(engine));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             CommandContext = _engine.CommandSystem.CreateContext("ServerContext", _engine.EngineContext);
+
+            startupState.EntitySystemMetaData.AddAssembly(typeof(GameAssembly).Assembly);
         }
 
         public void Shutdown()
