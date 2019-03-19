@@ -54,8 +54,8 @@ namespace SharpLife.Engine.Entities.Factories
         /// </summary>
         /// <param name="creator"></param>
         /// <param name="entity"></param>
-        /// <param name="keyvalues"></param>
+        /// <param name="keyValues"></param>
         /// <returns>Whether initialization succeeded</returns>
-        public abstract bool Initialize(EntityCreator creator, Entity entity, IReadOnlyList<KeyValuePair<string, string>> keyvalues);
+        public abstract bool Initialize(EntityCreator creator, Entity entity, IReadOnlyList<KeyValuePair<string, string>> keyValues);
     }
 }
