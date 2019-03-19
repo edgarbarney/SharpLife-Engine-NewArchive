@@ -15,7 +15,6 @@
 
 using ImGuiNET;
 using Serilog;
-using SharpLife.Engine.Client;
 using SharpLife.Input;
 using SharpLife.Renderer;
 using System.Diagnostics;
