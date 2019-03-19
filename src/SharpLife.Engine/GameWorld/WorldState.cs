@@ -29,7 +29,7 @@ using System.IO;
 
 namespace SharpLife.Engine.GameWorld
 {
-    internal sealed class WorldState
+    public sealed class WorldState
     {
         private readonly ILogger _logger;
 
