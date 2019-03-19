@@ -15,9 +15,9 @@
 
 using Serilog;
 using SharpLife.CommandSystem;
+using SharpLife.Engine.Configuration;
+using SharpLife.Engine.Events;
 using SharpLife.Engine.Host;
-using SharpLife.Engine.Shared.Configuration;
-using SharpLife.Engine.Shared.Events;
 using SharpLife.Utility;
 using SharpLife.Utility.Events;
 using System;

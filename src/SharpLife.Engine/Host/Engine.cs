@@ -17,14 +17,13 @@ using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.Engine.Client;
+using SharpLife.Engine.CommandSystem;
+using SharpLife.Engine.Configuration;
+using SharpLife.Engine.Events;
 using SharpLife.Engine.GameWorld;
+using SharpLife.Engine.Logging;
+using SharpLife.Engine.Plugins;
 using SharpLife.Engine.Server;
-using SharpLife.Engine.Shared;
-using SharpLife.Engine.Shared.CommandSystem;
-using SharpLife.Engine.Shared.Configuration;
-using SharpLife.Engine.Shared.Events;
-using SharpLife.Engine.Shared.Logging;
-using SharpLife.Engine.Shared.Plugins;
 using SharpLife.FileSystem;
 using SharpLife.Utility;
 using SharpLife.Utility.Events;
@@ -147,7 +146,7 @@ namespace SharpLife.Engine.Host
 
             SetupFileSystem(GameDirectory);
 
-            CommandSystem = new CommandSystem.CommandSystem(Logger, CultureInfo.InvariantCulture);
+            CommandSystem = new SharpLife.CommandSystem.CommandSystem(Logger, CultureInfo.InvariantCulture);
 
             EngineContext = CommandSystem.CreateContext("EngineContext");
 

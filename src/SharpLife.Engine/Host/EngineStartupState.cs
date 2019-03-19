@@ -14,8 +14,8 @@
 ****/
 
 using Serilog;
-using SharpLife.Engine.Shared.Entities;
-using SharpLife.Engine.Shared.Plugins;
+using SharpLife.Engine.Entities;
+using SharpLife.Engine.Plugins;
 
 namespace SharpLife.Engine.Host
 {

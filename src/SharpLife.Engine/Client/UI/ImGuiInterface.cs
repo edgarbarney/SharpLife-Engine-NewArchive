@@ -15,7 +15,7 @@
 
 using ImGuiNET;
 using Serilog;
-using SharpLife.Engine.Shared.Logging;
+using SharpLife.Engine.Logging;
 using SharpLife.Utility;
 using System;
 using System.Numerics;

@@ -16,8 +16,6 @@
 using SDL2;
 using Serilog;
 using SharpLife.CommandSystem;
-using SharpLife.Engine.Client;
-using SharpLife.Engine.Shared;
 using SharpLife.FileSystem;
 using SharpLife.Input;
 using SharpLife.Utility;

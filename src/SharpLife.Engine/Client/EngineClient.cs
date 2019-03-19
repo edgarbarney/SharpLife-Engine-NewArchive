@@ -16,9 +16,9 @@
 using SDL2;
 using SharpLife.CommandSystem;
 using SharpLife.Engine.Client.UI;
+using SharpLife.Engine.Configuration;
 using SharpLife.Engine.Host;
-using SharpLife.Engine.Shared.Configuration;
-using SharpLife.Engine.Shared.Logging;
+using SharpLife.Engine.Logging;
 using System;
 
 namespace SharpLife.Engine.Client

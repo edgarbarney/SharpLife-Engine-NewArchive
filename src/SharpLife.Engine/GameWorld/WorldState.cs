@@ -14,12 +14,11 @@
 ****/
 
 using Serilog;
+using SharpLife.Engine.Entities;
+using SharpLife.Engine.Events;
 using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.Models.MDL;
 using SharpLife.Engine.Models.SPR;
-using SharpLife.Engine.Shared;
-using SharpLife.Engine.Shared.Entities;
-using SharpLife.Engine.Shared.Events;
 using SharpLife.FileSystem;
 using SharpLife.Models;
 using SharpLife.Models.BSP;

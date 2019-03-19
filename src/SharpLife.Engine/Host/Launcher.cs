@@ -17,8 +17,8 @@ using Serilog;
 using Serilog.Formatting;
 using Serilog.Formatting.Compact;
 using Serilog.Formatting.Display;
-using SharpLife.Engine.Shared.Configuration;
-using SharpLife.Engine.Shared.Logging;
+using SharpLife.Engine.Configuration;
+using SharpLife.Engine.Logging;
 using SharpLife.Utility;
 using System.IO;
 

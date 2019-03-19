@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharpLife.CommandSystem\SharpLife.CommandSystem.csproj" />
-    <ProjectReference Include="..\SharpLife.Engine.Shared\SharpLife.Engine.Shared.csproj" />
     <ProjectReference Include="..\SharpLife.Input\SharpLife.Input.csproj" />
     <ProjectReference Include="..\SharpLife.Models.BSP\SharpLife.Models.BSP.csproj" />
     <ProjectReference Include="..\SharpLife.Models.MDL\SharpLife.Models.MDL.csproj" />

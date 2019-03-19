@@ -23,7 +23,6 @@ using SharpLife.Engine.Client.UI.Renderer.Objects;
 using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.Models.MDL;
 using SharpLife.Engine.Models.SPR;
-using SharpLife.Engine.Shared;
 using SharpLife.FileFormats.WAD;
 using SharpLife.FileSystem;
 using SharpLife.Models;
