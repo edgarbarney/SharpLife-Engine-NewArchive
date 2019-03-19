@@ -13,8 +13,10 @@
 *
 ****/
 
+using Serilog;
 using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Entities.Factories;
+using SharpLife.Engine.GameWorld;
 using SharpLife.Utility;
 using System;
 using System.Diagnostics;
@@ -26,7 +28,11 @@ namespace SharpLife.Engine.Entities
     /// </summary>
     public sealed class Scene : IDisposable
     {
+        public WorldState WorldState { get; }
+
         public EntitySystemMetaData EntitySystemMetaData { get; }
+
+        public ILogger Logger => WorldState.Logger;
 
         public EntityCreator EntityCreator { get; }
 
@@ -53,8 +59,9 @@ namespace SharpLife.Engine.Entities
         /// </summary>
         public event Action<Scene> SceneDeactivated;
 
-        public Scene(EntitySystemMetaData entitySystemMetaData)
+        public Scene(WorldState worldState, EntitySystemMetaData entitySystemMetaData)
         {
+            WorldState = worldState ?? throw new ArgumentNullException(nameof(worldState));
             EntitySystemMetaData = entitySystemMetaData ?? throw new ArgumentNullException(nameof(entitySystemMetaData));
             EntityCreator = new EntityCreator(this);
             Components = new ComponentSystem(this);

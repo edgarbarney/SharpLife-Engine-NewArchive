@@ -13,6 +13,7 @@
 *
 ****/
 
+using SharpLife.Engine.GameWorld;
 using SharpLife.Utility;
 using System.Diagnostics;
 
@@ -33,6 +34,8 @@ namespace SharpLife.Engine.Entities
                 return _scene;
             }
         }
+
+        public static WorldState WorldState => Scene.WorldState;
 
         public static EntityList Entities => Scene.Entities;
 

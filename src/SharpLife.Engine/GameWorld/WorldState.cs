@@ -122,7 +122,8 @@ namespace SharpLife.Engine.GameWorld
             //Load the fallback model now to ensure that BSP indices are matched up
             Models.LoadFallbackModel(Framework.FallbackModelName);
 
-            Scene = new Scene(EntitySystemMetaData);
+            Scene = new Scene(this, EntitySystemMetaData);
+
             EntitySystem.SetScene(Scene);
 
             return true;

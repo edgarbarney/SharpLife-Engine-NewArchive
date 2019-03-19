@@ -13,6 +13,7 @@
 *
 ****/
 
+using Serilog;
 using SharpLife.Engine.Entities.Components;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,8 @@ namespace SharpLife.Engine.Entities.Factories
     public sealed class EntityCreator
     {
         public Scene Scene { get; }
+
+        public ILogger Logger => Scene.Logger;
 
         public EntityCreator(Scene scene)
         {
@@ -63,6 +66,8 @@ namespace SharpLife.Engine.Entities.Factories
             if (!Scene.EntitySystemMetaData.EntityFactories.TryGetValue(className, out var factory))
             {
                 entity = null;
+
+                Logger.Warning("No entity factory for class {ClassName}", className);
                 return false;
             }
 
@@ -72,6 +77,8 @@ namespace SharpLife.Engine.Entities.Factories
             {
                 Scene.DestroyEntity(entity);
                 entity = null;
+
+                Logger.Warning("Failed to initialize entity of class {ClassName}", className);
                 return false;
             }
 
