@@ -273,6 +273,8 @@ namespace SharpLife.Engine.Host
             CommandSystem.Execute();
 
             Client?.Update(deltaSeconds);
+
+            World.Update(_engineTime.ElapsedTime);
         }
 
         private void Shutdown()
