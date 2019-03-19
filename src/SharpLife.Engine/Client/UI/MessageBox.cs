@@ -16,7 +16,7 @@
 using SDL2;
 using System;
 
-namespace SharpLife.Engine.UI
+namespace SharpLife.Engine.Client.UI
 {
     /// <summary>
     /// Simple class to display message boxes at any time
