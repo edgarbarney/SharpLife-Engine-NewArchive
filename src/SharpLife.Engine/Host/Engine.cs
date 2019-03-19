@@ -152,6 +152,9 @@ namespace SharpLife.Engine.Host
 
             var startupState = new EngineStartupState(Logger, GameDirectory);
 
+            //Add the engine assembly so builtin data gets added
+            startupState.EntitySystemMetaData.AddAssembly(typeof(Engine).Assembly);
+
             //create the game window if this is a client
             if (_hostType == HostType.Client)
             {
