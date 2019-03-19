@@ -14,6 +14,7 @@
 ****/
 
 using Serilog;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Entities;
 using SharpLife.Engine.Events;
 using SharpLife.Engine.Models.BSP;
@@ -31,11 +32,11 @@ namespace SharpLife.Engine.GameWorld
 {
     public sealed class WorldState
     {
-        private readonly ILogger _logger;
-
         private readonly IEventSystem _eventSystem;
 
         private readonly IFileSystem _fileSystem;
+
+        public ILogger Logger { get; }
 
         public IModelManager Models { get; }
 
@@ -43,13 +44,15 @@ namespace SharpLife.Engine.GameWorld
 
         public EntitySystemMetaData EntitySystemMetaData { get; }
 
+        public IModelRenderer ModelRenderer { get; }
+
         public MapInfo MapInfo { get; private set; }
 
         public Scene Scene { get; private set; }
 
-        public WorldState(ILogger logger, IEventSystem eventSystem, IFileSystem fileSystem, EntitySystemMetaData entitySystemMetaData)
+        public WorldState(ILogger logger, IEventSystem eventSystem, IFileSystem fileSystem, EntitySystemMetaData entitySystemMetaData, IModelRenderer modelRenderer)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _eventSystem = eventSystem ?? throw new ArgumentNullException(nameof(eventSystem));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 
@@ -65,6 +68,7 @@ namespace SharpLife.Engine.GameWorld
             BSPUtils = new BSPModelUtils(Framework.BSPModelNamePrefix, Framework.Directory.Maps, Framework.Extension.BSP);
 
             EntitySystemMetaData = entitySystemMetaData ?? throw new ArgumentNullException(nameof(entitySystemMetaData));
+            ModelRenderer = modelRenderer ?? throw new ArgumentNullException(nameof(modelRenderer));
         }
 
         /// <summary>
@@ -103,7 +107,7 @@ namespace SharpLife.Engine.GameWorld
 
             if (worldModel == null)
             {
-                _logger.Information($"Couldn't spawn server {mapFileName}");
+                Logger.Information($"Couldn't spawn server {mapFileName}");
                 return false;
             }
 
@@ -111,7 +115,7 @@ namespace SharpLife.Engine.GameWorld
 
             if (!(worldModel is BSPModel bspWorldModel))
             {
-                _logger.Information($"Model {mapFileName} is not a map");
+                Logger.Information($"Model {mapFileName} is not a map");
                 return false;
             }
 

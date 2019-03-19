@@ -67,6 +67,8 @@ namespace SharpLife.Engine.Client.UI.Renderer
 
         private Skybox2D _skyboxRenderable;
 
+        public IModelRenderer ModelRenderer => _modelRenderer;
+
         public Scene Scene { get; }
 
         public ImGuiRenderable ImGui { get; }

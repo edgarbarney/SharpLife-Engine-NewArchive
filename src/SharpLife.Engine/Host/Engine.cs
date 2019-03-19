@@ -17,6 +17,7 @@ using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.Engine.Client;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.CommandSystem;
 using SharpLife.Engine.Configuration;
 using SharpLife.Engine.Events;
@@ -171,7 +172,7 @@ namespace SharpLife.Engine.Host
                 startupState.EntitySystemMetaData.AddAssembly(pluginAssembly);
             }
 
-            World = new WorldState(Logger, EventSystem, FileSystem, startupState.EntitySystemMetaData.Build());
+            World = new WorldState(Logger, EventSystem, FileSystem, startupState.EntitySystemMetaData.Build(), Client?.UserInterface.Renderer.ModelRenderer ?? new ServerModelRenderer());
 
             _engineTimeStopwatch.Start();
 
