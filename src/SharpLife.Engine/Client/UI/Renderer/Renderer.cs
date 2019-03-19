@@ -238,8 +238,6 @@ namespace SharpLife.Engine.Client.UI.Renderer
                 throw new ArgumentNullException(nameof(modelManager));
             }
 
-            ClearBSP();
-
             Scene.WorldModel = worldModel;
 
             //Reset light styles

@@ -76,6 +76,11 @@ namespace SharpLife.Engine.Client
             UserInterface.Draw();
         }
 
+        public void ClearMemory()
+        {
+            UserInterface.Renderer.ClearBSP();
+        }
+
         public void Shutdown()
         {
             UserInterface.Shutdown();

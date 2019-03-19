@@ -313,6 +313,8 @@ namespace SharpLife.Engine.Host
         /// </summary>
         private void ClearMemory()
         {
+            Client?.ClearMemory();
+
             //Done here so server and client don't wipe eachother's data while loading
             World.Clear();
         }
