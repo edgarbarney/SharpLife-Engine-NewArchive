@@ -13,6 +13,7 @@
 *
 ****/
 
+using SharpLife.Engine.ObjectEditor;
 using System.Numerics;
 
 namespace SharpLife.Engine.Entities.Components
@@ -25,6 +26,7 @@ namespace SharpLife.Engine.Entities.Components
 
         private Transform _nextSibling;
 
+        [ObjectEditorVisible(Visible = false)]
         public Transform Parent
         {
             get => _parent;

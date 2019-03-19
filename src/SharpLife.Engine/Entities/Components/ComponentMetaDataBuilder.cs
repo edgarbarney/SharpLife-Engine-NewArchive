@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.Engine.Entities.KeyValues;
+using SharpLife.Engine.ObjectEditor;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -78,39 +79,44 @@ namespace SharpLife.Engine.Entities.Components
                 .GetMembers(BindingFlags.Public | BindingFlags.Instance)
                 .Where(t => t is FieldInfo || t is PropertyInfo))
             {
-                var keyValueAttr = member.GetCustomAttribute<KeyValueAttribute>();
+                var objectEditorVisible = member.GetCustomAttribute<ObjectEditorVisibleAttribute>();
 
-                var name = member.Name;
-
-                if (keyValueAttr != null)
+                if (objectEditorVisible?.Visible != false)
                 {
-                    name = keyValueAttr.Name;
+                    var keyValueAttr = member.GetCustomAttribute<KeyValueAttribute>();
+
+                    var name = member.Name;
+
+                    if (keyValueAttr != null)
+                    {
+                        name = keyValueAttr.Name;
+                    }
+
+                    if (builder.ContainsKey(name))
+                    {
+                        throw new NotSupportedException("Using the same name for multiple keyvalues is not allowed");
+                    }
+
+                    Type memberType;
+
+                    switch (member)
+                    {
+                        case FieldInfo field:
+                            memberType = field.FieldType;
+                            break;
+
+                        case PropertyInfo prop:
+                            memberType = prop.PropertyType;
+                            break;
+
+                        //Shouldn't happen since we're filtering them
+                        default: throw new NotSupportedException("Unsupported member type");
+                    }
+
+                    var converter = GetConverter(member, memberType, keyValueAttr);
+
+                    builder.Add(name, new KeyValueMetaData(member, memberType, converter));
                 }
-
-                if (builder.ContainsKey(name))
-                {
-                    throw new NotSupportedException("Using the same name for multiple keyvalues is not allowed");
-                }
-
-                Type memberType;
-
-                switch (member)
-                {
-                    case FieldInfo field:
-                        memberType = field.FieldType;
-                        break;
-
-                    case PropertyInfo prop:
-                        memberType = prop.PropertyType;
-                        break;
-
-                    //Shouldn't happen since we're filtering them
-                    default: throw new NotSupportedException("Unsupported member type");
-                }
-
-                var converter = GetConverter(member, memberType, keyValueAttr);
-
-                builder.Add(name, new KeyValueMetaData(member, memberType, converter));
             }
 
             ImmutableDictionary<string, KeyValueMetaData> keyValues;
@@ -131,11 +137,11 @@ namespace SharpLife.Engine.Entities.Components
         {
             IKeyValueConverter converter;
 
-            if (keyValueAttr.ConverterType == null)
+            if (keyValueAttr?.ConverterType == null)
             {
                 if (!_keyValueConverters.TryGetValue(memberType, out converter))
                 {
-                    throw new ArgumentException($"KeyValue {member.DeclaringType.AssemblyQualifiedName}.{member.Name} uses type {memberType.AssemblyQualifiedName} with no converter");
+                    throw new ArgumentException($"KeyValue {member.DeclaringType.FullName}.{member.Name} uses type {memberType.FullName} with no converter");
                 }
             }
             else

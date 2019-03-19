@@ -13,6 +13,7 @@
 *
 ****/
 
+using SharpLife.Engine.ObjectEditor;
 using System;
 
 namespace SharpLife.Engine.Entities.Components
@@ -28,6 +29,7 @@ namespace SharpLife.Engine.Entities.Components
         /// <summary>
         /// The entity that owns this component
         /// </summary>
+        [ObjectEditorVisible(Visible = false)]
         public Entity Entity { get; private set; }
 
         public bool Enabled { get; private set; }
