@@ -17,7 +17,7 @@ using System;
 
 namespace SharpLife.Engine.Entities.KeyValues
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public sealed class KeyValueAttribute : Attribute
     {
         /// <summary>
