@@ -28,7 +28,7 @@ namespace SharpLife.Engine.Entities
         {
             get
             {
-                if (index < 0 || index >= HighestIndex)
+                if (index < 0 || index > HighestIndex)
                 {
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }

@@ -54,11 +54,11 @@ namespace SharpLife.Engine.Entities
                 public bool MoveNext()
                 {
                     //Once all entities have been enumerated, disable the enumerator to avoid edge cases
-                    if (_index != -2 && _index + 1 < _list.HighestIndex)
+                    if (_index != -2 && _index + 1 <= _list.HighestIndex)
                     {
                         ++_index;
 
-                        while (_index < _list.HighestIndex)
+                        while (_index <= _list.HighestIndex)
                         {
                             var entity = _list[_index];
 
