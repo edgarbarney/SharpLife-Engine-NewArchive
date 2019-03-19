@@ -156,15 +156,13 @@ namespace SharpLife.Engine.GameWorld
 
         public void Clear()
         {
-            Models.Clear();
-
-            EntitySystem.SetScene(null);
-
             if (Scene != null)
             {
                 Scene.Dispose();
                 Scene = null;
             }
+
+            Models.Clear();
         }
 
         private void LoadEntities(string entityData)

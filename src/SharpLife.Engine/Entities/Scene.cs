@@ -88,15 +88,15 @@ namespace SharpLife.Engine.Entities
         {
             if (Running)
             {
-                Activate();
+                EntitySystem.SetScene(this);
 
                 Stop();
 
-                Deactivate();
+                EntitySystem.SetScene(null);
             }
             else if (Active)
             {
-                Deactivate();
+                EntitySystem.SetScene(null);
             }
         }
 

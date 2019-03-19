@@ -43,6 +43,11 @@ namespace SharpLife.Engine.Entities
 
         public static void SetScene(Scene scene)
         {
+            if (ReferenceEquals(_scene, scene))
+            {
+                return;
+            }
+
             //Deactivate any old scene if active
             if (_scene != null)
             {
