@@ -24,6 +24,7 @@ using SharpLife.Engine.Shared.CommandSystem;
 using SharpLife.Engine.Shared.Configuration;
 using SharpLife.Engine.Shared.Events;
 using SharpLife.Engine.Shared.Logging;
+using SharpLife.Engine.Shared.Plugins;
 using SharpLife.FileSystem;
 using SharpLife.Utility;
 using SharpLife.Utility.Events;
@@ -104,6 +105,8 @@ namespace SharpLife.Engine.Host
         /// </summary>
         public IEventSystem EventSystem { get; } = new EventSystem();
 
+        public PluginManager PluginManager { get; }
+
         /// <summary>
         /// The engine configuration
         /// </summary>
@@ -148,15 +151,23 @@ namespace SharpLife.Engine.Host
 
             EngineContext = CommandSystem.CreateContext("EngineContext");
 
-            var startupState = new EngineStartupState(Logger);
+            var startupState = new EngineStartupState(Logger, GameDirectory);
 
             //create the game window if this is a client
             if (_hostType == HostType.Client)
             {
-                Client = new EngineClient(this);
+                Client = new EngineClient(this, startupState);
             }
 
             Server = new EngineServer(this, Logger, startupState);
+
+            PluginManager = startupState.PluginManager.Build();
+
+            //Automatically add in all plugin assemblies to the entity system
+            foreach (var pluginAssembly in PluginManager.Assemblies)
+            {
+                startupState.EntitySystemMetaData.AddAssembly(pluginAssembly);
+            }
 
             World = new WorldState(Logger, EventSystem, FileSystem, startupState.EntitySystemMetaData.Build());
 

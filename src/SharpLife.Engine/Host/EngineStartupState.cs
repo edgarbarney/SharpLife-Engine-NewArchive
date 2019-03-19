@@ -15,6 +15,7 @@
 
 using Serilog;
 using SharpLife.Engine.Shared.Entities;
+using SharpLife.Engine.Shared.Plugins;
 
 namespace SharpLife.Engine.Host
 {
@@ -24,10 +25,13 @@ namespace SharpLife.Engine.Host
     /// </summary>
     public sealed class EngineStartupState
     {
+        public PluginManagerBuilder PluginManager { get; }
+
         public EntitySystemMetaDataBuilder EntitySystemMetaData { get; }
 
-        public EngineStartupState(ILogger logger)
+        public EngineStartupState(ILogger logger, string gameDirectory)
         {
+            PluginManager = new PluginManagerBuilder(logger, gameDirectory);
             EntitySystemMetaData = new EntitySystemMetaDataBuilder(logger);
         }
     }

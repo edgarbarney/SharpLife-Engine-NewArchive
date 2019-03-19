@@ -16,8 +16,8 @@
 using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.Engine.Host;
+using SharpLife.Engine.Shared.Configuration;
 using SharpLife.Engine.Shared.Events;
-using SharpLife.Game;
 using SharpLife.Utility;
 using SharpLife.Utility.Events;
 using System;
@@ -51,7 +51,7 @@ namespace SharpLife.Engine.Server
 
             CommandContext = _engine.CommandSystem.CreateContext("ServerContext", _engine.EngineContext);
 
-            startupState.EntitySystemMetaData.AddAssembly(typeof(GameAssembly).Assembly);
+            startupState.PluginManager.AddAllAssembliesFromConfiguration(engine.EngineConfiguration.GameAssemblies, GameAssemblyTarget.Server);
         }
 
         public void Shutdown()

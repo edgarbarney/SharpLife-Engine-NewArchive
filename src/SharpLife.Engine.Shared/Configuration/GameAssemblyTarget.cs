@@ -13,13 +13,14 @@
 *
 ****/
 
-namespace SharpLife.Game
+namespace SharpLife.Engine.Shared.Configuration
 {
     /// <summary>
-    /// Tag type used to reference the assembly
-    /// TODO: remove once assembly is dynamically loaded
+    /// Indicates which target a game assembly configuration is intended for
     /// </summary>
-    public static class GameAssembly
+    public enum GameAssemblyTarget
     {
+        Client = 0,
+        Server
     }
 }

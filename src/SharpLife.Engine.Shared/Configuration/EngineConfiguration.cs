@@ -13,6 +13,7 @@
 *
 ****/
 
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace SharpLife.Engine.Shared.Configuration
@@ -50,5 +51,11 @@ namespace SharpLife.Engine.Shared.Configuration
         /// The engine's logging configuration
         /// </summary>
         public LoggingConfiguration LoggingConfiguration { get; set; }
+
+        /// <summary>
+        /// List of game assemblies to load
+        /// </summary>
+        [XmlArrayItem(ElementName = "GameAssembly")]
+        public List<GameAssemblyConfiguration> GameAssemblies { get; set; }
     }
 }
