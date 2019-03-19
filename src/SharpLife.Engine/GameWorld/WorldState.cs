@@ -138,6 +138,11 @@ namespace SharpLife.Engine.GameWorld
             //TODO
         }
 
+        public void Update(double currentTime)
+        {
+            Scene?.Update(currentTime);
+        }
+
         public void Clear()
         {
             Models.Clear();
