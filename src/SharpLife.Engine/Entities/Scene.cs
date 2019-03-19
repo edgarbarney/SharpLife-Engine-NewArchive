@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.Engine.Entities.Components;
+using SharpLife.Engine.Entities.Factories;
 using SharpLife.Utility;
 using System;
 using System.Diagnostics;
@@ -26,6 +27,8 @@ namespace SharpLife.Engine.Entities
     public sealed class Scene : IDisposable
     {
         public EntitySystemMetaData EntitySystemMetaData { get; }
+
+        public EntityCreator EntityCreator { get; }
 
         public ComponentSystem Components { get; }
 
@@ -53,6 +56,7 @@ namespace SharpLife.Engine.Entities
         public Scene(EntitySystemMetaData entitySystemMetaData)
         {
             EntitySystemMetaData = entitySystemMetaData ?? throw new ArgumentNullException(nameof(entitySystemMetaData));
+            EntityCreator = new EntityCreator(this);
             Components = new ComponentSystem(this);
         }
 
