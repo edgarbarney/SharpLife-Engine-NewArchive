@@ -11,28 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FastMember" Version="1.4.1" />
-    <PackageReference Include="ImGui.NET" Version="1.67.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
-    <PackageReference Include="Veldrid.ImGui" Version="5.67.0" />
+    <PackageReference Include="Serilog" Version="2.8.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharpLife.CommandSystem\SharpLife.CommandSystem.csproj" />
-    <ProjectReference Include="..\SharpLife.Input\SharpLife.Input.csproj" />
-    <ProjectReference Include="..\SharpLife.Models.BSP\SharpLife.Models.BSP.csproj" />
-    <ProjectReference Include="..\SharpLife.Models.MDL\SharpLife.Models.MDL.csproj" />
-    <ProjectReference Include="..\SharpLife.Models.SPR\SharpLife.Models.SPR.csproj" />
-    <ProjectReference Include="..\SharpLife.Models\SharpLife.Models.csproj" />
-    <ProjectReference Include="..\SharpLife.Renderer\SharpLife.Renderer.csproj" />
+    <ProjectReference Include="..\SharpLife.Engine\SharpLife.Engine.csproj" />
     <ProjectReference Include="..\SharpLife.Utility\SharpLife.Utility.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="SDL2-CS">
-      <HintPath>$(STEAMCOMMON)\Half-Life\sharplife_full\assemblies\SDL2-CS.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

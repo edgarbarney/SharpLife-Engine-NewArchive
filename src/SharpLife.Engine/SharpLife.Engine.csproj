@@ -40,13 +40,16 @@
     <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.TextWriter" Version="2.1.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="Veldrid.ImGui" Version="5.67.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SharpLife.CommandSystem\SharpLife.CommandSystem.csproj" />
     <ProjectReference Include="..\SharpLife.FileSystem\SharpLife.FileSystem.csproj" />
-    <ProjectReference Include="..\SharpLife.Game\SharpLife.Game.csproj" />
     <ProjectReference Include="..\SharpLife.Input\SharpLife.Input.csproj" />
+    <ProjectReference Include="..\SharpLife.Models.BSP\SharpLife.Models.BSP.csproj" />
+    <ProjectReference Include="..\SharpLife.Models.MDL\SharpLife.Models.MDL.csproj" />
+    <ProjectReference Include="..\SharpLife.Models.SPR\SharpLife.Models.SPR.csproj" />
     <ProjectReference Include="..\SharpLife.Models\SharpLife.Models.csproj" />
     <ProjectReference Include="..\SharpLife.Renderer\SharpLife.Renderer.csproj" />
     <ProjectReference Include="..\SharpLife.Utility\SharpLife.Utility.csproj" />

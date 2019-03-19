@@ -34,6 +34,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpLife.Models.MDL", "SharpLife.Models.MDL\SharpLife.Models.MDL.csproj", "{A7FFE5F3-D225-4AFE-B665-AAAF755128EE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpLife.Game", "SharpLife.Game\SharpLife.Game.csproj", "{8603957D-297B-4A47-99AE-167A6FD716FF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{960ACFAB-370D-405C-BCB0-E9C3F7125E71} = {960ACFAB-370D-405C-BCB0-E9C3F7125E71}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
