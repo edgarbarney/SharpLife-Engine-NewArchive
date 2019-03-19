@@ -123,6 +123,7 @@ namespace SharpLife.Engine.GameWorld
             Models.LoadFallbackModel(Framework.FallbackModelName);
 
             Scene = new Scene(EntitySystemMetaData);
+            EntitySystem.SetScene(Scene);
 
             return true;
         }
@@ -135,6 +136,14 @@ namespace SharpLife.Engine.GameWorld
         public void Clear()
         {
             Models.Clear();
+
+            EntitySystem.SetScene(null);
+
+            if (Scene != null)
+            {
+                Scene.Dispose();
+                Scene = null;
+            }
         }
     }
 }
