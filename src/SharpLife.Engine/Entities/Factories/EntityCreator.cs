@@ -31,9 +31,11 @@ namespace SharpLife.Engine.Entities.Factories
             Scene = scene ?? throw new ArgumentNullException(nameof(scene));
         }
 
-        private Entity CreateUninitializedEntity(EntityFactory factory)
+        private Entity CreateUninitializedEntity(string className, EntityFactory factory)
         {
             var entity = Scene.CreateEntity();
+
+            entity.ClassName = className;
 
             entity.AddComponents(factory.ComponentTypes);
 
@@ -64,7 +66,7 @@ namespace SharpLife.Engine.Entities.Factories
                 return false;
             }
 
-            entity = CreateUninitializedEntity(factory);
+            entity = CreateUninitializedEntity(className, factory);
 
             if (!factory.Initialize(this, entity, keyValues))
             {

@@ -26,6 +26,8 @@ namespace SharpLife.Engine.Entities
 
         public bool Destroyed { get; internal set; }
 
+        public string ClassName { get; set; }
+
         public string TargetName { get; set; }
 
         internal Entity(int id)
