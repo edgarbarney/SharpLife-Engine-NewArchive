@@ -16,9 +16,10 @@
 using SharpLife.Engine.Client.UI.Renderer.Models.BSP;
 using SharpLife.Engine.Client.UI.Renderer.Models.MDL;
 using SharpLife.Engine.Client.UI.Renderer.Models.SPR;
-using SharpLife.Engine.Models;
+using SharpLife.Engine.Entities.Components;
 using SharpLife.Renderer;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Veldrid;
 
@@ -34,6 +35,8 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
         private bool _active;
 
         private RenderContext _renderContext;
+
+        private readonly HashSet<RenderableComponent> _renderables = new HashSet<RenderableComponent>();
 
         public RenderPasses RenderPasses => RenderPasses.Standard;
 
@@ -53,6 +56,26 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
             SpriteRenderer = spriteRenderer ?? throw new ArgumentNullException(nameof(spriteRenderer));
             StudioRenderer = studioRenderer ?? throw new ArgumentNullException(nameof(studioRenderer));
             BrushRenderer = brushRenderer ?? throw new ArgumentNullException(nameof(brushRenderer));
+        }
+
+        public void AddRenderable(RenderableComponent renderable)
+        {
+            if (renderable == null)
+            {
+                throw new ArgumentNullException(nameof(renderable));
+            }
+
+            _renderables.Add(renderable);
+        }
+
+        public void RemoveRenderable(RenderableComponent renderable)
+        {
+            if (renderable == null)
+            {
+                throw new ArgumentNullException(nameof(renderable));
+            }
+
+            _renderables.Remove(renderable);
         }
 
         public void RenderSpriteModel(ref SpriteModelRenderData renderData)
@@ -134,9 +157,15 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
             _active = true;
             _renderContext = new RenderContext { GraphicsDevice = gd, CommandList = cl, SceneContext = sc, RenderPass = renderPass };
 
+            foreach (var renderable in _renderables)
+            {
+                renderable.Render(this);
+            }
+
             //TODO: render all entities known to the renderer
             //_renderModels(this, sc.ViewState);
 
+            /*
             //TODO: let game render world?
             if (sc.Scene.WorldModel != null)
             {
@@ -162,6 +191,7 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
 
                 RenderBrushModel(ref data);
             }
+            */
 
             _renderContext = new RenderContext();
             _active = false;
