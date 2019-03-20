@@ -43,13 +43,13 @@ namespace SharpLife.Engine.GameWorld
 
         public EntitySystemMetaData EntitySystemMetaData { get; }
 
-        public IModelRenderer ModelRenderer { get; }
+        public IRendererModels RendererModels { get; }
 
         public MapInfo MapInfo { get; private set; }
 
         public Scene Scene { get; private set; }
 
-        public WorldState(ILogger logger, IEventSystem eventSystem, IFileSystem fileSystem, EntitySystemMetaData entitySystemMetaData, IModelRenderer modelRenderer)
+        public WorldState(ILogger logger, IEventSystem eventSystem, IFileSystem fileSystem, EntitySystemMetaData entitySystemMetaData, IRendererModels rendererModels)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _eventSystem = eventSystem ?? throw new ArgumentNullException(nameof(eventSystem));
@@ -67,7 +67,7 @@ namespace SharpLife.Engine.GameWorld
             BSPUtils = new BSPModelUtils(Framework.BSPModelNamePrefix, Framework.Directory.Maps, Framework.Extension.BSP);
 
             EntitySystemMetaData = entitySystemMetaData ?? throw new ArgumentNullException(nameof(entitySystemMetaData));
-            ModelRenderer = modelRenderer ?? throw new ArgumentNullException(nameof(modelRenderer));
+            RendererModels = rendererModels ?? throw new ArgumentNullException(nameof(rendererModels));
         }
 
         /// <summary>

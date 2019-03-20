@@ -23,7 +23,7 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
     /// <summary>
     /// Renders models
     /// </summary>
-    public interface IModelRenderer
+    public interface IRendererModels
     {
         void AddRenderable(RenderableComponent renderable);
         void RemoveRenderable(RenderableComponent renderable);

@@ -83,7 +83,7 @@ namespace SharpLife.Engine.Models.MDL.Rendering
             {
                 var view = sc.MapResourceCache.GetTextureView(gd.ResourceFactory, uploadedTextures[i]);
 
-                Textures[i] = disposeFactory.CreateResourceSet(new ResourceSetDescription(sc.ModelRenderer.StudioRenderer.TextureLayout, view));
+                Textures[i] = disposeFactory.CreateResourceSet(new ResourceSetDescription(sc.Models.StudioRenderer.TextureLayout, view));
             }
         }
 

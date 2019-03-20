@@ -24,16 +24,16 @@ namespace SharpLife.Engine.Entities.Components
         [ObjectEditorVisible(Visible = false)]
         public abstract IModel Model { get; set; }
 
-        public abstract void Render(ModelRenderer renderer);
+        public abstract void Render(RendererModels renderer);
 
         public void OnEnable()
         {
-            EntitySystem.WorldState.ModelRenderer.AddRenderable(this);
+            EntitySystem.WorldState.RendererModels.AddRenderable(this);
         }
 
         public void OnDisable()
         {
-            EntitySystem.WorldState.ModelRenderer.RemoveRenderable(this);
+            EntitySystem.WorldState.RendererModels.RemoveRenderable(this);
         }
     }
 }

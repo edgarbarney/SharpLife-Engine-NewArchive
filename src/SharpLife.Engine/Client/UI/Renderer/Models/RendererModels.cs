@@ -28,7 +28,7 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
     /// <summary>
     /// Responsible for rendering models
     /// </summary>
-    public sealed class ModelRenderer : IModelRenderer, IRenderable
+    public sealed class RendererModels : IRendererModels, IRenderable
     {
         private readonly IModelResourcesManager _resourcesManager;
 
@@ -46,7 +46,7 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
 
         public BrushModelRenderer BrushRenderer { get; }
 
-        public ModelRenderer(IModelResourcesManager resourcesManager,
+        public RendererModels(IModelResourcesManager resourcesManager,
             SpriteModelRenderer spriteRenderer,
             StudioModelRenderer studioRenderer,
             BrushModelRenderer brushRenderer)

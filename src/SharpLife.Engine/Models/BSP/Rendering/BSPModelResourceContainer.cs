@@ -94,7 +94,7 @@ namespace SharpLife.Engine.Models.BSP.Rendering
 
                         var view = sc.MapResourceCache.GetTextureView(gd.ResourceFactory, texture);
 
-                        var textureResourceSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(sc.ModelRenderer.BrushRenderer.TextureLayout, view, sc.MainSampler));
+                        var textureResourceSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(sc.Models.BrushRenderer.TextureLayout, view, sc.MainSampler));
 
                         BSPResourceUtils.BuildFacesBuffer(
                             BSPModel.BSPFile,
@@ -110,7 +110,7 @@ namespace SharpLife.Engine.Models.BSP.Rendering
             }
 
             Lightmaps = lightmapBuilders
-                    .Select(builder => builder.Build(sc.ModelRenderer.BrushRenderer.LightmapLayout, sc.MapResourceCache, gd, gd.ResourceFactory))
+                    .Select(builder => builder.Build(sc.Models.BrushRenderer.LightmapLayout, sc.MapResourceCache, gd, gd.ResourceFactory))
                     .ToArray();
 
             Array.ForEach(Lightmaps, lightmap => _disposeCollector.Add(lightmap));

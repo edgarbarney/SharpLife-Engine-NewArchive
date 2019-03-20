@@ -172,7 +172,7 @@ namespace SharpLife.Engine.Host
                 startupState.EntitySystemMetaData.AddAssembly(pluginAssembly);
             }
 
-            World = new WorldState(Logger, EventSystem, FileSystem, startupState.EntitySystemMetaData.Build(), Client?.UserInterface.Renderer.ModelRenderer ?? new ServerModelRenderer());
+            World = new WorldState(Logger, EventSystem, FileSystem, startupState.EntitySystemMetaData.Build(), Client?.UserInterface.Renderer.Models ?? new ServerRendererModels());
 
             _engineTimeStopwatch.Start();
 

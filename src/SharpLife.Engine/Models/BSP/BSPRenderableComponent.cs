@@ -47,7 +47,7 @@ namespace SharpLife.Engine.Models.BSP
             }
         }
 
-        public override void Render(ModelRenderer renderer)
+        public override void Render(RendererModels renderer)
         {
             BrushModelRenderData data = new BrushModelRenderData
             {

@@ -65,7 +65,7 @@ namespace SharpLife.Engine.Models.SPR.Rendering
             var view = sc.MapResourceCache.GetTextureView(gd.ResourceFactory, texture);
 
             ResourceSet = disposeFactory.CreateResourceSet(new ResourceSetDescription(
-                sc.ModelRenderer.SpriteRenderer.Layout,
+                sc.Models.SpriteRenderer.Layout,
                 sc.ProjectionMatrixBuffer,
                 sc.ViewMatrixBuffer,
                 sc.WorldAndInverseBuffer,

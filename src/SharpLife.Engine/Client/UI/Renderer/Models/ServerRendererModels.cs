@@ -23,7 +23,7 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
     /// <summary>
     /// Dummy renderer that does not do anything
     /// </summary>
-    internal sealed class ServerModelRenderer : IModelRenderer
+    internal sealed class ServerRendererModels : IRendererModels
     {
         public void AddRenderable(RenderableComponent renderable)
         {

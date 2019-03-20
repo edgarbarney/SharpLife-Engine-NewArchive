@@ -60,13 +60,13 @@ namespace SharpLife.Engine.Client.UI.Renderer
         private event Action<int, int> _resizeHandled;
 
         private readonly ModelResourcesManager _modelResourcesManager;
-        private readonly ModelRenderer _modelRenderer;
+        private readonly RendererModels _models;
 
         private CoordinateAxes _coordinateAxes;
 
         private Skybox2D _skyboxRenderable;
 
-        public IModelRenderer ModelRenderer => _modelRenderer;
+        public IRendererModels Models => _models;
 
         public Scene Scene { get; }
 
@@ -121,20 +121,20 @@ namespace SharpLife.Engine.Client.UI.Renderer
                 { typeof(BSPModel), model => new BSPModelResourceContainer((BSPModel)model)  }
             });
 
-            _modelRenderer = new ModelRenderer(
+            _models = new RendererModels(
                 _modelResourcesManager,
                 spriteRenderer,
                 studioRenderer,
                 brushRenderer
                 );
 
-            Scene.AddRenderable(_modelRenderer);
+            Scene.AddRenderable(_models);
 
             Scene.AddContainer(spriteRenderer);
             Scene.AddContainer(studioRenderer);
             Scene.AddContainer(brushRenderer);
 
-            _sc = new SceneContext(fileSystem, commandContext, _modelRenderer, shadersDirectory);
+            _sc = new SceneContext(fileSystem, commandContext, _models, shadersDirectory);
 
             _sc.SetCurrentScene(Scene);
 
