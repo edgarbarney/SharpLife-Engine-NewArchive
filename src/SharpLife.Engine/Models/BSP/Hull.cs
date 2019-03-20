@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Models.BSP.FileFormat;
+using SharpLife.Engine.Models.BSP.FileFormat;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -32,13 +32,13 @@ namespace SharpLife.Engine.Models.BSP
 
         public IReadOnlyList<ClipNode> ClipNodes;
 
-        public Memory<SharpLife.Models.BSP.FileFormat.Plane> Planes;
+        public Memory<FileFormat.Plane> Planes;
 
         public Hull(
             int firstClipNode, int lastClipNode,
             in Vector3 clipMins, in Vector3 clipMaxs,
             IReadOnlyList<ClipNode> clipNodes,
-            Memory<SharpLife.Models.BSP.FileFormat.Plane> planes)
+            Memory<FileFormat.Plane> planes)
         {
             FirstClipNode = firstClipNode;
             LastClipNode = lastClipNode;

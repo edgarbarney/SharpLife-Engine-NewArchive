@@ -13,9 +13,9 @@
 *
 ****/
 
+using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.FileSystem;
 using SharpLife.Models;
-using SharpLife.Models.BSP.FileFormat;
 using System;
 using System.Collections.Generic;
 using System.IO;

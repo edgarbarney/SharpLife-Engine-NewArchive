@@ -45,9 +45,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharpLife.CommandSystem\SharpLife.CommandSystem.csproj" />
+    <ProjectReference Include="..\SharpLife.FileFormats\SharpLife.FileFormats.csproj" />
     <ProjectReference Include="..\SharpLife.FileSystem\SharpLife.FileSystem.csproj" />
     <ProjectReference Include="..\SharpLife.Input\SharpLife.Input.csproj" />
-    <ProjectReference Include="..\SharpLife.Models.BSP\SharpLife.Models.BSP.csproj" />
     <ProjectReference Include="..\SharpLife.Models.MDL\SharpLife.Models.MDL.csproj" />
     <ProjectReference Include="..\SharpLife.Models.SPR\SharpLife.Models.SPR.csproj" />
     <ProjectReference Include="..\SharpLife.Models\SharpLife.Models.csproj" />

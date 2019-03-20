@@ -18,7 +18,7 @@ using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.Commands.VariableFilters;
 using SharpLife.Engine.Client.UI.Renderer.Utility;
 using SharpLife.Engine.Models;
-using SharpLife.Models.BSP.FileFormat;
+using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Models.MDL;
 using SharpLife.Models.MDL.FileFormat;
 using SharpLife.Models.MDL.Rendering;

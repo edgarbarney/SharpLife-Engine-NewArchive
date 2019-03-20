@@ -13,9 +13,9 @@
 *
 ****/
 
+using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Physics;
 using SharpLife.Models;
-using SharpLife.Models.BSP.FileFormat;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -41,9 +41,9 @@ namespace SharpLife.Engine.Models.BSP
             var hulls = new Hull[BSPConstants.MaxHulls];
 
             hulls[0] = new Hull(subModel.HeadNodes[0], bspFile.ClipNodes.Count - 1, hull0.ClipMins, hull0.ClipMaxs, hull0.ClipNodes, hull0.Planes);
-            hulls[1] = new Hull(subModel.HeadNodes[1], bspFile.ClipNodes.Count - 1, PhysicsConstants.Hull1.ClipMins, PhysicsConstants.Hull1.ClipMaxs, hull0.ClipNodes, new Memory<SharpLife.Models.BSP.FileFormat.Plane>(BSPFile.Planes));
-            hulls[2] = new Hull(subModel.HeadNodes[2], bspFile.ClipNodes.Count - 1, PhysicsConstants.Hull2.ClipMins, PhysicsConstants.Hull2.ClipMaxs, hull0.ClipNodes, new Memory<SharpLife.Models.BSP.FileFormat.Plane>(BSPFile.Planes));
-            hulls[3] = new Hull(subModel.HeadNodes[3], bspFile.ClipNodes.Count - 1, PhysicsConstants.Hull3.ClipMins, PhysicsConstants.Hull3.ClipMaxs, hull0.ClipNodes, new Memory<SharpLife.Models.BSP.FileFormat.Plane>(BSPFile.Planes));
+            hulls[1] = new Hull(subModel.HeadNodes[1], bspFile.ClipNodes.Count - 1, PhysicsConstants.Hull1.ClipMins, PhysicsConstants.Hull1.ClipMaxs, hull0.ClipNodes, new Memory<FileFormat.Plane>(BSPFile.Planes));
+            hulls[2] = new Hull(subModel.HeadNodes[2], bspFile.ClipNodes.Count - 1, PhysicsConstants.Hull2.ClipMins, PhysicsConstants.Hull2.ClipMaxs, hull0.ClipNodes, new Memory<FileFormat.Plane>(BSPFile.Planes));
+            hulls[3] = new Hull(subModel.HeadNodes[3], bspFile.ClipNodes.Count - 1, PhysicsConstants.Hull3.ClipMins, PhysicsConstants.Hull3.ClipMaxs, hull0.ClipNodes, new Memory<FileFormat.Plane>(BSPFile.Planes));
 
             Hulls = hulls;
 
