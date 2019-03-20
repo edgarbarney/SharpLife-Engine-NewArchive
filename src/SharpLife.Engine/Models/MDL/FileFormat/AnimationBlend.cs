@@ -13,33 +13,12 @@
 *
 ****/
 
-using SharpLife.Engine.Models.MDL;
-using SharpLife.Engine.Models.MDL.Rendering;
+using System.Collections.Generic;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
+namespace SharpLife.Engine.Models.MDL.FileFormat
 {
-    public unsafe struct StudioModelRenderData
+    public class AnimationBlend
     {
-        public StudioModel Model;
-
-        public SharedModelRenderData Shared;
-
-        public double CurrentTime;
-
-        public uint Sequence;
-
-        public float LastTime;
-
-        public float Frame;
-
-        public float FrameRate;
-
-        public uint Body;
-
-        public uint Skin;
-
-        public BoneData BoneData;
-
-        public int RenderFXLightMultiplier;
+        public List<Animation> Animations { get; set; }
     }
 }

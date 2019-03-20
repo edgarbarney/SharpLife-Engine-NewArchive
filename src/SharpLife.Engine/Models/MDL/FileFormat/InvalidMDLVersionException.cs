@@ -13,22 +13,27 @@
 *
 ****/
 
-using SharpLife.Engine.Models.MDL.FileFormat;
-using SharpLife.Models;
+using SharpLife.Utility;
 using System;
-using System.Numerics;
 
-namespace SharpLife.Engine.Models.MDL
+namespace SharpLife.Engine.Models.MDL.FileFormat
 {
-    public sealed class StudioModel : BaseModel
+#pragma warning disable RCS1194 // Implement exception constructors.
+    public sealed class InvalidMDLVersionException : FileLoadFailureException
+#pragma warning restore RCS1194 // Implement exception constructors.
     {
-        public StudioFile StudioFile { get; }
-
-        public StudioModel(string name, uint crc, StudioFile studioFile)
-            //TODO: figure out if models have a preset size
-            : base(name, crc, Vector3.Zero, Vector3.Zero)
+        public InvalidMDLVersionException()
         {
-            StudioFile = studioFile ?? throw new ArgumentNullException(nameof(studioFile));
+        }
+
+        public InvalidMDLVersionException(string message)
+            : base(message)
+        {
+        }
+
+        public InvalidMDLVersionException(string message, Exception innerException)
+            : base(message, innerException)
+        {
         }
     }
 }

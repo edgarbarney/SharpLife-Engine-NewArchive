@@ -13,33 +13,22 @@
 *
 ****/
 
-using SharpLife.Engine.Models.MDL;
-using SharpLife.Engine.Models.MDL.Rendering;
+using System.Numerics;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
+namespace SharpLife.Engine.Models.MDL.FileFormat.Disk
 {
-    public unsafe struct StudioModelRenderData
+    internal unsafe struct Attachment
     {
-        public StudioModel Model;
+        internal const int NameSize = 32;
 
-        public SharedModelRenderData Shared;
-
-        public double CurrentTime;
-
-        public uint Sequence;
-
-        public float LastTime;
-
-        public float Frame;
-
-        public float FrameRate;
-
-        public uint Body;
-
-        public uint Skin;
-
-        public BoneData BoneData;
-
-        public int RenderFXLightMultiplier;
+        internal fixed byte Name[NameSize];
+#pragma warning disable CS0649
+        internal int Type;
+        internal int Bone;
+        internal Vector3 Origin;
+        internal Vector3 Vector0;
+        internal Vector3 Vector1;
+        internal Vector3 Vector2;
+#pragma warning restore CS0649
     }
 }

@@ -13,33 +13,20 @@
 *
 ****/
 
-using SharpLife.Engine.Models.MDL;
-using SharpLife.Engine.Models.MDL.Rendering;
+using System;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
+namespace SharpLife.Engine.Models.MDL.FileFormat
 {
-    public unsafe struct StudioModelRenderData
+    [Flags]
+    public enum MDLTextureFlags
     {
-        public StudioModel Model;
-
-        public SharedModelRenderData Shared;
-
-        public double CurrentTime;
-
-        public uint Sequence;
-
-        public float LastTime;
-
-        public float Frame;
-
-        public float FrameRate;
-
-        public uint Body;
-
-        public uint Skin;
-
-        public BoneData BoneData;
-
-        public int RenderFXLightMultiplier;
+        None = 0,
+        FlatShade = 1 << 0,
+        Chrome = 1 << 1,
+        Fullbright = 1 << 2,
+        NoMips = 1 << 3,
+        Alpha = 1 << 4,
+        Additive = 1 << 5,
+        Masked = 1 << 6
     }
 }

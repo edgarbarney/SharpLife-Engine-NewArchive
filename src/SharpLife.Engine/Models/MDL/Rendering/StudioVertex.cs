@@ -13,33 +13,18 @@
 *
 ****/
 
-using SharpLife.Engine.Models.MDL;
-using SharpLife.Engine.Models.MDL.Rendering;
+using SharpLife.Renderer.Utility;
+using System.Numerics;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
+namespace SharpLife.Engine.Models.MDL.Rendering
 {
-    public unsafe struct StudioModelRenderData
+    public struct StudioVertex
     {
-        public StudioModel Model;
+        public WorldTextureCoordinate WorldTexture;
 
-        public SharedModelRenderData Shared;
+        public Vector3 Normal;
 
-        public double CurrentTime;
-
-        public uint Sequence;
-
-        public float LastTime;
-
-        public float Frame;
-
-        public float FrameRate;
-
-        public uint Body;
-
-        public uint Skin;
-
-        public BoneData BoneData;
-
-        public int RenderFXLightMultiplier;
+        public int VertexBoneIndex;
+        public int NormalBoneIndex;
     }
 }

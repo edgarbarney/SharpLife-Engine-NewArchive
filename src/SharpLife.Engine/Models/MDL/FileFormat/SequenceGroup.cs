@@ -13,33 +13,16 @@
 *
 ****/
 
-using SharpLife.Engine.Models.MDL;
-using SharpLife.Engine.Models.MDL.Rendering;
+using System.Collections.Generic;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
+namespace SharpLife.Engine.Models.MDL.FileFormat
 {
-    public unsafe struct StudioModelRenderData
+    public class SequenceGroup
     {
-        public StudioModel Model;
+        public string Label { get; set; }
 
-        public SharedModelRenderData Shared;
+        public string Name { get; set; }
 
-        public double CurrentTime;
-
-        public uint Sequence;
-
-        public float LastTime;
-
-        public float Frame;
-
-        public float FrameRate;
-
-        public uint Body;
-
-        public uint Skin;
-
-        public BoneData BoneData;
-
-        public int RenderFXLightMultiplier;
+        public List<SequenceDescriptor> Sequences { get; set; }
     }
 }

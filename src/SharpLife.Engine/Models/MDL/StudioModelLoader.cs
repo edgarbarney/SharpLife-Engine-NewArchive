@@ -13,9 +13,9 @@
 *
 ****/
 
+using SharpLife.Engine.Models.MDL.FileFormat;
 using SharpLife.FileSystem;
 using SharpLife.Models;
-using SharpLife.Models.MDL.FileFormat;
 using System;
 using System.Collections.Generic;
 using System.IO;
