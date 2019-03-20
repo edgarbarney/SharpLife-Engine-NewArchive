@@ -15,10 +15,15 @@
 
 using System.Numerics;
 
-namespace SharpLife.Engine.Rendering
+namespace SharpLife.Engine.Client.UI.Rendering.Utility
 {
-    public interface IRenderable
+    /// <summary>
+    /// Blittable type used to pass a 3D vertex and 2D texture coordinate to shaders
+    /// </summary>
+    public struct WorldTextureCoordinate
     {
-        RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
+        public Vector3 Vertex;
+
+        public Vector2 Texture;
     }
 }

@@ -15,10 +15,9 @@
 
 using SharpLife.CommandSystem;
 using SharpLife.Engine.Client.UI.Rendering.Models;
+using SharpLife.Engine.Client.UI.Rendering.Utility;
 using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.Models.BSP.FileFormat;
-using SharpLife.Engine.Rendering;
-using SharpLife.Engine.Rendering.Utility;
 using SharpLife.FileSystem;
 using SixLabors.ImageSharp.PixelFormats;
 using System;

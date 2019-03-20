@@ -19,7 +19,6 @@ using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Client.UI.Rendering.Utility;
 using SharpLife.Engine.Models.Rendering;
 using SharpLife.Engine.Models.SPR.FileFormat;
-using SharpLife.Engine.Rendering.Utility;
 using SharpLife.Utility.Mathematics;
 using System;
 using System.Numerics;

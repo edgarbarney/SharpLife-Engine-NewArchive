@@ -19,7 +19,6 @@ using SharpLife.CommandSystem.Commands.VariableFilters;
 using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Models.BSP.Rendering;
-using SharpLife.Engine.Rendering;
 using SharpLife.Input;
 using SharpLife.Utility;
 using SharpLife.Utility.Mathematics;
@@ -223,7 +222,7 @@ namespace SharpLife.Engine.Client.UI.Rendering
             RenderPasses pass,
             BoundingFrustum frustum,
             Vector3 viewPosition,
-            RenderQueue<IRenderable> renderQueue,
+            RenderQueue renderQueue,
             List<IRenderable> renderableList,
             Comparer<RenderItemIndex> comparer,
             bool threaded)
@@ -319,7 +318,7 @@ namespace SharpLife.Engine.Client.UI.Rendering
             }
         }
 
-        private readonly RenderQueue<IRenderable>[] _renderQueues = Enumerable.Range(0, 4).Select(_ => new RenderQueue<IRenderable>()).ToArray();
+        private readonly RenderQueue[] _renderQueues = Enumerable.Range(0, 4).Select(_ => new RenderQueue()).ToArray();
         private readonly List<IRenderable>[] _renderableStage = Enumerable.Range(0, 4).Select(_ => new List<IRenderable>()).ToArray();
 
         private void CollectFreeObjects(RenderPasses renderPass, List<IRenderable> renderables)

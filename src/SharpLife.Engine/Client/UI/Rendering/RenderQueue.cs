@@ -18,15 +18,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 
-namespace SharpLife.Engine.Rendering
+namespace SharpLife.Engine.Client.UI.Rendering
 {
-    public class RenderQueue<TRenderable> : IEnumerable<TRenderable>
-        where TRenderable : class, IRenderable
+    public class RenderQueue : IEnumerable<IRenderable>
     {
         private const int DefaultCapacity = 250;
 
         private readonly List<RenderItemIndex> _indices = new List<RenderItemIndex>(DefaultCapacity);
-        private readonly List<TRenderable> _renderables = new List<TRenderable>(DefaultCapacity);
+        private readonly List<IRenderable> _renderables = new List<IRenderable>(DefaultCapacity);
 
         public int Count => _renderables.Count;
 
@@ -36,7 +35,7 @@ namespace SharpLife.Engine.Rendering
             _renderables.Clear();
         }
 
-        public void AddRange(List<TRenderable> Renderables, Vector3 viewPosition)
+        public void AddRange(List<IRenderable> Renderables, Vector3 viewPosition)
         {
             for (int i = 0; i < Renderables.Count; i++)
             {
@@ -48,7 +47,7 @@ namespace SharpLife.Engine.Rendering
             }
         }
 
-        public void AddRange(IReadOnlyList<TRenderable> Renderables, Vector3 viewPosition)
+        public void AddRange(IReadOnlyList<IRenderable> Renderables, Vector3 viewPosition)
         {
             for (int i = 0; i < Renderables.Count; i++)
             {
@@ -60,7 +59,7 @@ namespace SharpLife.Engine.Rendering
             }
         }
 
-        public void AddRange(IEnumerable<TRenderable> Renderables, Vector3 viewPosition)
+        public void AddRange(IEnumerable<IRenderable> Renderables, Vector3 viewPosition)
         {
             foreach (var item in Renderables)
             {
@@ -71,7 +70,7 @@ namespace SharpLife.Engine.Rendering
             }
         }
 
-        public void Add(TRenderable item, Vector3 viewPosition)
+        public void Add(IRenderable item, Vector3 viewPosition)
         {
             int index = _renderables.Count;
             _indices.Add(new RenderItemIndex(item.GetRenderOrderKey(viewPosition), index));
@@ -101,17 +100,17 @@ namespace SharpLife.Engine.Rendering
             return new Enumerator(_indices, _renderables);
         }
 
-        IEnumerator<TRenderable> IEnumerable<TRenderable>.GetEnumerator() => GetEnumerator();
+        IEnumerator<IRenderable> IEnumerable<IRenderable>.GetEnumerator() => GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public struct Enumerator : IEnumerator<TRenderable>
+        public struct Enumerator : IEnumerator<IRenderable>
         {
             private readonly List<RenderItemIndex> _indices;
-            private readonly List<TRenderable> _Renderables;
+            private readonly List<IRenderable> _Renderables;
             private int _nextItemIndex;
-            private TRenderable _currentItem;
+            private IRenderable _currentItem;
 
-            public Enumerator(List<RenderItemIndex> indices, List<TRenderable> Renderables)
+            public Enumerator(List<RenderItemIndex> indices, List<IRenderable> Renderables)
             {
                 _indices = indices;
                 _Renderables = Renderables;
@@ -119,7 +118,7 @@ namespace SharpLife.Engine.Rendering
                 _currentItem = null;
             }
 
-            public TRenderable Current => _currentItem;
+            public IRenderable Current => _currentItem;
             object IEnumerator.Current => _currentItem;
 
             public void Dispose()

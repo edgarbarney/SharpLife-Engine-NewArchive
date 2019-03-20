@@ -16,7 +16,7 @@
 using System;
 using System.Numerics;
 
-namespace SharpLife.Engine.Rendering
+namespace SharpLife.Engine.Client.UI.Rendering
 {
     public class Transform
     {

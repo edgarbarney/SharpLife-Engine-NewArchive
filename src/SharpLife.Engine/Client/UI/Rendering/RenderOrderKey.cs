@@ -16,7 +16,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace SharpLife.Engine.Rendering
+namespace SharpLife.Engine.Client.UI.Rendering
 {
     public struct RenderOrderKey : IComparable<RenderOrderKey>, IComparable
     {

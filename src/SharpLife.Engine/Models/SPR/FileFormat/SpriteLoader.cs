@@ -13,8 +13,8 @@
 *
 ****/
 
+using SharpLife.Engine.Client.UI.Rendering.Utility;
 using SharpLife.Engine.Models.SPR.FileFormat.Disk;
-using SharpLife.Engine.Rendering.Utility;
 using SharpLife.Utility;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.Primitives;

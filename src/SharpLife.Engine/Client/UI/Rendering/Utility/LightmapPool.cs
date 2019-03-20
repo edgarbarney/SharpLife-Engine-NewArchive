@@ -21,7 +21,7 @@ using System.Numerics;
 using Veldrid;
 using Veldrid.ImageSharp;
 
-namespace SharpLife.Engine.Rendering.Utility
+namespace SharpLife.Engine.Client.UI.Rendering.Utility
 {
     /// <summary>
     /// Provides a way to allocate lightmaps from a pool of memory that can be uploaded into memory

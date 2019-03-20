@@ -13,9 +13,9 @@
 *
 ****/
 
+using SharpLife.Engine.Client.UI.Rendering;
+using SharpLife.Engine.Client.UI.Rendering.Utility;
 using SharpLife.Engine.Models.SPR.FileFormat;
-using SharpLife.Engine.Rendering;
-using SharpLife.Engine.Rendering.Utility;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;

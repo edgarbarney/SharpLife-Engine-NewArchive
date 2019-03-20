@@ -13,7 +13,7 @@
 *
 ****/
 
-namespace SharpLife.Engine.Rendering.Utility
+namespace SharpLife.Engine.Client.UI.Rendering.Utility
 {
     public static class IndexPaletteConstants
     {

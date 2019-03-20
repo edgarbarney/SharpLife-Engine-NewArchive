@@ -17,7 +17,6 @@ using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Models.BSP.Rendering;
 using SharpLife.Engine.Models.MDL.Rendering;
 using SharpLife.Engine.Models.SPR.Rendering;
-using SharpLife.Engine.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;

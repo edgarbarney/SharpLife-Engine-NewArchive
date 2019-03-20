@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Engine.Rendering.Utility;
+using SharpLife.Engine.Client.UI.Rendering.Utility;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace SharpLife.Engine.Models.MDL.FileFormat

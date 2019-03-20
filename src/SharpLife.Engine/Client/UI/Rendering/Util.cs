@@ -19,7 +19,7 @@ using System.Runtime.CompilerServices;
 using Veldrid;
 using Veldrid.Utilities;
 
-namespace SharpLife.Engine.Rendering
+namespace SharpLife.Engine.Client.UI.Rendering
 {
     public static class Util
     {

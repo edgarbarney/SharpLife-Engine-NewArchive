@@ -13,9 +13,9 @@
 *
 ****/
 
+using SharpLife.Engine.Client.UI.Rendering.Utility;
 using SharpLife.Engine.FileFormats.WAD;
 using SharpLife.Engine.Models.BSP.FileFormat;
-using SharpLife.Engine.Rendering.Utility;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;

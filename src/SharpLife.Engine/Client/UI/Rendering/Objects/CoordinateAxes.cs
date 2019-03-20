@@ -13,7 +13,6 @@
 *
 ****/
 
-using SharpLife.Engine.Rendering;
 using System.Numerics;
 using Veldrid;
 using Veldrid.Utilities;

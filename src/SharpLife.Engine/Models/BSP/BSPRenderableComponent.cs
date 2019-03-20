@@ -21,6 +21,7 @@ using SharpLife.Engine.Models.BSP.Rendering;
 using SharpLife.Engine.Models.Rendering;
 using SharpLife.Engine.ObjectEditor;
 using System.Numerics;
+using Transform = SharpLife.Engine.Entities.Components.Transform;
 
 namespace SharpLife.Engine.Models.BSP
 {

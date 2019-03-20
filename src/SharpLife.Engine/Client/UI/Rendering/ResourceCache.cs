@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using Veldrid;
 using Veldrid.ImageSharp;
 
-namespace SharpLife.Engine.Rendering
+namespace SharpLife.Engine.Client.UI.Rendering
 {
     // Non-thread-safe cache for resources.
     public class ResourceCache

@@ -15,7 +15,7 @@
 
 using System;
 
-namespace SharpLife.Engine.Rendering
+namespace SharpLife.Engine.Client.UI.Rendering
 {
     public struct RenderItemIndex : IComparable<RenderItemIndex>, IComparable
     {

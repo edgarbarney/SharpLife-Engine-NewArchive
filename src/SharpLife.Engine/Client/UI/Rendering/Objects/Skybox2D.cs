@@ -13,7 +13,6 @@
 *
 ****/
 
-using SharpLife.Engine.Rendering;
 using SharpLife.FileSystem;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
