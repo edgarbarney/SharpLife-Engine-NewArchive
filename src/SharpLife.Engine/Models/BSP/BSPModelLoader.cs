@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Models.BSP.Rendering;
 using SharpLife.FileSystem;

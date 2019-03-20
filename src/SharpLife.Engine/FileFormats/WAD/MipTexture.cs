@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Engine.Renderer.Utility;
+using SharpLife.Engine.Rendering.Utility;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace SharpLife.Engine.FileFormats.WAD

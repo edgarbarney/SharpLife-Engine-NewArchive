@@ -13,8 +13,8 @@
 *
 ****/
 
-using SharpLife.Engine.Client.UI.Renderer;
-using SharpLife.Engine.Client.UI.Renderer.Models;
+using SharpLife.Engine.Client.UI.Rendering;
+using SharpLife.Engine.Client.UI.Rendering.Models;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;

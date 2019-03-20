@@ -17,7 +17,7 @@ using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.Engine.Client;
-using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.CommandSystem;
 using SharpLife.Engine.Configuration;
 using SharpLife.Engine.Events;

@@ -14,12 +14,12 @@
 ****/
 
 using Serilog;
-using SharpLife.Engine.Client.UI.Renderer;
-using SharpLife.Engine.Client.UI.Renderer.Models;
-using SharpLife.Engine.Client.UI.Renderer.Utility;
+using SharpLife.Engine.Client.UI.Rendering;
+using SharpLife.Engine.Client.UI.Rendering.Models;
+using SharpLife.Engine.Client.UI.Rendering.Utility;
 using SharpLife.Engine.Models.Rendering;
 using SharpLife.Engine.Models.SPR.FileFormat;
-using SharpLife.Engine.Renderer.Utility;
+using SharpLife.Engine.Rendering.Utility;
 using SharpLife.Utility.Mathematics;
 using System;
 using System.Numerics;

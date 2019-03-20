@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Engine.Client.UI.Renderer.Models;
+using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Models;
 using SharpLife.Engine.ObjectEditor;
 

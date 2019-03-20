@@ -16,6 +16,7 @@
 using SDL2;
 using Serilog;
 using SharpLife.CommandSystem;
+using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.Host;
 using SharpLife.FileSystem;
 using SharpLife.Input;
@@ -37,7 +38,7 @@ namespace SharpLife.Engine.Client.UI
 
         public Window Window { get; private set; }
 
-        public Renderer.Renderer Renderer { get; }
+        public Renderer Renderer { get; }
 
         /// <summary>
         /// Invoked when the Quit event has been received
@@ -68,7 +69,7 @@ namespace SharpLife.Engine.Client.UI
 
             Window.Center();
 
-            Renderer = new Renderer.Renderer(logger, engineTime, commandContext, fileSystem, this, client, startupState, Framework.Path.Shaders);
+            Renderer = new Renderer(logger, engineTime, commandContext, fileSystem, this, client, startupState, Framework.Path.Shaders);
         }
 
         /// <summary>

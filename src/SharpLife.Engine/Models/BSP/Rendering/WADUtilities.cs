@@ -14,8 +14,8 @@
 ****/
 
 using SharpLife.Engine.FileFormats.WAD;
-using SharpLife.Engine.Renderer;
-using SharpLife.Engine.Renderer.Utility;
+using SharpLife.Engine.Rendering;
+using SharpLife.Engine.Rendering.Utility;
 using System.Collections.Generic;
 using Veldrid;
 

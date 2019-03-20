@@ -14,7 +14,7 @@
 ****/
 
 using SharpLife.Engine.Models.SPR.FileFormat.Disk;
-using SharpLife.Engine.Renderer.Utility;
+using SharpLife.Engine.Rendering.Utility;
 using SharpLife.Utility;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.Primitives;

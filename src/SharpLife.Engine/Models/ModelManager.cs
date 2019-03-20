@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Rendering;
 using System;
 using System.Collections;
 using System.Collections.Generic;

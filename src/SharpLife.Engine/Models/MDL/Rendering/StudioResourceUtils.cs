@@ -14,8 +14,8 @@
 ****/
 
 using SharpLife.Engine.Models.MDL.FileFormat;
-using SharpLife.Engine.Renderer;
-using SharpLife.Engine.Renderer.Utility;
+using SharpLife.Engine.Rendering;
+using SharpLife.Engine.Rendering.Utility;
 using System;
 using System.Collections.Generic;
 using System.Numerics;

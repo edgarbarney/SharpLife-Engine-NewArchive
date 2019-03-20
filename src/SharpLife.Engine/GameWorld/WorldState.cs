@@ -14,8 +14,8 @@
 ****/
 
 using Serilog;
-using SharpLife.Engine.Client.UI.Renderer;
-using SharpLife.Engine.Client.UI.Renderer.Models;
+using SharpLife.Engine.Client.UI.Rendering;
+using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Entities;
 using SharpLife.Engine.Events;
 using SharpLife.Engine.Models;
