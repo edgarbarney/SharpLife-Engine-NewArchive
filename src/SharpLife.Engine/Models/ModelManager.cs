@@ -47,16 +47,30 @@ namespace SharpLife.Engine.Models
             _scene = scene ?? throw new ArgumentNullException(nameof(scene));
         }
 
-        public void Dispose()
+        ~ModelManager()
+        {
+            Dispose(false);
+        }
+
+        private void Dispose(bool disposing)
         {
             foreach (var model in _models.Values)
             {
                 model.Dispose();
             }
 
-            _models.Clear();
+            if (disposing)
+            {
+                _models.Clear();
 
-            FallbackModel = null;
+                FallbackModel = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public bool Contains(string modelName)
