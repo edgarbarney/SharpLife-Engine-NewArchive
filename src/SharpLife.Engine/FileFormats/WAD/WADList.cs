@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace SharpLife.FileFormats.WAD
+namespace SharpLife.Engine.FileFormats.WAD
 {
     /// <summary>
     /// Manages the list of wad files and handles texture lookup

@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.FileFormats.WAD;
+using SharpLife.Engine.FileFormats.WAD;
 using SharpLife.Renderer;
 using SharpLife.Renderer.Utility;
 using System.Collections.Generic;

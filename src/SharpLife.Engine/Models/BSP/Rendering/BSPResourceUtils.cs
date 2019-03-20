@@ -13,8 +13,8 @@
 *
 ****/
 
+using SharpLife.Engine.FileFormats.WAD;
 using SharpLife.Engine.Models.BSP.FileFormat;
-using SharpLife.FileFormats.WAD;
 using SharpLife.Renderer.Utility;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;

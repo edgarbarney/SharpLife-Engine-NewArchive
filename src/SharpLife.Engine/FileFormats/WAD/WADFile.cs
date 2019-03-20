@@ -13,23 +13,14 @@
 *
 ****/
 
-using SharpLife.Renderer.Utility;
-using SixLabors.ImageSharp.PixelFormats;
+using System.Collections.Generic;
 
-namespace SharpLife.FileFormats.WAD
+namespace SharpLife.Engine.FileFormats.WAD
 {
-    public class MipTexture
+    public class WADFile
     {
-        public string Name { get; set; }
+        public WADVersion Version { get; set; }
 
-        public uint Width { get; set; }
-        public uint Height { get; set; }
-
-        /// <summary>
-        /// Texture data stored as raw bytes
-        /// </summary>
-        public byte[][] Data { get; } = new byte[WADConstants.NumMipLevels][]; // four mip maps stored
-
-        public Rgb24[] Palette { get; } = new Rgb24[IndexPaletteConstants.NumPaletteColors];
+        public List<MipTexture> MipTextures { get; set; }
     }
 }

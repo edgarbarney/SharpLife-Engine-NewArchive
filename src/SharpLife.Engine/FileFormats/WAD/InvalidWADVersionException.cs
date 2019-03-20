@@ -16,7 +16,7 @@
 using SharpLife.Utility;
 using System;
 
-namespace SharpLife.FileFormats.WAD
+namespace SharpLife.Engine.FileFormats.WAD
 {
 #pragma warning disable RCS1194 // Implement exception constructors.
     public sealed class InvalidWADVersionException : FileLoadFailureException

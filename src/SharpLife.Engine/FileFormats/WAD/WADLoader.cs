@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.FileFormats.WAD.Disk;
+using SharpLife.Engine.FileFormats.WAD.Disk;
 using SharpLife.Renderer.Utility;
 using SharpLife.Utility;
 using SixLabors.ImageSharp.PixelFormats;
@@ -24,7 +24,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace SharpLife.FileFormats.WAD
+namespace SharpLife.Engine.FileFormats.WAD
 {
     public class WADLoader
     {

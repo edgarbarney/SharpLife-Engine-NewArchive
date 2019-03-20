@@ -14,8 +14,8 @@
 ****/
 
 using Force.Crc32;
+using SharpLife.Engine.FileFormats.WAD;
 using SharpLife.Engine.Models.BSP.FileFormat.Disk;
-using SharpLife.FileFormats.WAD;
 using SharpLife.Utility;
 using SixLabors.ImageSharp.PixelFormats;
 using System;

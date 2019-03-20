@@ -14,7 +14,7 @@
 ****/
 
 
-namespace SharpLife.FileFormats.WAD.Disk
+namespace SharpLife.Engine.FileFormats.WAD.Disk
 {
     internal struct Header
     {

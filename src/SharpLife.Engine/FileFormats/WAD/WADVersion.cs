@@ -13,14 +13,11 @@
 *
 ****/
 
-using System.Collections.Generic;
-
-namespace SharpLife.FileFormats.WAD
+namespace SharpLife.Engine.FileFormats.WAD
 {
-    public class WADFile
+    public enum WADVersion : uint
     {
-        public WADVersion Version { get; set; }
-
-        public List<MipTexture> MipTextures { get; set; }
+        WAD2 = (byte)'W' | (byte)'A' << 8 | (byte)'D' << 16 | (byte)'2' << 24,
+        WAD3 = (byte)'W' | (byte)'A' << 8 | (byte)'D' << 16 | (byte)'3' << 24
     }
 }

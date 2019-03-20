@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.FileFormats.WAD;
+using SharpLife.Engine.FileFormats.WAD;
 using System.Numerics;
 
 namespace SharpLife.Engine.Models.BSP.FileFormat

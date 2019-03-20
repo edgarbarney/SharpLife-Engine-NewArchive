@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.FileFormats.WAD;
+using SharpLife.Engine.FileFormats.WAD;
 using SixLabors.ImageSharp.PixelFormats;
 using System.Collections.Generic;
 

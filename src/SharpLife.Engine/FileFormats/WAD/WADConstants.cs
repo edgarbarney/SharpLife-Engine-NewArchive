@@ -13,7 +13,7 @@
 *
 ****/
 
-namespace SharpLife.FileFormats.WAD
+namespace SharpLife.Engine.FileFormats.WAD
 {
     public static class WADConstants
     {
