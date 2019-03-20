@@ -13,14 +13,11 @@
 *
 ****/
 
-namespace SharpLife.Models.SPR.FileFormat
+namespace SharpLife.Engine.Models.SPR.FileFormat.Disk
 {
-    public enum SpriteType
+    internal enum SpriteFrameType
     {
-        ParallelUpright = 0,
-        FacingUpright,
-        Parallel,
-        Oriented,
-        ParallelOriented
+        Single,
+        Group
     }
 }

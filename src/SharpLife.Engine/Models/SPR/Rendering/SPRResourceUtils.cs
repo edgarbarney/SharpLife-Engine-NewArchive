@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Models.SPR.FileFormat;
+using SharpLife.Engine.Models.SPR.FileFormat;
 using SharpLife.Renderer;
 using SharpLife.Renderer.Utility;
 using SixLabors.ImageSharp;
@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Veldrid;
 
-namespace SharpLife.Models.SPR.Rendering
+namespace SharpLife.Engine.Models.SPR.Rendering
 {
     public static class SPRResourceUtils
     {
@@ -71,7 +71,7 @@ namespace SharpLife.Models.SPR.Rendering
 
             graphicsOptions.BlenderMode = PixelBlenderMode.Src;
 
-            var nextFramePosition = new Point();
+            var nextFramePosition = new SixLabors.Primitives.Point();
 
             //Determine which texture format it is
             TextureFormat textureFormat;

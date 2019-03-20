@@ -13,13 +13,14 @@
 *
 ****/
 
-namespace SharpLife.Models.SPR.FileFormat
+using SixLabors.Primitives;
+
+namespace SharpLife.Engine.Models.SPR.FileFormat
 {
-    public enum SpriteTextureFormat
+    public class SpriteFrame
     {
-        Normal = 0,
-        Additive,
-        IndexedAlpha,
-        AlphaTest
+        public Rectangle Area { get; set; }
+
+        public byte[] TextureData { get; set; }
     }
 }

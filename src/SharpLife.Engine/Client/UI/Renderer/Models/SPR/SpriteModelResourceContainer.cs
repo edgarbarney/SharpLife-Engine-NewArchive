@@ -14,8 +14,8 @@
 ****/
 
 using SharpLife.Engine.Models.SPR;
+using SharpLife.Engine.Models.SPR.Rendering;
 using SharpLife.Models;
-using SharpLife.Models.SPR.Rendering;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;

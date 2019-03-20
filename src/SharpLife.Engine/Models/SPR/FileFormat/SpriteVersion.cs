@@ -13,14 +13,10 @@
 *
 ****/
 
-
-namespace SharpLife.Models.SPR.FileFormat
+namespace SharpLife.Engine.Models.SPR.FileFormat
 {
-    public static class SPRConstants
+    public enum SpriteVersion
     {
-        /// <summary>
-        /// little-endian "IDSP"
-        /// </summary>
-        public const int Identifier = (byte)'I' | ((byte)'D' << 8) | ((byte)'S' << 16) | ((byte)'P' << 24);
+        HalfLife1 = 2
     }
 }

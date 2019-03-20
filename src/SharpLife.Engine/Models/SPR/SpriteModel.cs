@@ -13,8 +13,8 @@
 *
 ****/
 
+using SharpLife.Engine.Models.SPR.FileFormat;
 using SharpLife.Models;
-using SharpLife.Models.SPR.FileFormat;
 using System;
 using System.Numerics;
 

@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 
-namespace SharpLife.Models.SPR.FileFormat
+namespace SharpLife.Engine.Models.SPR.FileFormat
 {
     public class SpriteFile
     {

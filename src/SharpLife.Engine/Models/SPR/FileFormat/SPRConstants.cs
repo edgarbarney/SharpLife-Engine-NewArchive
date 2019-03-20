@@ -13,14 +13,14 @@
 *
 ****/
 
-using SixLabors.Primitives;
 
-namespace SharpLife.Models.SPR.FileFormat
+namespace SharpLife.Engine.Models.SPR.FileFormat
 {
-    public class SpriteFrame
+    public static class SPRConstants
     {
-        public Rectangle Area { get; set; }
-
-        public byte[] TextureData { get; set; }
+        /// <summary>
+        /// little-endian "IDSP"
+        /// </summary>
+        public const int Identifier = (byte)'I' | ((byte)'D' << 8) | ((byte)'S' << 16) | ((byte)'P' << 24);
     }
 }

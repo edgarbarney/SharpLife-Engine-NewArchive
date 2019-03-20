@@ -13,11 +13,13 @@
 *
 ****/
 
-namespace SharpLife.Models.SPR.FileFormat.Disk
+namespace SharpLife.Engine.Models.SPR.FileFormat
 {
-    internal enum SpriteFrameType
+    public enum SpriteTextureFormat
     {
-        Single,
-        Group
+        Normal = 0,
+        Additive,
+        IndexedAlpha,
+        AlphaTest
     }
 }

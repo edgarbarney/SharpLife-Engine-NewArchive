@@ -16,8 +16,8 @@
 using Serilog;
 using SharpLife.Engine.Client.UI.Renderer.Utility;
 using SharpLife.Engine.Models;
-using SharpLife.Models.SPR.FileFormat;
-using SharpLife.Models.SPR.Rendering;
+using SharpLife.Engine.Models.SPR.FileFormat;
+using SharpLife.Engine.Models.SPR.Rendering;
 using SharpLife.Renderer.Utility;
 using SharpLife.Utility.Mathematics;
 using System;

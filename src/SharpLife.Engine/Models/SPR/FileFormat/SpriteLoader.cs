@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Models.SPR.FileFormat.Disk;
+using SharpLife.Engine.Models.SPR.FileFormat.Disk;
 using SharpLife.Renderer.Utility;
 using SharpLife.Utility;
 using SixLabors.ImageSharp.PixelFormats;
@@ -24,7 +24,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace SharpLife.Models.SPR.FileFormat
+namespace SharpLife.Engine.Models.SPR.FileFormat
 {
     public sealed class SpriteLoader
     {

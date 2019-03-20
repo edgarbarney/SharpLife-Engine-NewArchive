@@ -13,19 +13,12 @@
 *
 ****/
 
-namespace SharpLife.Models.SPR.FileFormat.Disk
+namespace SharpLife.Engine.Models.SPR.FileFormat.Disk
 {
-    internal struct SpriteHeader
+    internal unsafe struct SpriteFrame
     {
-        public int Identifier;
-        public int Version;
-        public int Type;
-        public int TextureFormat;
-        public float BoundingRadius;
+        public fixed int Origin[2];
         public int Width;
         public int Height;
-        public int NumFrames;
-        public float BeamLength;
-        public int SyncType;
     }
 }

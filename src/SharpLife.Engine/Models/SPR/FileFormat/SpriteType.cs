@@ -13,10 +13,14 @@
 *
 ****/
 
-namespace SharpLife.Models.SPR.FileFormat
+namespace SharpLife.Engine.Models.SPR.FileFormat
 {
-    public enum SpriteVersion
+    public enum SpriteType
     {
-        HalfLife1 = 2
+        ParallelUpright = 0,
+        FacingUpright,
+        Parallel,
+        Oriented,
+        ParallelOriented
     }
 }
