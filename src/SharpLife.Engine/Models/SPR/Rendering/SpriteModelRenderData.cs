@@ -13,9 +13,9 @@
 *
 ****/
 
-using SharpLife.Engine.Models.SPR;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.SPR
+namespace SharpLife.Engine.Models.SPR.Rendering
 {
     public struct SpriteModelRenderData
     {

@@ -13,10 +13,10 @@
 *
 ****/
 
-using SharpLife.Engine.Client.UI.Renderer.Models.SPR;
 using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Models.BSP.Rendering;
 using SharpLife.Engine.Models.MDL.Rendering;
+using SharpLife.Engine.Models.SPR.Rendering;
 
 namespace SharpLife.Engine.Client.UI.Renderer.Models
 {

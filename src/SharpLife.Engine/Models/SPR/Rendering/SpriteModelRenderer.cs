@@ -14,10 +14,10 @@
 ****/
 
 using Serilog;
+using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Client.UI.Renderer.Utility;
-using SharpLife.Engine.Models;
 using SharpLife.Engine.Models.SPR.FileFormat;
-using SharpLife.Engine.Models.SPR.Rendering;
 using SharpLife.Engine.Renderer.Utility;
 using SharpLife.Utility.Mathematics;
 using System;
@@ -25,7 +25,7 @@ using System.Numerics;
 using Veldrid;
 using Veldrid.Utilities;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.SPR
+namespace SharpLife.Engine.Models.SPR.Rendering
 {
     public sealed class SpriteModelRenderer : IResourceContainer
     {

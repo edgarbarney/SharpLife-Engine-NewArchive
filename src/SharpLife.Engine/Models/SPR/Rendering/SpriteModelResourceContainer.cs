@@ -13,9 +13,8 @@
 *
 ****/
 
-using SharpLife.Engine.Models;
-using SharpLife.Engine.Models.SPR;
-using SharpLife.Engine.Models.SPR.Rendering;
+using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -23,7 +22,7 @@ using Veldrid;
 using Veldrid.ImageSharp;
 using Veldrid.Utilities;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.SPR
+namespace SharpLife.Engine.Models.SPR.Rendering
 {
     public class SpriteModelResourceContainer : ModelResourceContainer
     {

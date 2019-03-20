@@ -16,7 +16,6 @@
 using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.Engine.Client.UI.Renderer.Models;
-using SharpLife.Engine.Client.UI.Renderer.Models.SPR;
 using SharpLife.Engine.Client.UI.Renderer.Objects;
 using SharpLife.Engine.FileFormats.WAD;
 using SharpLife.Engine.Models;
@@ -26,6 +25,7 @@ using SharpLife.Engine.Models.BSP.Rendering;
 using SharpLife.Engine.Models.MDL;
 using SharpLife.Engine.Models.MDL.Rendering;
 using SharpLife.Engine.Models.SPR;
+using SharpLife.Engine.Models.SPR.Rendering;
 using SharpLife.FileSystem;
 using SharpLife.Utility;
 using SharpLife.Utility.FileSystem;
