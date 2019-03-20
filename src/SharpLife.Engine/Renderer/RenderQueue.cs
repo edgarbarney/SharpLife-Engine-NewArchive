@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 
-namespace SharpLife.Renderer
+namespace SharpLife.Engine.Renderer
 {
     public class RenderQueue<TRenderable> : IEnumerable<TRenderable>
         where TRenderable : class, IRenderable

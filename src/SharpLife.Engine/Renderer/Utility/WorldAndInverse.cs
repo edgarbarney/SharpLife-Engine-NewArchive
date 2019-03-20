@@ -17,7 +17,7 @@ using SharpLife.Utility.Mathematics;
 using System.Numerics;
 using Veldrid.Utilities;
 
-namespace SharpLife.Renderer.Utility
+namespace SharpLife.Engine.Renderer.Utility
 {
     public struct WorldAndInverse
     {

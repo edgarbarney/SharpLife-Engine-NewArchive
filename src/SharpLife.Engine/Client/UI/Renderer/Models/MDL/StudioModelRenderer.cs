@@ -22,7 +22,7 @@ using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Models.MDL;
 using SharpLife.Engine.Models.MDL.FileFormat;
 using SharpLife.Engine.Models.MDL.Rendering;
-using SharpLife.Renderer.Utility;
+using SharpLife.Engine.Renderer.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -19,7 +19,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace SharpLife.Renderer.Utility
+namespace SharpLife.Engine.Renderer.Utility
 {
     /// <summary>
     /// Utilities to convert images to <see cref="Rgba32"/>

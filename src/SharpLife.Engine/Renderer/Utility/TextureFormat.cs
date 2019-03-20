@@ -13,7 +13,7 @@
 *
 ****/
 
-namespace SharpLife.Renderer.Utility
+namespace SharpLife.Engine.Renderer.Utility
 {
     /// <summary>
     /// Texture formats to convert from palette based to <see cref="SixLabors.ImageSharp.PixelFormats.Rgba32"/>

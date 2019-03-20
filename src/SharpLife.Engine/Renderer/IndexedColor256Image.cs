@@ -13,12 +13,12 @@
 *
 ****/
 
-using SharpLife.Renderer.Utility;
+using SharpLife.Engine.Renderer.Utility;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Linq;
 
-namespace SharpLife.Renderer
+namespace SharpLife.Engine.Renderer
 {
     /// <summary>
     /// Immutable container for indexed 256 color images

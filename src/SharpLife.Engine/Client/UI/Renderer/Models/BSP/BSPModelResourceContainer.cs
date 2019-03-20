@@ -16,7 +16,7 @@
 using SharpLife.Engine.Models;
 using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.Models.BSP.Rendering;
-using SharpLife.Renderer;
+using SharpLife.Engine.Renderer;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;

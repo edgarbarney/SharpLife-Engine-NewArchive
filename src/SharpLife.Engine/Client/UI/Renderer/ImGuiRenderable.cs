@@ -15,8 +15,8 @@
 
 using ImGuiNET;
 using Serilog;
+using SharpLife.Engine.Renderer;
 using SharpLife.Input;
-using SharpLife.Renderer;
 using System.Diagnostics;
 using System.Numerics;
 using Veldrid;

@@ -13,17 +13,14 @@
 *
 ****/
 
-using System.Numerics;
-
-namespace SharpLife.Renderer.Utility
+namespace SharpLife.Engine.Renderer.Utility
 {
-    /// <summary>
-    /// Blittable type used to pass a 3D vertex and 2D texture coordinate to shaders
-    /// </summary>
-    public struct WorldTextureCoordinate
+    public static class IndexPaletteConstants
     {
-        public Vector3 Vertex;
+        public const int NumPaletteColors = 256;
+        public const int NumPaletteComponents = 3;
+        public const int PaletteComponentSizeInBytes = 1;
 
-        public Vector2 Texture;
+        public const int PaletteSizeInBytes = NumPaletteColors * NumPaletteComponents * PaletteComponentSizeInBytes;
     }
 }

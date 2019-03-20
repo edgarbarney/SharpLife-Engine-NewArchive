@@ -16,7 +16,7 @@
 using SharpLife.Engine.Models;
 using SharpLife.Engine.Models.MDL;
 using SharpLife.Engine.Models.MDL.Rendering;
-using SharpLife.Renderer;
+using SharpLife.Engine.Renderer;
 using System;
 using System.Collections.Generic;
 using Veldrid;

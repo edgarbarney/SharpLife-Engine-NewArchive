@@ -13,14 +13,12 @@
 *
 ****/
 
-namespace SharpLife.Renderer.Utility
-{
-    public static class IndexPaletteConstants
-    {
-        public const int NumPaletteColors = 256;
-        public const int NumPaletteComponents = 3;
-        public const int PaletteComponentSizeInBytes = 1;
+using System.Numerics;
 
-        public const int PaletteSizeInBytes = NumPaletteColors * NumPaletteComponents * PaletteComponentSizeInBytes;
+namespace SharpLife.Engine.Renderer
+{
+    public interface IRenderable
+    {
+        RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition);
     }
 }

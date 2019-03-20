@@ -14,7 +14,7 @@
 ****/
 
 using SharpLife.Engine.Models.MDL.FileFormat.Disk;
-using SharpLife.Renderer.Utility;
+using SharpLife.Engine.Renderer.Utility;
 using SharpLife.Utility;
 using SixLabors.ImageSharp.PixelFormats;
 using System;

@@ -15,8 +15,8 @@
 
 using ImGuiNET;
 using SDL2;
+using SharpLife.Engine.Renderer;
 using SharpLife.Input;
-using SharpLife.Renderer;
 using System;
 using System.Numerics;
 using Veldrid;

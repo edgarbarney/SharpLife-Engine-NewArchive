@@ -16,14 +16,14 @@
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.Commands.VariableFilters;
-using SharpLife.Renderer.Utility;
+using SharpLife.Engine.Renderer.Utility;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 using Veldrid;
 using Veldrid.ImageSharp;
 
-namespace SharpLife.Renderer
+namespace SharpLife.Engine.Renderer
 {
     public class TextureLoader
     {

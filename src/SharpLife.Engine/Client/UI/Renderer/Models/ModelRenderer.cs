@@ -17,7 +17,7 @@ using SharpLife.Engine.Client.UI.Renderer.Models.BSP;
 using SharpLife.Engine.Client.UI.Renderer.Models.MDL;
 using SharpLife.Engine.Client.UI.Renderer.Models.SPR;
 using SharpLife.Engine.Entities.Components;
-using SharpLife.Renderer;
+using SharpLife.Engine.Renderer;
 using System;
 using System.Collections.Generic;
 using System.Numerics;

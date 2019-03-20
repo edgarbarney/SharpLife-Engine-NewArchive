@@ -13,7 +13,6 @@
 *
 ****/
 
-using SharpLife.Renderer;
 using Veldrid;
 
 namespace SharpLife.Engine.Client.UI.Renderer

@@ -20,7 +20,7 @@ using System.IO;
 using Veldrid;
 using Veldrid.SPIRV;
 
-namespace SharpLife.Renderer
+namespace SharpLife.Engine.Renderer
 {
     public class ShaderHelper
     {

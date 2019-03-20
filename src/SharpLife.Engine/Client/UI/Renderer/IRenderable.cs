@@ -17,7 +17,7 @@ using Veldrid;
 
 namespace SharpLife.Engine.Client.UI.Renderer
 {
-    public interface IRenderable : SharpLife.Renderer.IRenderable
+    public interface IRenderable : SharpLife.Engine.Renderer.IRenderable
     {
         RenderPasses RenderPasses { get; }
 

@@ -15,7 +15,7 @@
 
 using SharpLife.Engine.Client.UI.Renderer.Utility;
 using SharpLife.Engine.Models;
-using SharpLife.Renderer.Utility;
+using SharpLife.Engine.Renderer.Utility;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
