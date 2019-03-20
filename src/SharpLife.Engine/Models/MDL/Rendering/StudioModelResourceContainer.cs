@@ -13,16 +13,15 @@
 *
 ****/
 
-using SharpLife.Engine.Models;
-using SharpLife.Engine.Models.MDL;
-using SharpLife.Engine.Models.MDL.Rendering;
+using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Renderer;
 using System;
 using System.Collections.Generic;
 using Veldrid;
 using Veldrid.Utilities;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
+namespace SharpLife.Engine.Models.MDL.Rendering
 {
     public sealed class StudioModelResourceContainer : ModelResourceContainer
     {

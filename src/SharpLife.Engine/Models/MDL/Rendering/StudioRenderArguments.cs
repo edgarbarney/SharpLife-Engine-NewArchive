@@ -13,33 +13,26 @@
 *
 ****/
 
-using SharpLife.Engine.Models.MDL;
-using SharpLife.Engine.Models.MDL.Rendering;
+using System.Numerics;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
+namespace SharpLife.Engine.Models.MDL.Rendering
 {
-    public unsafe struct StudioModelRenderData
+    public struct StudioRenderArguments
     {
-        public StudioModel Model;
+        public struct AmbientLight
+        {
+            public Vector3 Color;
+            public int Ambient;
+            public Vector3 Normal;
+            public int Shade;
+        }
 
-        public SharedModelRenderData Shared;
+        public Vector4 RenderColor;
 
-        public double CurrentTime;
+        public AmbientLight GlobalLight;
 
-        public uint Sequence;
-
-        public float LastTime;
-
-        public float Frame;
-
-        public float FrameRate;
-
-        public uint Body;
-
-        public uint Skin;
-
-        public BoneData BoneData;
-
-        public int RenderFXLightMultiplier;
+#pragma warning disable CS0169 // Remove unused member declaration.
+        private Vector4 _padding0;
+#pragma warning restore CS0169 // Remove unused member declaration.
     }
 }

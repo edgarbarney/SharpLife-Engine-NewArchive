@@ -13,26 +13,16 @@
 *
 ****/
 
-using System.Numerics;
-
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
+namespace SharpLife.Engine.Models.MDL.Rendering
 {
-    public struct StudioRenderArguments
+    public struct StudioTextureData
     {
-        public struct AmbientLight
-        {
-            public Vector3 Color;
-            public int Ambient;
-            public Vector3 Normal;
-            public int Shade;
-        }
-
-        public Vector4 RenderColor;
-
-        public AmbientLight GlobalLight;
+        public int FlatShade;
 
 #pragma warning disable CS0169 // Remove unused member declaration.
-        private Vector4 _padding0;
+        private int _padding0;
+        private int _padding1;
+        private int _padding2;
 #pragma warning restore CS0169 // Remove unused member declaration.
     }
 }

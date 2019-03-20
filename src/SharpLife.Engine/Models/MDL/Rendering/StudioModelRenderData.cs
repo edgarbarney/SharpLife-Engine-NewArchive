@@ -13,16 +13,32 @@
 *
 ****/
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
-{
-    public struct StudioTextureData
-    {
-        public int FlatShade;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 
-#pragma warning disable CS0169 // Remove unused member declaration.
-        private int _padding0;
-        private int _padding1;
-        private int _padding2;
-#pragma warning restore CS0169 // Remove unused member declaration.
+namespace SharpLife.Engine.Models.MDL.Rendering
+{
+    public unsafe struct StudioModelRenderData
+    {
+        public StudioModel Model;
+
+        public SharedModelRenderData Shared;
+
+        public double CurrentTime;
+
+        public uint Sequence;
+
+        public float LastTime;
+
+        public float Frame;
+
+        public float FrameRate;
+
+        public uint Body;
+
+        public uint Skin;
+
+        public BoneData BoneData;
+
+        public int RenderFXLightMultiplier;
     }
 }

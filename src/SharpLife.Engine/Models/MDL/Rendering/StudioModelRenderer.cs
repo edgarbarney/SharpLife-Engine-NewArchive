@@ -16,12 +16,11 @@
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.Commands.VariableFilters;
+using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Client.UI.Renderer.Utility;
-using SharpLife.Engine.Models;
 using SharpLife.Engine.Models.BSP.FileFormat;
-using SharpLife.Engine.Models.MDL;
 using SharpLife.Engine.Models.MDL.FileFormat;
-using SharpLife.Engine.Models.MDL.Rendering;
 using SharpLife.Engine.Renderer.Utility;
 using System;
 using System.Collections.Generic;
@@ -31,7 +30,7 @@ using System.Runtime.InteropServices;
 using Veldrid;
 using Veldrid.Utilities;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.MDL
+namespace SharpLife.Engine.Models.MDL.Rendering
 {
     public sealed class StudioModelRenderer : IResourceContainer
     {
