@@ -14,7 +14,6 @@
 ****/
 
 using SharpLife.Engine.Models.SPR.FileFormat;
-using SharpLife.Models;
 using System;
 using System.Numerics;
 

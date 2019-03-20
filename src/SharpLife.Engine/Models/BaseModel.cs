@@ -13,18 +13,29 @@
 *
 ****/
 
-namespace SharpLife.Models
-{
-    public static class ModelUtils
-    {
-        public static ModelIndex CreateModelIndex(int index)
-        {
-            return new ModelIndex(index + 1);
-        }
+using System;
+using System.Numerics;
 
-        public static int GetInternalIndex(ModelIndex index)
+namespace SharpLife.Engine.Models
+{
+    public abstract class BaseModel : IModel
+    {
+        public string Name { get; }
+
+        public uint CRC { get; }
+
+        public Vector3 Mins { get; }
+
+        public Vector3 Maxs { get; }
+
+        protected BaseModel(string name, uint crc, in Vector3 mins, in Vector3 maxs)
         {
-            return index.Index - 1;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+
+            CRC = crc;
+
+            Mins = mins;
+            Maxs = maxs;
         }
     }
 }

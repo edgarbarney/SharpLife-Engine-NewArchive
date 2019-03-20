@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Models;
+using SharpLife.Engine.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;

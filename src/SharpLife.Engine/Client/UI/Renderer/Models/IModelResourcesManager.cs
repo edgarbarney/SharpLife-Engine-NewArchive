@@ -13,7 +13,7 @@
 *
 ****/
 
-using SharpLife.Models;
+using SharpLife.Engine.Models;
 
 namespace SharpLife.Engine.Client.UI.Renderer.Models
 {

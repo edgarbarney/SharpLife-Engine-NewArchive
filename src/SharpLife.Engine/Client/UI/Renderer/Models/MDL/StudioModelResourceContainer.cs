@@ -13,9 +13,9 @@
 *
 ****/
 
+using SharpLife.Engine.Models;
 using SharpLife.Engine.Models.MDL;
 using SharpLife.Engine.Models.MDL.Rendering;
-using SharpLife.Models;
 using SharpLife.Renderer;
 using System;
 using System.Collections.Generic;

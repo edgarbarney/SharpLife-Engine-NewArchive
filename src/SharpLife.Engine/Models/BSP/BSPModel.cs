@@ -15,7 +15,6 @@
 
 using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Physics;
-using SharpLife.Models;
 using System;
 using System.Collections.Generic;
 using System.Numerics;

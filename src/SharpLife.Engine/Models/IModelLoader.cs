@@ -17,7 +17,7 @@ using SharpLife.FileSystem;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SharpLife.Models
+namespace SharpLife.Engine.Models
 {
     /// <summary>
     /// Represents an object that can load a certain type of model

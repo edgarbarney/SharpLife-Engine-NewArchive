@@ -19,7 +19,6 @@ using SharpLife.Engine.Client.UI.Renderer.Models.BSP;
 using SharpLife.Engine.Models;
 using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.ObjectEditor;
-using SharpLife.Models;
 using System.Numerics;
 
 namespace SharpLife.Engine.Entities.Components

@@ -13,8 +13,8 @@
 *
 ****/
 
+using SharpLife.Engine.Models;
 using SharpLife.Engine.Models.BSP;
-using SharpLife.Models;
 using System;
 using System.Collections.Generic;
 

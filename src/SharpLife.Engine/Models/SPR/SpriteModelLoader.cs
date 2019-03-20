@@ -15,7 +15,6 @@
 
 using SharpLife.Engine.Models.SPR.FileFormat;
 using SharpLife.FileSystem;
-using SharpLife.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;

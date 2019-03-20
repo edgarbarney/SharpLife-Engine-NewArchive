@@ -19,7 +19,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SharpLife.Models
+namespace SharpLife.Engine.Models
 {
     public sealed class ModelManager : IModelManager
     {

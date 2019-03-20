@@ -14,8 +14,8 @@
 ****/
 
 using SharpLife.Engine.Client.UI.Renderer.Models;
+using SharpLife.Engine.Models;
 using SharpLife.Engine.ObjectEditor;
-using SharpLife.Models;
 
 namespace SharpLife.Engine.Entities.Components
 {

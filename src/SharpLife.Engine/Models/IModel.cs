@@ -15,7 +15,7 @@
 
 using System.Numerics;
 
-namespace SharpLife.Models
+namespace SharpLife.Engine.Models
 {
     /// <summary>
     /// Interface to a model
