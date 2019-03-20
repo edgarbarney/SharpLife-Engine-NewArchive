@@ -13,7 +13,6 @@
 *
 ****/
 
-using SharpLife.Engine.Models;
 using System.Numerics;
 
 namespace SharpLife.Engine.Models.BSP.Rendering

@@ -13,7 +13,6 @@
 *
 ****/
 
-using SharpLife.Engine.Entities.KeyValues;
 using System;
 
 namespace SharpLife.Engine.Entities.KeyValues.Converters
