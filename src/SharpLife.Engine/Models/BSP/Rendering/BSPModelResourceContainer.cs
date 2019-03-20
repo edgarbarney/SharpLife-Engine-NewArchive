@@ -46,7 +46,8 @@ namespace SharpLife.Engine.Models.BSP.Rendering
         public DeviceBuffer IndexBuffer { get; set; }
         public SingleLightmapData[] Lightmaps { get; set; }
 
-        public BSPModelResourceContainer(BSPModel bspModel)
+        public BSPModelResourceContainer(Scene scene, BSPModel bspModel)
+            : base(scene)
         {
             BSPModel = bspModel ?? throw new ArgumentNullException(nameof(bspModel));
         }
@@ -57,6 +58,8 @@ namespace SharpLife.Engine.Models.BSP.Rendering
             {
                 return;
             }
+
+            var renderer = sc.Models.GetRenderer<BrushModelRenderer>();
 
             var disposeFactory = new DisposeCollectorResourceFactory(gd.ResourceFactory, _disposeCollector);
 
@@ -94,7 +97,7 @@ namespace SharpLife.Engine.Models.BSP.Rendering
 
                         var view = sc.MapResourceCache.GetTextureView(gd.ResourceFactory, texture);
 
-                        var textureResourceSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(sc.Models.BrushRenderer.TextureLayout, view, sc.MainSampler));
+                        var textureResourceSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(renderer.TextureLayout, view, sc.MainSampler));
 
                         BSPResourceUtils.BuildFacesBuffer(
                             BSPModel.BSPFile,
@@ -110,7 +113,7 @@ namespace SharpLife.Engine.Models.BSP.Rendering
             }
 
             Lightmaps = lightmapBuilders
-                    .Select(builder => builder.Build(sc.Models.BrushRenderer.LightmapLayout, sc.MapResourceCache, gd, gd.ResourceFactory))
+                    .Select(builder => builder.Build(renderer.LightmapLayout, sc.MapResourceCache, gd, gd.ResourceFactory))
                     .ToArray();
 
             Array.ForEach(Lightmaps, lightmap => _disposeCollector.Add(lightmap));

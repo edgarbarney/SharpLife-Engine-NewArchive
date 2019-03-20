@@ -18,20 +18,16 @@ using SharpLife.CommandSystem;
 using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Client.UI.Renderer.Objects;
 using SharpLife.Engine.FileFormats.WAD;
-using SharpLife.Engine.Models;
+using SharpLife.Engine.Host;
 using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Models.BSP.Rendering;
-using SharpLife.Engine.Models.MDL;
-using SharpLife.Engine.Models.MDL.Rendering;
-using SharpLife.Engine.Models.SPR;
-using SharpLife.Engine.Models.SPR.Rendering;
 using SharpLife.FileSystem;
 using SharpLife.Utility;
 using SharpLife.Utility.FileSystem;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Veldrid;
 
 namespace SharpLife.Engine.Client.UI.Renderer
@@ -39,7 +35,7 @@ namespace SharpLife.Engine.Client.UI.Renderer
     /// <summary>
     /// Handles the rendering of the UI
     /// </summary>
-    internal sealed class Renderer
+    internal sealed class Renderer : IRenderer
     {
         private readonly UserInterface _userInterface;
 
@@ -59,7 +55,6 @@ namespace SharpLife.Engine.Client.UI.Renderer
 
         private event Action<int, int> _resizeHandled;
 
-        private readonly ModelResourcesManager _modelResourcesManager;
         private readonly RendererModels _models;
 
         private CoordinateAxes _coordinateAxes;
@@ -72,7 +67,15 @@ namespace SharpLife.Engine.Client.UI.Renderer
 
         public ImGuiRenderable ImGui { get; }
 
-        public Renderer(ILogger logger, ITime engineTime, ICommandContext commandContext, IFileSystem fileSystem, UserInterface userInterface, EngineClient client, string shadersDirectory)
+        public Renderer(
+            ILogger logger,
+            ITime engineTime,
+            ICommandContext commandContext,
+            IFileSystem fileSystem,
+            UserInterface userInterface,
+            EngineClient client,
+            EngineStartupState startupState,
+            string shadersDirectory)
         {
             if (client == null)
             {
@@ -110,29 +113,9 @@ namespace SharpLife.Engine.Client.UI.Renderer
             Scene.AddContainer(_finalPass);
             Scene.AddRenderable(_finalPass);
 
-            var spriteRenderer = new SpriteModelRenderer(logger);
-            var studioRenderer = new StudioModelRenderer(commandContext);
-            var brushRenderer = new BrushModelRenderer();
-
-            _modelResourcesManager = new ModelResourcesManager(new Dictionary<Type, ModelResourcesManager.ResourceFactory>
-            {
-                {typeof(SpriteModel), model => new SpriteModelResourceContainer((SpriteModel)model) },
-                { typeof(StudioModel), model => new StudioModelResourceContainer((StudioModel)model)  },
-                { typeof(BSPModel), model => new BSPModelResourceContainer((BSPModel)model)  }
-            });
-
-            _models = new RendererModels(
-                _modelResourcesManager,
-                spriteRenderer,
-                studioRenderer,
-                brushRenderer
-                );
+            _models = new RendererModels(startupState.ModelFormats.Select(p => p.CreateRenderer(Scene, logger, commandContext)));
 
             Scene.AddRenderable(_models);
-
-            Scene.AddContainer(spriteRenderer);
-            Scene.AddContainer(studioRenderer);
-            Scene.AddContainer(brushRenderer);
 
             _sc = new SceneContext(fileSystem, commandContext, _models, shadersDirectory);
 
@@ -221,35 +204,17 @@ namespace SharpLife.Engine.Client.UI.Renderer
 
         /// <summary>
         /// Loads all models in the model manager
-        /// This is when BSP models are loaded
+        /// This is when models are loaded
         /// </summary>
         /// <param name="worldModel"></param>
-        /// <param name="modelManager"></param>
-        public void LoadModels(BSPModel worldModel, IModelManager modelManager)
+        public void LoadModels(BSPModel worldModel)
         {
-            if (worldModel == null)
-            {
-                throw new ArgumentNullException(nameof(worldModel));
-            }
-
-            if (modelManager == null)
-            {
-                throw new ArgumentNullException(nameof(modelManager));
-            }
-
-            Scene.WorldModel = worldModel;
+            Scene.WorldModel = worldModel ?? throw new ArgumentNullException(nameof(worldModel));
 
             //Reset light styles
             Scene.InitializeLightStyles();
 
             UploadWADTextures(worldModel);
-
-            foreach (var model in modelManager)
-            {
-                var modelRenderable = _modelResourcesManager.CreateResources(model);
-
-                Scene.AddContainer(modelRenderable);
-            }
 
             _coordinateAxes = new CoordinateAxes();
             Scene.AddContainer(_coordinateAxes);
@@ -275,13 +240,6 @@ namespace SharpLife.Engine.Client.UI.Renderer
         public void ClearBSP()
         {
             Scene.DestroyAllDeviceObjects(ResourceScope.Map);
-
-            foreach (var resource in _modelResourcesManager)
-            {
-                Scene.RemoveContainer(resource);
-            }
-
-            _modelResourcesManager.FreeAllResources();
 
             if (_skyboxRenderable != null)
             {

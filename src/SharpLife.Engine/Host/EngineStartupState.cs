@@ -15,7 +15,10 @@
 
 using Serilog;
 using SharpLife.Engine.Entities;
+using SharpLife.Engine.Models;
 using SharpLife.Engine.Plugins;
+using System;
+using System.Collections.Generic;
 
 namespace SharpLife.Engine.Host
 {
@@ -29,10 +32,13 @@ namespace SharpLife.Engine.Host
 
         public EntitySystemMetaDataBuilder EntitySystemMetaData { get; }
 
-        public EngineStartupState(ILogger logger, string gameDirectory)
+        public IReadOnlyList<IModelFormatProvider> ModelFormats { get; }
+
+        public EngineStartupState(ILogger logger, string gameDirectory, IReadOnlyList<IModelFormatProvider> modelFormats)
         {
             PluginManager = new PluginManagerBuilder(logger, gameDirectory);
             EntitySystemMetaData = new EntitySystemMetaDataBuilder(logger);
+            ModelFormats = modelFormats ?? throw new ArgumentNullException(nameof(modelFormats));
         }
     }
 }

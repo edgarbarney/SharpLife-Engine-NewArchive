@@ -13,6 +13,7 @@
 *
 ****/
 
+using System;
 using System.Numerics;
 
 namespace SharpLife.Engine.Models
@@ -20,7 +21,7 @@ namespace SharpLife.Engine.Models
     /// <summary>
     /// Interface to a model
     /// </summary>
-    public interface IModel
+    public interface IModel : IDisposable
     {
         string Name { get; }
 

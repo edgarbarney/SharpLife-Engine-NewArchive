@@ -13,19 +13,19 @@
 *
 ****/
 
-using SharpLife.FileSystem;
+using SharpLife.Engine.Client.UI.Renderer;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 namespace SharpLife.Engine.Models
 {
     public sealed class ModelManager : IModelManager
     {
-        private readonly IReadOnlyList<IModelLoader> _modelLoaders;
+        //TODO: replace with List to allow use of stack allocated enumerator
+        private readonly ModelCreator _creator;
 
-        private readonly IFileSystem _fileSystem;
+        private readonly Scene _scene;
 
         private readonly Dictionary<string, IModel> _models;
 
@@ -37,13 +37,26 @@ namespace SharpLife.Engine.Models
 
         public event Action<IModel> OnModelLoaded;
 
-        public ModelManager(IFileSystem fileSystem, IReadOnlyList<IModelLoader> loaders)
+        public ModelManager(ModelCreator modelCreator, Scene scene)
         {
-            _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-            _modelLoaders = loaders ?? throw new ArgumentNullException(nameof(loaders));
+            _creator = modelCreator ?? throw new ArgumentNullException(nameof(modelCreator));
 
             //Names are case insensitive to account for differences in the filesystem
             _models = new Dictionary<string, IModel>(StringComparer.OrdinalIgnoreCase);
+
+            _scene = scene ?? throw new ArgumentNullException(nameof(scene));
+        }
+
+        public void Dispose()
+        {
+            foreach (var model in _models.Values)
+            {
+                model.Dispose();
+            }
+
+            _models.Clear();
+
+            FallbackModel = null;
         }
 
         public bool Contains(string modelName)
@@ -60,36 +73,23 @@ namespace SharpLife.Engine.Models
 
         private IModel LoadModel(string modelName)
         {
-            var reader = new BinaryReader(_fileSystem.OpenRead(modelName));
+            var models = _creator.TryLoadModel(modelName, _scene);
 
-            foreach (var loader in _modelLoaders)
+            if (models != null)
             {
-                //TODO: this needs to be profiled to see if the allocations cause issues
-                //If so we'll need to optimize this
-                var models = loader.Load(modelName, _fileSystem, reader, true);
-
-                if (models != null)
+                //Add all models
+                foreach (var model in models)
                 {
-                    //This should never happen since a loader needs to return null to signal failure
-                    if (models.Count == 0)
-                    {
-                        throw new InvalidOperationException($"Model loader {loader.GetType().Name} returned empty array");
-                    }
-
-                    //Add all models
-                    foreach (var model in models)
-                    {
-                        AddModel(model.Name, model);
-                    }
-
-                    //Return first model as the model associated with this model name
-                    if (!_models.ContainsKey(modelName))
-                    {
-                        AddModel(modelName, models[0]);
-                    }
-
-                    return models[0];
+                    AddModel(model.Name, model);
                 }
+
+                //Return first model as the model associated with this model name
+                if (!_models.ContainsKey(modelName))
+                {
+                    AddModel(modelName, models[0]);
+                }
+
+                return models[0];
             }
 
             return null;
@@ -142,13 +142,6 @@ namespace SharpLife.Engine.Models
             }
 
             return FallbackModel;
-        }
-
-        public void Clear()
-        {
-            _models.Clear();
-
-            FallbackModel = null;
         }
 
         public IEnumerator<IModel> GetEnumerator()

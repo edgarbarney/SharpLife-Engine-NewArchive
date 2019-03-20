@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.Engine.Models;
+using System;
 
 namespace SharpLife.Engine.Client.UI.Renderer.Models
 {
@@ -22,9 +23,23 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
     /// </summary>
     public abstract class ModelResourceContainer : ResourceContainer
     {
+        protected readonly Scene _scene;
+
+        protected ModelResourceContainer(Scene scene)
+        {
+            _scene = scene ?? throw new ArgumentNullException(nameof(scene));
+        }
+
         /// <summary>
         /// The model whose resources this container manages
         /// </summary>
         public abstract IModel Model { get; }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            _scene.RemoveContainer(this);
+        }
     }
 }

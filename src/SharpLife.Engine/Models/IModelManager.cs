@@ -21,7 +21,7 @@ namespace SharpLife.Engine.Models
     /// <summary>
     /// Manages the models that have been loaded for a map
     /// </summary>
-    public interface IModelManager : IEnumerable<IModel>
+    public interface IModelManager : IEnumerable<IModel>, IDisposable
     {
         /// <summary>
         /// Gets a model by name
@@ -66,10 +66,5 @@ namespace SharpLife.Engine.Models
         /// <param name="fallbackModelName"></param>
         /// <returns></returns>
         IModel LoadFallbackModel(string fallbackModelName);
-
-        /// <summary>
-        /// Clears all model data
-        /// </summary>
-        void Clear();
     }
 }

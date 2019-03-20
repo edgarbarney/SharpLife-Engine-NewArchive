@@ -54,6 +54,7 @@ namespace SharpLife.Engine.Client
             }
 
             UserInterface = new UserInterface(_engine.Logger, _engine.EngineTime, _engine.FileSystem, CommandContext, this,
+                startupState,
                 _engine.CommandLine.Contains("-noontop"), gameWindowName, _engine.CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
 
             UserInterface.Quit += _engine.Exit;
@@ -90,7 +91,7 @@ namespace SharpLife.Engine.Client
 
         public void LocalConnect()
         {
-            UserInterface.Renderer.LoadModels(_engine.World.MapInfo.Model, _engine.World.Models);
+            UserInterface.Renderer.LoadModels(_engine.World.MapInfo.Model);
         }
 
         public void Disconnect(bool shutdownServer)

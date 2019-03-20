@@ -13,31 +13,24 @@
 *
 ****/
 
-using System;
-using System.Numerics;
+using Serilog;
+using SharpLife.CommandSystem;
+using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Renderer.Models;
+using SharpLife.Engine.Models.SPR.Rendering;
 
-namespace SharpLife.Engine.Models
+namespace SharpLife.Engine.Models.SPR
 {
-    public abstract class BaseModel : IModel
+    internal sealed class SpriteModelFormatProvider : IModelFormatProvider
     {
-        public string Name { get; }
-
-        public uint CRC { get; }
-
-        public Vector3 Mins { get; }
-
-        public Vector3 Maxs { get; }
-
-        protected BaseModel(string name, uint crc, in Vector3 mins, in Vector3 maxs)
+        public IModelRenderer CreateRenderer(Scene scene, ILogger logger, ICommandContext commandContext)
         {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-
-            CRC = crc;
-
-            Mins = mins;
-            Maxs = maxs;
+            return new SpriteModelRenderer(scene, logger);
         }
 
-        public abstract void Dispose();
+        public IModelLoader CreateLoader()
+        {
+            return new SpriteModelLoader();
+        }
     }
 }

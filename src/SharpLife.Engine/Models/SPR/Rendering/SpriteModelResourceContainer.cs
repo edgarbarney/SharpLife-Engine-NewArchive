@@ -37,7 +37,8 @@ namespace SharpLife.Engine.Models.SPR.Rendering
         public DeviceBuffer RenderColorBuffer { get; set; }
         public ResourceSet ResourceSet { get; set; }
 
-        public SpriteModelResourceContainer(SpriteModel spriteModel)
+        public SpriteModelResourceContainer(Scene scene, SpriteModel spriteModel)
+            : base(scene)
         {
             SpriteModel = spriteModel ?? throw new ArgumentNullException(nameof(spriteModel));
         }
@@ -48,6 +49,8 @@ namespace SharpLife.Engine.Models.SPR.Rendering
             {
                 return;
             }
+
+            var renderer = sc.Models.GetRenderer<SpriteModelRenderer>();
 
             var disposeFactory = new DisposeCollectorResourceFactory(gd.ResourceFactory, _disposeCollector);
 
@@ -65,7 +68,7 @@ namespace SharpLife.Engine.Models.SPR.Rendering
             var view = sc.MapResourceCache.GetTextureView(gd.ResourceFactory, texture);
 
             ResourceSet = disposeFactory.CreateResourceSet(new ResourceSetDescription(
-                sc.Models.SpriteRenderer.Layout,
+                renderer.Layout,
                 sc.ProjectionMatrixBuffer,
                 sc.ViewMatrixBuffer,
                 sc.WorldAndInverseBuffer,

@@ -17,6 +17,7 @@ using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.Commands.VariableFilters;
 using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Client.UI.Renderer.Utility;
 using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Models.MDL.FileFormat;
@@ -32,7 +33,7 @@ using Veldrid.Utilities;
 
 namespace SharpLife.Engine.Models.MDL.Rendering
 {
-    public sealed class StudioModelRenderer : IResourceContainer
+    public sealed class StudioModelRenderer : IModelRenderer, IResourceContainer
     {
         private const int CullBack = 0;
         private const int CullFront = 1;
@@ -78,11 +79,13 @@ namespace SharpLife.Engine.Models.MDL.Rendering
 
         private readonly RenderModePipelines[,,] _pipelines = new RenderModePipelines[CullModeCount, MaskModeCount, AdditiveModeCount];
 
-        public StudioModelRenderer(ICommandContext commandContext)
+        public StudioModelRenderer(Scene scene, ICommandContext commandContext)
         {
             _direct = commandContext.RegisterVariable(new VirtualVariableInfo<float>("direct", 0.9f)
                 .WithHelpInfo("Controls the shade light multiplier")
                 .ConfigureFilters(filters => filters.WithMinMaxFilter(0.75f, 1.0f)));
+
+            scene.AddContainer(this);
         }
 
         public void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc, ResourceScope scope)

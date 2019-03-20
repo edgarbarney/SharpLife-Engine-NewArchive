@@ -62,7 +62,7 @@ namespace SharpLife.Engine.Entities.Components
 
         public static RenderableComponent SetModel(this Entity entity, string modelName)
         {
-            var model = EntitySystem.WorldState.Models.Load(modelName);
+            var model = EntitySystem.Scene.Models.Load(modelName);
 
             var factory = _renderableFactories[model?.GetType()];
 

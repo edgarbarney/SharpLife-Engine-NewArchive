@@ -22,7 +22,7 @@ namespace SharpLife.Engine.Client.UI.Renderer
         public abstract void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc, ResourceScope scope);
         public abstract void DestroyDeviceObjects(ResourceScope scope);
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             DestroyDeviceObjects(ResourceScope.All);
         }

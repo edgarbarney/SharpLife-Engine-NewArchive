@@ -17,6 +17,7 @@ using Serilog;
 using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Entities.Factories;
 using SharpLife.Engine.GameWorld;
+using SharpLife.Engine.Models;
 using SharpLife.Utility;
 using SharpLife.Utility.Text;
 using System;
@@ -40,6 +41,8 @@ namespace SharpLife.Engine.Entities
 
         public ComponentSystem Components { get; }
 
+        public IModelManager Models { get; }
+
         public EntityList Entities { get; } = new EntityList();
 
         public bool Running { get; private set; }
@@ -61,12 +64,13 @@ namespace SharpLife.Engine.Entities
         /// </summary>
         public event Action<Scene> SceneDeactivated;
 
-        public Scene(WorldState worldState, EntitySystemMetaData entitySystemMetaData)
+        public Scene(WorldState worldState, EntitySystemMetaData entitySystemMetaData, IModelManager modelManager)
         {
             WorldState = worldState ?? throw new ArgumentNullException(nameof(worldState));
             EntitySystemMetaData = entitySystemMetaData ?? throw new ArgumentNullException(nameof(entitySystemMetaData));
             EntityCreator = new EntityCreator(this);
             Components = new ComponentSystem(this);
+            Models = modelManager ?? throw new ArgumentNullException(nameof(modelManager));
         }
 
         internal void Activate()
@@ -100,6 +104,8 @@ namespace SharpLife.Engine.Entities
             {
                 EntitySystem.SetScene(null);
             }
+
+            Models.Dispose();
         }
 
         public void Start()

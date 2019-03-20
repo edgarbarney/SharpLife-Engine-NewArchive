@@ -25,6 +25,8 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
     /// </summary>
     public interface IRendererModels
     {
+        TModelRenderer GetRenderer<TModelRenderer>() where TModelRenderer : class, IModelRenderer;
+
         void AddRenderable(RenderableComponent renderable);
         void RemoveRenderable(RenderableComponent renderable);
 

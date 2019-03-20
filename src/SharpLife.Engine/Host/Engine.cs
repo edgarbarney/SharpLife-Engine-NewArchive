@@ -17,12 +17,16 @@ using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.Engine.Client;
-using SharpLife.Engine.Client.UI.Renderer.Models;
+using SharpLife.Engine.Client.UI.Renderer;
 using SharpLife.Engine.CommandSystem;
 using SharpLife.Engine.Configuration;
 using SharpLife.Engine.Events;
 using SharpLife.Engine.GameWorld;
 using SharpLife.Engine.Logging;
+using SharpLife.Engine.Models;
+using SharpLife.Engine.Models.BSP;
+using SharpLife.Engine.Models.MDL;
+using SharpLife.Engine.Models.SPR;
 using SharpLife.Engine.Plugins;
 using SharpLife.Engine.Server;
 using SharpLife.FileSystem;
@@ -151,7 +155,14 @@ namespace SharpLife.Engine.Host
 
             EngineContext = CommandSystem.CreateContext("EngineContext");
 
-            var startupState = new EngineStartupState(Logger, GameDirectory);
+            var startupState = new EngineStartupState(Logger, GameDirectory,
+                new IModelFormatProvider[]
+            {
+                new SpriteModelFormatProvider(),
+                new StudioModelFormatProvider(),
+                //BSP loader comes last due to not having a way to positively recognize the format
+                new BSPModelFormatProvider(Framework.BSPModelNamePrefix)
+            });
 
             //Add the engine assembly so builtin data gets added
             startupState.EntitySystemMetaData.AddAssembly(typeof(Engine).Assembly);
@@ -172,7 +183,15 @@ namespace SharpLife.Engine.Host
                 startupState.EntitySystemMetaData.AddAssembly(pluginAssembly);
             }
 
-            World = new WorldState(Logger, EventSystem, FileSystem, startupState.EntitySystemMetaData.Build(), Client?.UserInterface.Renderer.Models ?? new ServerRendererModels());
+            var renderer = (IRenderer)Client?.UserInterface.Renderer ?? new ServerRenderer();
+
+            World = new WorldState(
+                Logger,
+                EventSystem,
+                FileSystem,
+                startupState.EntitySystemMetaData.Build(),
+                renderer,
+                startupState.ModelFormats);
 
             _engineTimeStopwatch.Start();
 

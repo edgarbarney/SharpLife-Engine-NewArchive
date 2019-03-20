@@ -20,6 +20,7 @@ using SharpLife.Engine.Models.SPR.Rendering;
 using SharpLife.Engine.Renderer;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Veldrid;
 
@@ -30,7 +31,7 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
     /// </summary>
     public sealed class RendererModels : IRendererModels, IRenderable
     {
-        private readonly IModelResourcesManager _resourcesManager;
+        private readonly IModelRenderer[] _renderers;
 
         private bool _active;
 
@@ -40,22 +41,28 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
 
         public RenderPasses RenderPasses => RenderPasses.Standard;
 
-        public SpriteModelRenderer SpriteRenderer { get; }
-
-        public StudioModelRenderer StudioRenderer { get; }
-
-        public BrushModelRenderer BrushRenderer { get; }
-
-        public RendererModels(IModelResourcesManager resourcesManager,
-            SpriteModelRenderer spriteRenderer,
-            StudioModelRenderer studioRenderer,
-            BrushModelRenderer brushRenderer)
+        public RendererModels(IEnumerable<IModelRenderer> renderers)
         {
-            _resourcesManager = resourcesManager ?? throw new ArgumentNullException(nameof(resourcesManager));
+            if (renderers == null)
+            {
+                throw new ArgumentNullException(nameof(renderers));
+            }
 
-            SpriteRenderer = spriteRenderer ?? throw new ArgumentNullException(nameof(spriteRenderer));
-            StudioRenderer = studioRenderer ?? throw new ArgumentNullException(nameof(studioRenderer));
-            BrushRenderer = brushRenderer ?? throw new ArgumentNullException(nameof(brushRenderer));
+            _renderers = renderers.ToArray();
+        }
+
+        public TModelRenderer GetRenderer<TModelRenderer>() where TModelRenderer : class, IModelRenderer
+        {
+            //TODO: may need to make a dictionary to speed this up
+            foreach (var renderer in _renderers)
+            {
+                if (renderer is TModelRenderer modelRenderer)
+                {
+                    return modelRenderer;
+                }
+            }
+
+            throw new ArgumentException($"Could not find model renderer of type {typeof(TModelRenderer).FullName}", nameof(TModelRenderer));
         }
 
         public void AddRenderable(RenderableComponent renderable)
@@ -90,14 +97,12 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
                 throw new InvalidOperationException($"Cannot call {nameof(RenderSpriteModel)} outside the render operation");
             }
 
-            var resources = _resourcesManager.GetResources(renderData.Model);
-
-            SpriteRenderer.Render(
+            GetRenderer<SpriteModelRenderer>().Render(
                 _renderContext.GraphicsDevice,
                 _renderContext.CommandList,
                 _renderContext.SceneContext,
                 _renderContext.RenderPass,
-                (SpriteModelResourceContainer)resources,
+                renderData.Model.ResourceContainer,
                 ref renderData);
         }
 
@@ -113,14 +118,12 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
                 throw new InvalidOperationException($"Cannot call {nameof(RenderStudioModel)} outside the render operation");
             }
 
-            var resources = _resourcesManager.GetResources(renderData.Model);
-
-            StudioRenderer.Render(
+            GetRenderer<StudioModelRenderer>().Render(
                 _renderContext.GraphicsDevice,
                 _renderContext.CommandList,
                 _renderContext.SceneContext,
                 _renderContext.RenderPass,
-                (StudioModelResourceContainer)resources,
+                renderData.Model.ResourceContainer,
                 ref renderData);
         }
 
@@ -136,14 +139,12 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
                 throw new InvalidOperationException($"Cannot call {nameof(RenderBrushModel)} outside the render operation");
             }
 
-            var resources = _resourcesManager.GetResources(renderData.Model);
-
-            BrushRenderer.Render(
+            GetRenderer<BrushModelRenderer>().Render(
                 _renderContext.GraphicsDevice,
                 _renderContext.CommandList,
                 _renderContext.SceneContext,
                 _renderContext.RenderPass,
-                (BSPModelResourceContainer)resources,
+                renderData.Model.ResourceContainer,
                 ref renderData);
         }
 

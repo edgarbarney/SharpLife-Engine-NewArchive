@@ -13,31 +13,12 @@
 *
 ****/
 
-using System;
-using System.Numerics;
-
-namespace SharpLife.Engine.Models
+namespace SharpLife.Engine.Client.UI.Renderer.Models
 {
-    public abstract class BaseModel : IModel
+    /// <summary>
+    /// Renders a specific model format
+    /// </summary>
+    public interface IModelRenderer
     {
-        public string Name { get; }
-
-        public uint CRC { get; }
-
-        public Vector3 Mins { get; }
-
-        public Vector3 Maxs { get; }
-
-        protected BaseModel(string name, uint crc, in Vector3 mins, in Vector3 maxs)
-        {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-
-            CRC = crc;
-
-            Mins = mins;
-            Maxs = maxs;
-        }
-
-        public abstract void Dispose();
     }
 }

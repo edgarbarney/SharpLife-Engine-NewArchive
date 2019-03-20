@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.Engine.Models.BSP.FileFormat;
+using SharpLife.Engine.Models.BSP.Rendering;
 using SharpLife.Engine.Physics;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,9 @@ namespace SharpLife.Engine.Models.BSP
 
         public float Radius { get; }
 
-        public BSPModel(string name, uint crc, BSPFile bspFile, Model subModel, Hull hull0)
+        internal BSPModelResourceContainer ResourceContainer { get; set; }
+
+        internal BSPModel(string name, uint crc, BSPFile bspFile, Model subModel, Hull hull0)
             : base(name, crc, subModel.Mins, subModel.Maxs)
         {
             BSPFile = bspFile ?? throw new ArgumentNullException(nameof(bspFile));
@@ -53,6 +56,11 @@ namespace SharpLife.Engine.Models.BSP
                 );
 
             Radius = radius.Length();
+        }
+
+        public override void Dispose()
+        {
+            ResourceContainer?.Dispose();
         }
     }
 }

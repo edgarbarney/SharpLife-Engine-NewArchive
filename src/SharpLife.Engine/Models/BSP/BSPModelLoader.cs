@@ -13,7 +13,9 @@
 *
 ****/
 
+using SharpLife.Engine.Client.UI.Renderer;
 using SharpLife.Engine.Models.BSP.FileFormat;
+using SharpLife.Engine.Models.BSP.Rendering;
 using SharpLife.FileSystem;
 using System;
 using System.Collections.Generic;
@@ -31,7 +33,7 @@ namespace SharpLife.Engine.Models.BSP
             _bspModelNamePrefix = bspModelNamePrefix ?? throw new ArgumentNullException(nameof(bspModelNamePrefix));
         }
 
-        public IReadOnlyList<IModel> Load(string name, IFileSystem fileSystem, BinaryReader reader, bool computeCRC)
+        public IReadOnlyList<IModel> Load(string name, IFileSystem fileSystem, Scene scene, BinaryReader reader, bool computeCRC)
         {
             if (reader == null)
             {
@@ -68,6 +70,16 @@ namespace SharpLife.Engine.Models.BSP
             for (var i = 1; i < bspFile.Models.Count; ++i)
             {
                 models[i] = new BSPModel($"{_bspModelNamePrefix}{i}", crc, bspFile, bspFile.Models[i], hull0);
+            }
+
+            if (scene != null)
+            {
+                foreach (var model in models)
+                {
+                    model.ResourceContainer = new BSPModelResourceContainer(scene, model);
+
+                    scene.AddContainer(model.ResourceContainer);
+                }
             }
 
             return models;

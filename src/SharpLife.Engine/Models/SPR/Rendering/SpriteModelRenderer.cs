@@ -15,6 +15,7 @@
 
 using Serilog;
 using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Client.UI.Renderer.Utility;
 using SharpLife.Engine.Models.Rendering;
 using SharpLife.Engine.Models.SPR.FileFormat;
@@ -27,7 +28,7 @@ using Veldrid.Utilities;
 
 namespace SharpLife.Engine.Models.SPR.Rendering
 {
-    public sealed class SpriteModelRenderer : IResourceContainer
+    public sealed class SpriteModelRenderer : IModelRenderer, IResourceContainer
     {
         private readonly DisposeCollector _disposeCollector = new DisposeCollector();
 
@@ -37,9 +38,11 @@ namespace SharpLife.Engine.Models.SPR.Rendering
 
         public RenderModePipelines Pipelines { get; private set; }
 
-        public SpriteModelRenderer(ILogger logger)
+        public SpriteModelRenderer(Scene scene, ILogger logger)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            scene.AddContainer(this);
         }
 
         public void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc, ResourceScope scope)

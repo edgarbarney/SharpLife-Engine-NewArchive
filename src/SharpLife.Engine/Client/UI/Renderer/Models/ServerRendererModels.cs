@@ -25,6 +25,8 @@ namespace SharpLife.Engine.Client.UI.Renderer.Models
     /// </summary>
     internal sealed class ServerRendererModels : IRendererModels
     {
+        public TModelRenderer GetRenderer<TModelRenderer>() where TModelRenderer : class, IModelRenderer => null;
+
         public void AddRenderable(RenderableComponent renderable)
         {
         }

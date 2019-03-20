@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.Engine.Models.MDL.FileFormat;
+using SharpLife.Engine.Models.MDL.Rendering;
 using System;
 using System.Numerics;
 
@@ -23,11 +24,18 @@ namespace SharpLife.Engine.Models.MDL
     {
         public StudioFile StudioFile { get; }
 
+        internal StudioModelResourceContainer ResourceContainer { get; set; }
+
         public StudioModel(string name, uint crc, StudioFile studioFile)
             //TODO: figure out if models have a preset size
             : base(name, crc, Vector3.Zero, Vector3.Zero)
         {
             StudioFile = studioFile ?? throw new ArgumentNullException(nameof(studioFile));
+        }
+
+        public override void Dispose()
+        {
+            ResourceContainer?.Dispose();
         }
     }
 }

@@ -13,7 +13,9 @@
 *
 ****/
 
+using SharpLife.Engine.Client.UI.Renderer;
 using SharpLife.Engine.Models.SPR.FileFormat;
+using SharpLife.Engine.Models.SPR.Rendering;
 using SharpLife.FileSystem;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,7 @@ namespace SharpLife.Engine.Models.SPR
 {
     public sealed class SpriteModelLoader : IModelLoader
     {
-        public IReadOnlyList<IModel> Load(string name, IFileSystem fileSystem, BinaryReader reader, bool computeCRC)
+        public IReadOnlyList<IModel> Load(string name, IFileSystem fileSystem, Scene scene, BinaryReader reader, bool computeCRC)
         {
             if (reader == null)
             {
@@ -47,7 +49,16 @@ namespace SharpLife.Engine.Models.SPR
                 crc = loader.ComputeCRC();
             }
 
-            return new[] { new SpriteModel(name, crc, spriteFile) };
+            var model = new SpriteModel(name, crc, spriteFile);
+
+            if (scene != null)
+            {
+                model.ResourceContainer = new SpriteModelResourceContainer(scene, model);
+
+                scene.AddContainer(model.ResourceContainer);
+            }
+
+            return new[] { model };
         }
     }
 }

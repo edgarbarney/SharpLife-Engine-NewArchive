@@ -37,7 +37,8 @@ namespace SharpLife.Engine.Models.MDL.Rendering
         public ResourceSet[] Textures { get; set; }
         public BodyPartData[] BodyParts { get; set; }
 
-        public StudioModelResourceContainer(StudioModel studioModel)
+        public StudioModelResourceContainer(Scene scene, StudioModel studioModel)
+            : base(scene)
         {
             StudioModel = studioModel ?? throw new ArgumentNullException(nameof(studioModel));
         }
@@ -48,6 +49,8 @@ namespace SharpLife.Engine.Models.MDL.Rendering
             {
                 return;
             }
+
+            var renderer = sc.Models.GetRenderer<StudioModelRenderer>();
 
             var disposeFactory = new DisposeCollectorResourceFactory(gd.ResourceFactory, _disposeCollector);
 
@@ -83,7 +86,7 @@ namespace SharpLife.Engine.Models.MDL.Rendering
             {
                 var view = sc.MapResourceCache.GetTextureView(gd.ResourceFactory, uploadedTextures[i]);
 
-                Textures[i] = disposeFactory.CreateResourceSet(new ResourceSetDescription(sc.Models.StudioRenderer.TextureLayout, view));
+                Textures[i] = disposeFactory.CreateResourceSet(new ResourceSetDescription(renderer.TextureLayout, view));
             }
         }
 

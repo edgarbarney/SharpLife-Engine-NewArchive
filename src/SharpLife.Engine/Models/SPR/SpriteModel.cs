@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.Engine.Models.SPR.FileFormat;
+using SharpLife.Engine.Models.SPR.Rendering;
 using System;
 using System.Numerics;
 
@@ -23,6 +24,8 @@ namespace SharpLife.Engine.Models.SPR
     {
         public SpriteFile SpriteFile { get; }
 
+        internal SpriteModelResourceContainer ResourceContainer { get; set; }
+
         public SpriteModel(string name, uint crc, SpriteFile spriteFile)
             : base(name,
                   crc,
@@ -30,6 +33,11 @@ namespace SharpLife.Engine.Models.SPR
                   new Vector3(spriteFile.MaximumWidth / 2, spriteFile.MaximumWidth / 2, spriteFile.MaximumHeight / 2))
         {
             SpriteFile = spriteFile ?? throw new ArgumentNullException(nameof(spriteFile));
+        }
+
+        public override void Dispose()
+        {
+            ResourceContainer?.Dispose();
         }
     }
 }
