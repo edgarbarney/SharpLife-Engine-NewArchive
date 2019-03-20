@@ -13,10 +13,10 @@
 *
 ****/
 
-using SharpLife.Engine.Models;
+using SharpLife.Engine.Client.UI.Renderer;
 using System.Numerics;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models
+namespace SharpLife.Engine.Models.Rendering
 {
     public struct SharedModelRenderData
     {
