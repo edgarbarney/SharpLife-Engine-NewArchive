@@ -16,12 +16,12 @@
 using SharpLife.Engine.Client.UI.Renderer;
 using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Client.UI.Renderer.Models.BSP;
-using SharpLife.Engine.Models;
-using SharpLife.Engine.Models.BSP;
+using SharpLife.Engine.Entities;
+using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.ObjectEditor;
 using System.Numerics;
 
-namespace SharpLife.Engine.Entities.Components
+namespace SharpLife.Engine.Models.BSP
 {
     public class BSPRenderableComponent : RenderableComponent
     {

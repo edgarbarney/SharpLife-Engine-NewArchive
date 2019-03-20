@@ -16,6 +16,7 @@
 using SharpLife.Engine.Entities;
 using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Entities.Factories;
+using SharpLife.Engine.Models.BSP;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
