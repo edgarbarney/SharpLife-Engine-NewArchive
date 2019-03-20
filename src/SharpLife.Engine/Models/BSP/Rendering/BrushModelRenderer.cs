@@ -13,8 +13,9 @@
 *
 ****/
 
+using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Client.UI.Renderer.Utility;
-using SharpLife.Engine.Models;
 using SharpLife.Engine.Renderer.Utility;
 using System;
 using System.Numerics;
@@ -22,7 +23,7 @@ using System.Runtime.InteropServices;
 using Veldrid;
 using Veldrid.Utilities;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.BSP
+namespace SharpLife.Engine.Models.BSP.Rendering
 {
     public sealed class BrushModelRenderer : IResourceContainer
     {

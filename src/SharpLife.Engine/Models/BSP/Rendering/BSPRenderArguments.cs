@@ -16,7 +16,7 @@
 using SharpLife.Engine.Models;
 using System.Numerics;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.BSP
+namespace SharpLife.Engine.Models.BSP.Rendering
 {
     public struct BSPRenderArguments
     {

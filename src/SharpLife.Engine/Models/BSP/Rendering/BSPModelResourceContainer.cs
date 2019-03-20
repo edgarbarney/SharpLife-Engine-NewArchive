@@ -13,9 +13,8 @@
 *
 ****/
 
-using SharpLife.Engine.Models;
-using SharpLife.Engine.Models.BSP;
-using SharpLife.Engine.Models.BSP.Rendering;
+using SharpLife.Engine.Client.UI.Renderer;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 using SharpLife.Engine.Renderer;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -25,7 +24,7 @@ using System.Linq;
 using Veldrid;
 using Veldrid.Utilities;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.BSP
+namespace SharpLife.Engine.Models.BSP.Rendering
 {
     /// <summary>
     /// The BSP World model renderable

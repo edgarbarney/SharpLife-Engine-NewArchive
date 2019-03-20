@@ -16,7 +16,6 @@
 using Serilog;
 using SharpLife.CommandSystem;
 using SharpLife.Engine.Client.UI.Renderer.Models;
-using SharpLife.Engine.Client.UI.Renderer.Models.BSP;
 using SharpLife.Engine.Client.UI.Renderer.Models.MDL;
 using SharpLife.Engine.Client.UI.Renderer.Models.SPR;
 using SharpLife.Engine.Client.UI.Renderer.Objects;

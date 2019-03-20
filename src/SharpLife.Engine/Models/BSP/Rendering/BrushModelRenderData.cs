@@ -13,9 +13,9 @@
 *
 ****/
 
-using SharpLife.Engine.Models.BSP;
+using SharpLife.Engine.Client.UI.Renderer.Models;
 
-namespace SharpLife.Engine.Client.UI.Renderer.Models.BSP
+namespace SharpLife.Engine.Models.BSP.Rendering
 {
     public struct BrushModelRenderData
     {
