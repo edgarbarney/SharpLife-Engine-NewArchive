@@ -159,7 +159,23 @@ namespace SharpLife.Engine.Entities.Components
         private MethodInfo FindMethod(Type type, string methodName)
         {
             //TODO: determine if this can be made more efficient with caching
+            //TODO: use component metadata for lookup
             return type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public, null, Array.Empty<Type>(), null);
+        }
+
+        internal bool InvokeImmediate(Component component, string methodName)
+        {
+            var method = FindMethod(component.GetType(), methodName);
+
+            if (method == null)
+            {
+                _scene.Logger.Error("Method {ComponentType}.{MethodName}() does not exist", component.GetType().FullName, methodName);
+                return false;
+            }
+
+            method.Invoke(component, null);
+
+            return true;
         }
 
         internal void ScheduleInvocation(Component component, string methodName, float delay, float interval = InvokeOnceInterval)
@@ -185,6 +201,7 @@ namespace SharpLife.Engine.Entities.Components
                 throw new ArgumentOutOfRangeException("Invocation interval must be greater than 0.0001");
             }
 
+            //TODO: don't throw exception
             var method = FindMethod(component.GetType(), methodName) ?? throw new ArgumentException("Method does not exist", nameof(methodName));
 
             var data = new InvokeData

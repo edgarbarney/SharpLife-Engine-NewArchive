@@ -92,6 +92,8 @@ namespace SharpLife.Engine.Entities.Components
             Entity = null;
         }
 
+        public bool Invoke(string methodName) => EntitySystem.Scene.Components.InvokeImmediate(this, methodName);
+
         public void Invoke(string methodName, float delay) => EntitySystem.Scene.Components.ScheduleInvocation(this, methodName, delay);
 
         public void InvokeRepeating(string methodName, float delay, float interval) => EntitySystem.Scene.Components.ScheduleInvocation(this, methodName, delay, interval);
