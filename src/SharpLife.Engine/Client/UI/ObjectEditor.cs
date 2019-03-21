@@ -89,6 +89,8 @@ namespace SharpLife.Engine.Client.UI
         public void OnMapEnd()
         {
             _scene = null;
+            _editObjectHandle = null;
+            _editableComponents.Clear();
         }
 
         public void AddMenuItem()
