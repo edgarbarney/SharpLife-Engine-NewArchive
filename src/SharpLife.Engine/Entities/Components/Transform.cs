@@ -62,7 +62,7 @@ namespace SharpLife.Engine.Entities.Components
             }
         }
 
-        public void Removed()
+        public void OnDisable()
         {
             //Detach from hierarchy
             Parent = null;
