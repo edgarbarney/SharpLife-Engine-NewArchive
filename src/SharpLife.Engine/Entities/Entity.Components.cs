@@ -24,6 +24,8 @@ namespace SharpLife.Engine.Entities
     {
         private readonly List<Component> _components = new List<Component>();
 
+        public IEnumerable<Component> Components => _components;
+
         private bool InternalHasComponent(Type componentType) => GetComponent(componentType) != null;
 
         public bool HasComponent(Type componentType) => InternalHasComponent(componentType ?? throw new ArgumentNullException(nameof(componentType)));
