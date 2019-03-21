@@ -203,7 +203,7 @@ namespace SharpLife.Engine.Models.BSP.Rendering
                     //TODO: fill in other values
                     Origin = component.Transform.AbsoluteOrigin,
                     Angles = component.Transform.AbsoluteAngles,
-                    Scale = Vector3.One,
+                    Scale = component.Transform.ScaleVector,
 
                     Effects = EffectsFlags.None,
 

@@ -70,6 +70,11 @@ namespace SharpLife.Engine.Entities.Components
         [ObjectEditorVector3(DisplayFormat = Vector3DisplayFormat.AnglesDegrees)]
         public Vector3 AbsoluteAngles { get; set; }
 
+        [KeyValue(Name = "scale")]
+        public float Scale { get; set; }
+
+        public Vector3 ScaleVector => Scale == 0 ? Vector3.One : new Vector3(Scale);
+
         public void OnDisable()
         {
             //Detach from hierarchy
