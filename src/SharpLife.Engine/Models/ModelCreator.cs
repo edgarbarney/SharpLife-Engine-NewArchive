@@ -13,6 +13,7 @@
 *
 ****/
 
+using Serilog;
 using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.FileSystem;
 using System;
@@ -24,13 +25,16 @@ namespace SharpLife.Engine.Models
 {
     public sealed class ModelCreator
     {
-        //TODO: replace with List to allow use of stack allocated enumerator
-        private readonly IReadOnlyList<IModelLoader> _modelLoaders;
+        private readonly ILogger _logger;
 
         private readonly IFileSystem _fileSystem;
 
-        public ModelCreator(IFileSystem fileSystem, IEnumerable<IModelLoader> loaders)
+        //TODO: replace with List to allow use of stack allocated enumerator
+        private readonly IReadOnlyList<IModelLoader> _modelLoaders;
+
+        public ModelCreator(ILogger logger, IFileSystem fileSystem, IEnumerable<IModelLoader> loaders)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 
             if (loaders == null)
@@ -44,27 +48,35 @@ namespace SharpLife.Engine.Models
 
         public IReadOnlyList<IModel> TryLoadModel(string modelName, Scene scene)
         {
-            var reader = new BinaryReader(_fileSystem.OpenRead(modelName));
-
-            foreach (var loader in _modelLoaders)
+            try
             {
-                //TODO: this needs to be profiled to see if the allocations cause issues
-                //If so we'll need to optimize this
-                var models = loader.Load(modelName, _fileSystem, scene, reader, true);
+                var reader = new BinaryReader(_fileSystem.OpenRead(modelName));
 
-                if (models != null)
+                foreach (var loader in _modelLoaders)
                 {
-                    //This should never happen since a loader needs to return null to signal failure
-                    if (models.Count == 0)
+                    //TODO: this needs to be profiled to see if the allocations cause issues
+                    //If so we'll need to optimize this
+                    var models = loader.Load(modelName, _fileSystem, scene, reader, true);
+
+                    if (models != null)
                     {
-                        throw new InvalidOperationException($"Model loader {loader.GetType().Name} returned empty array");
+                        //This should never happen since a loader needs to return null to signal failure
+                        if (models.Count == 0)
+                        {
+                            throw new InvalidOperationException($"Model loader {loader.GetType().Name} returned empty array");
+                        }
+
+                        return models;
                     }
-
-                    return models;
                 }
-            }
 
-            return null;
+                return null;
+            }
+            catch (FileNotFoundException e)
+            {
+                _logger.Error(e, "Failed to load model {FileName}", modelName);
+                return null;
+            }
         }
     }
 }

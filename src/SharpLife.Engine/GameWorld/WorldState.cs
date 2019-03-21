@@ -77,7 +77,7 @@ namespace SharpLife.Engine.GameWorld
             BSPUtils = new BSPModelUtils(Framework.BSPModelNamePrefix, Framework.Directory.Maps, Framework.Extension.BSP);
 
             EntitySystemMetaData = entitySystemMetaData ?? throw new ArgumentNullException(nameof(entitySystemMetaData));
-            _modelCreator = new ModelCreator(fileSystem, modelFormats.Select(p => p.CreateLoader()));
+            _modelCreator = new ModelCreator(logger, fileSystem, modelFormats.Select(p => p.CreateLoader()));
             RendererModels = _renderer.Models ?? throw new ArgumentNullException(nameof(_renderer.Models));
         }
 
