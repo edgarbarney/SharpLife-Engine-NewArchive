@@ -43,5 +43,10 @@ namespace SharpLife.Engine.Entities
         public override bool Equals(object obj) => ReferenceEquals(this, obj);
 
         public override int GetHashCode() => base.GetHashCode();
+
+        public override string ToString()
+        {
+            return $"Entity {_id}:{ClassName}:{TargetName}";
+        }
     }
 }

@@ -108,5 +108,10 @@ namespace SharpLife.Engine.Entities.Components
         public sealed override bool Equals(object obj) => ReferenceEquals(this, obj);
 
         public sealed override int GetHashCode() => base.GetHashCode();
+
+        public override string ToString()
+        {
+            return $"{GetType().Name}";
+        }
     }
 }
