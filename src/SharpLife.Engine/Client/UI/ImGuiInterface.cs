@@ -15,6 +15,7 @@
 
 using ImGuiNET;
 using Serilog;
+using SharpLife.Engine.Entities;
 using SharpLife.Utility;
 using System;
 
@@ -32,6 +33,8 @@ namespace SharpLife.Engine.Client.UI
 
         private readonly MaterialControl _materialControl;
 
+        private readonly ObjectEditor _objectEditor;
+
         public ImGuiInterface(ILogger logger, EngineClient client)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -39,6 +42,17 @@ namespace SharpLife.Engine.Client.UI
 
             _console = new Console(logger, client);
             _materialControl = new MaterialControl(client.CommandContext);
+            _objectEditor = new ObjectEditor(logger);
+        }
+
+        public void OnMapStart(Scene scene)
+        {
+            _objectEditor.OnMapStart(scene);
+        }
+
+        public void OnMapEnd()
+        {
+            _objectEditor.OnMapEnd();
         }
 
         public void Update(float deltaSeconds)
@@ -54,6 +68,7 @@ namespace SharpLife.Engine.Client.UI
                 {
                     _console.AddMenuItem();
                     _materialControl.AddMenuItem();
+                    _objectEditor.AddMenuItem();
 
                     ImGui.EndMenu();
                 }
@@ -70,6 +85,7 @@ namespace SharpLife.Engine.Client.UI
 
             _console.Draw();
             _materialControl.Draw();
+            _objectEditor.Draw();
         }
     }
 }

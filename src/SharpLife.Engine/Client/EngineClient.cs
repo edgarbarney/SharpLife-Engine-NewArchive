@@ -28,7 +28,7 @@ namespace SharpLife.Engine.Client
     /// </summary>
     internal sealed class EngineClient
     {
-        private readonly Host.Engine _engine;
+        public Host.Engine Engine { get; }
 
         public ICommandContext CommandContext { get; }
 
@@ -36,28 +36,28 @@ namespace SharpLife.Engine.Client
 
         public ILogListener LogListener
         {
-            get => _engine.LogTextWriter.Listener;
-            set => _engine.LogTextWriter.Listener = value;
+            get => Engine.LogTextWriter.Listener;
+            set => Engine.LogTextWriter.Listener = value;
         }
 
         public EngineClient(Host.Engine engine, EngineStartupState startupState)
         {
-            _engine = engine ?? throw new ArgumentNullException(nameof(engine));
+            Engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-            CommandContext = _engine.CommandSystem.CreateContext("ClientContext", _engine.EngineContext);
+            CommandContext = Engine.CommandSystem.CreateContext("ClientContext", Engine.EngineContext);
 
-            var gameWindowName = _engine.EngineConfiguration.DefaultGameName;
+            var gameWindowName = Engine.EngineConfiguration.DefaultGameName;
 
-            if (!string.IsNullOrWhiteSpace(_engine.EngineConfiguration.GameName))
+            if (!string.IsNullOrWhiteSpace(Engine.EngineConfiguration.GameName))
             {
-                gameWindowName = _engine.EngineConfiguration.GameName;
+                gameWindowName = Engine.EngineConfiguration.GameName;
             }
 
-            UserInterface = new UserInterface(_engine.Logger, _engine.EngineTime, _engine.FileSystem, CommandContext, this,
+            UserInterface = new UserInterface(Engine.Logger, Engine.EngineTime, Engine.FileSystem, CommandContext, this,
                 startupState,
-                _engine.CommandLine.Contains("-noontop"), gameWindowName, _engine.CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
+                Engine.CommandLine.Contains("-noontop"), gameWindowName, Engine.CommandLine.Contains("-noborder") ? SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS : 0);
 
-            UserInterface.Quit += _engine.Exit;
+            UserInterface.Quit += Engine.Exit;
 
             startupState.PluginManager.AddAllAssembliesFromConfiguration(engine.EngineConfiguration.GameAssemblies, GameAssemblyTarget.Client);
         }
@@ -91,11 +91,15 @@ namespace SharpLife.Engine.Client
 
         public void LocalConnect()
         {
-            UserInterface.Renderer.LoadModels(_engine.World.MapInfo.Model);
+            UserInterface.Renderer.LoadModels(Engine.World.MapInfo.Model);
+
+            //TODO: need a way to hook into this event before world is created
+            UserInterface.Renderer.ImGui.ImGuiInterface.OnMapStart(Engine.World.Scene);
         }
 
         public void Disconnect(bool shutdownServer)
         {
+            UserInterface.Renderer.ImGui.ImGuiInterface.OnMapEnd();
             //TODO
         }
     }

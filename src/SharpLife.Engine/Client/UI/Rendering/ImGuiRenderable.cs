@@ -29,7 +29,7 @@ namespace SharpLife.Engine.Client.UI.Rendering
         private readonly int _width;
         private readonly int _height;
 
-        private readonly ImGuiInterface _imGuiInterface;
+        public ImGuiInterface ImGuiInterface { get; }
 
         public ImGuiRenderable(IInputSystem inputSystem, int width, int height, ILogger logger, EngineClient client)
         {
@@ -37,7 +37,7 @@ namespace SharpLife.Engine.Client.UI.Rendering
             _width = width;
             _height = height;
 
-            _imGuiInterface = new ImGuiInterface(logger, client);
+            ImGuiInterface = new ImGuiInterface(logger, client);
         }
 
         public void WindowResized(int width, int height) => _imguiRenderer.WindowResized(width, height);
@@ -80,7 +80,7 @@ namespace SharpLife.Engine.Client.UI.Rendering
         {
             Debug.Assert(renderPass == RenderPasses.Overlay);
 
-            _imGuiInterface.Draw();
+            ImGuiInterface.Draw();
 
             _imguiRenderer.Render(gd, cl);
         }
@@ -91,7 +91,7 @@ namespace SharpLife.Engine.Client.UI.Rendering
         {
             _imguiRenderer.Update(deltaSeconds, _inputSystem.Snapshot);
 
-            _imGuiInterface.Update(deltaSeconds);
+            ImGuiInterface.Update(deltaSeconds);
         }
     }
 }

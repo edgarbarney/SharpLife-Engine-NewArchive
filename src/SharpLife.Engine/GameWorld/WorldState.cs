@@ -52,6 +52,10 @@ namespace SharpLife.Engine.GameWorld
 
         public Entities.Scene Scene { get; private set; }
 
+        public event Action<WorldState, Entities.Scene> MapStart;
+
+        public event Action<WorldState, Entities.Scene> MapEnd;
+
         public WorldState(
             ILogger logger,
             IEventSystem eventSystem,
@@ -163,6 +167,8 @@ namespace SharpLife.Engine.GameWorld
             }
 
             Scene.Start();
+
+            MapStart?.Invoke(this, Scene);
         }
 
         public void Update(double currentTime)
@@ -174,6 +180,8 @@ namespace SharpLife.Engine.GameWorld
         {
             if (Scene != null)
             {
+                MapEnd?.Invoke(this, Scene);
+
                 Scene.Dispose();
                 Scene = null;
             }
