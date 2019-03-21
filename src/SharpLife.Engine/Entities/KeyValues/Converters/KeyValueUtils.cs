@@ -32,6 +32,16 @@ namespace SharpLife.Engine.Entities.KeyValues.Converters
         }
 
         /// <summary>
+        /// Parses an unsigned integer value the way Half-Life does
+        /// </summary>
+        /// <param name="value"></param>
+        public static uint ParseUInt(string value)
+        {
+            uint.TryParse(value, out var result);
+            return result;
+        }
+
+        /// <summary>
         /// Parses a single precision floating point value the way Half-Life does
         /// </summary>
         /// <param name="value"></param>
