@@ -210,15 +210,17 @@ namespace SharpLife.Engine.Client.UI
 
                             ImGui.Text(_editObjectHandle.ToString());
 
+                            var componentIndex = 0;
+
                             foreach (var componentData in _editableComponents)
                             {
                                 if (ImGui.CollapsingHeader(componentData.Component.ToString()))
                                 {
-                                    ImGui.InputText("Invoke method", ref componentData.InvokeBuffer, InvokeMaxLength, ImGuiInputTextFlags.None, null);
+                                    ImGui.InputText($"Invoke method ## {componentIndex}", ref componentData.InvokeBuffer, InvokeMaxLength, ImGuiInputTextFlags.None, null);
 
                                     ImGui.SameLine();
 
-                                    if (ImGui.Button("Invoke") && componentData.InvokeBuffer.Length > 0)
+                                    if (ImGui.Button($"Invoke ## {componentIndex}") && componentData.InvokeBuffer.Length > 0)
                                     {
                                         componentData.Component.Invoke(componentData.InvokeBuffer);
                                     }
@@ -229,6 +231,8 @@ namespace SharpLife.Engine.Client.UI
                                         member.Display(_editObjectHandle, componentData.Accessor);
                                     }
                                 }
+
+                                ++componentIndex;
                             }
                         }
                     }
