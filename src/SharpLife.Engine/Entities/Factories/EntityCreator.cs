@@ -104,9 +104,9 @@ namespace SharpLife.Engine.Entities.Factories
 
             foreach (var keyValue in keyValues)
             {
-                if (component._metaData.KeyValues.TryGetValue(keyValue.Key, out var member))
+                if (component.MetaData.KeyValues.TryGetValue(keyValue.Key, out var member))
                 {
-                    component._metaData.Accessor[component, member.Member.Name] = member.Converter.FromString(member.MemberType, keyValue.Key, keyValue.Value);
+                    component.MetaData.Accessor[component, member.Member.Name] = member.Converter.FromString(member.MemberType, keyValue.Key, keyValue.Value);
                 }
             }
 

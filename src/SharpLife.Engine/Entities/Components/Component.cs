@@ -23,8 +23,10 @@ namespace SharpLife.Engine.Entities.Components
     /// </summary>
     public abstract class Component : IEquatable<Component>
     {
-        internal readonly ComponentMetaData _metaData;
         internal bool _startCalled;
+
+        [ObjectEditorVisible(Visible = false)]
+        public ComponentMetaData MetaData { get; }
 
         /// <summary>
         /// The entity that owns this component
@@ -36,7 +38,7 @@ namespace SharpLife.Engine.Entities.Components
 
         protected Component()
         {
-            _metaData = EntitySystem.Scene.Components.GetMetaData(GetType());
+            MetaData = EntitySystem.Scene.Components.GetMetaData(GetType());
         }
 
         private void SetEnabled(bool state, bool forceInvokeHandlers)
@@ -61,11 +63,11 @@ namespace SharpLife.Engine.Entities.Components
             {
                 if (oldState)
                 {
-                    _metaData.TryGetMethodAndInvoke(BuiltInComponentMethods.OnDisable, this);
+                    MetaData.TryGetMethodAndInvoke(BuiltInComponentMethods.OnDisable, this);
                 }
                 else
                 {
-                    _metaData.TryGetMethodAndInvoke(BuiltInComponentMethods.OnEnable, this);
+                    MetaData.TryGetMethodAndInvoke(BuiltInComponentMethods.OnEnable, this);
                 }
             }
         }

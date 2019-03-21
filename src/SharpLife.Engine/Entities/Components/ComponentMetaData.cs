@@ -36,7 +36,7 @@ namespace SharpLife.Engine.Entities.Components
 
         public ImmutableDictionary<string, KeyValueMetaData> KeyValues { get; }
 
-        public ComponentMetaData(Type componentType, ImmutableDictionary<string, KeyValueMetaData> keyValues)
+        internal ComponentMetaData(Type componentType, ImmutableDictionary<string, KeyValueMetaData> keyValues)
         {
             ComponentType = componentType ?? throw new ArgumentNullException(nameof(componentType));
             InvokerType = typeof(DelegateInvoker<>).MakeGenericType(componentType);
@@ -58,7 +58,7 @@ namespace SharpLife.Engine.Entities.Components
             return (InvokableMethod)Delegate.CreateDelegate(typeof(InvokableMethod), invoker, InvokerType.GetMethod(nameof(DelegateInvoker<Component>.Invoke)));
         }
 
-        public bool TryGetMethod(string methodName, out InvokableMethod invokable)
+        internal bool TryGetMethod(string methodName, out InvokableMethod invokable)
         {
             invokable = null;
 
@@ -85,7 +85,7 @@ namespace SharpLife.Engine.Entities.Components
             return true;
         }
 
-        public bool TryGetMethodAndInvoke(string methodName, Component instance)
+        internal bool TryGetMethodAndInvoke(string methodName, Component instance)
         {
             if (TryGetMethod(methodName, out var invokable))
             {

@@ -57,7 +57,7 @@ namespace SharpLife.Engine.Entities.Components
         {
             foreach (var component in _allComponents)
             {
-                component._metaData.TryGetMethodAndInvoke(BuiltInComponentMethods.Activate, component);
+                component.MetaData.TryGetMethodAndInvoke(BuiltInComponentMethods.Activate, component);
             }
         }
 
@@ -68,10 +68,10 @@ namespace SharpLife.Engine.Entities.Components
                 if (!component._startCalled)
                 {
                     component._startCalled = true;
-                    component._metaData.TryGetMethodAndInvoke(BuiltInComponentMethods.Start, component);
+                    component.MetaData.TryGetMethodAndInvoke(BuiltInComponentMethods.Start, component);
                 }
 
-                component._metaData.TryGetMethodAndInvoke(BuiltInComponentMethods.Update, component);
+                component.MetaData.TryGetMethodAndInvoke(BuiltInComponentMethods.Update, component);
             }
 
             for (var node = _invokeTargets.First; node != null;)
