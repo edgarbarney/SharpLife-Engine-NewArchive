@@ -13,6 +13,7 @@
 *
 ****/
 
+using SharpLife.Engine.Entities.KeyValues;
 using SharpLife.Engine.ObjectEditor;
 using System.Numerics;
 
@@ -41,9 +42,25 @@ namespace SharpLife.Engine.Entities.Components
             }
         }
 
-        public Vector3 Position { get; set; }
+        public Vector3 RelativeOrigin { get; set; }
 
-        public Vector3 AbsolutePosition => ComputeAbsolutePosition();
+        [KeyValue(Name = "origin")]
+        public Vector3 AbsoluteOrigin
+        {
+            get => ComputeAbsoluteOrigin();
+
+            set
+            {
+                if (Parent != null)
+                {
+                    RelativeOrigin = value - Parent.AbsoluteOrigin;
+                }
+                else
+                {
+                    RelativeOrigin = value;
+                }
+            }
+        }
 
         public void Removed()
         {
@@ -156,16 +173,16 @@ namespace SharpLife.Engine.Entities.Components
             }
         }
 
-        private Vector3 ComputeAbsolutePosition()
+        private Vector3 ComputeAbsoluteOrigin()
         {
-            var position = Position;
+            var origin = RelativeOrigin;
 
             if (_parent != null)
             {
-                position += _parent.AbsolutePosition;
+                origin += _parent.AbsoluteOrigin;
             }
 
-            return position;
+            return origin;
         }
 
         public Enumerator GetEnumerator() => new Enumerator(this);
