@@ -30,12 +30,15 @@ namespace SharpLife.Engine.Client.UI
 
         private readonly Console _console;
 
+        private readonly MaterialControl _materialControl;
+
         public ImGuiInterface(ILogger logger, EngineClient client)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _client = client ?? throw new ArgumentNullException(nameof(client));
 
             _console = new Console(logger, client);
+            _materialControl = new MaterialControl(client.CommandContext);
         }
 
         public void Update(float deltaSeconds)
@@ -50,6 +53,7 @@ namespace SharpLife.Engine.Client.UI
                 if (ImGui.BeginMenu("Tools"))
                 {
                     _console.AddMenuItem();
+                    _materialControl.AddMenuItem();
 
                     ImGui.EndMenu();
                 }
@@ -65,6 +69,7 @@ namespace SharpLife.Engine.Client.UI
             }
 
             _console.Draw();
+            _materialControl.Draw();
         }
     }
 }
