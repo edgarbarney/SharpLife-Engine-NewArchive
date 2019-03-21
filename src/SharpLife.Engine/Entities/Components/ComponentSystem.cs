@@ -16,7 +16,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Reflection;
 
 namespace SharpLife.Engine.Entities.Components
 {
@@ -28,7 +27,7 @@ namespace SharpLife.Engine.Entities.Components
         {
             public Component Component;
 
-            public MethodInfo Method;
+            public ComponentMetaData.InvokableMethod Method;
 
             public float InvocationTime;
 
@@ -82,7 +81,7 @@ namespace SharpLife.Engine.Entities.Components
 
                 if (data.InvocationTime <= _scene.Time.ElapsedTime)
                 {
-                    data.Method.Invoke(data.Component, null);
+                    data.Method(data.Component);
 
                     //The node could've been removed in the invocation
                     if (node.List != null)
@@ -156,25 +155,30 @@ namespace SharpLife.Engine.Entities.Components
             CancelInvocations(component);
         }
 
-        private MethodInfo FindMethod(Type type, string methodName)
+        private bool TryGetMethod(Component component, string methodName, out ComponentMetaData.InvokableMethod invokable)
         {
-            //TODO: determine if this can be made more efficient with caching
-            //TODO: use component metadata for lookup
-            return type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public, null, Array.Empty<Type>(), null);
-        }
-
-        internal bool InvokeImmediate(Component component, string methodName)
-        {
-            if (!component.MetaData.TryGetMethodAndInvoke(methodName, component))
+            if (!component.MetaData.TryGetMethod(methodName, out invokable))
             {
-                _scene.Logger.Error("Method {ComponentType}.{MethodName}() does not exist", component.GetType().FullName, methodName);
+                _scene.Logger.Warning("Method void {ComponentType}.{MethodName}() does not exist", component.GetType().FullName, methodName);
                 return false;
             }
 
             return true;
         }
 
-        internal void ScheduleInvocation(Component component, string methodName, float delay, float interval = InvokeOnceInterval)
+        internal bool InvokeImmediate(Component component, string methodName)
+        {
+            if (!TryGetMethod(component, methodName, out var invokable))
+            {
+                return false;
+            }
+
+            invokable(component);
+
+            return true;
+        }
+
+        internal bool ScheduleInvocation(Component component, string methodName, float delay, float interval = InvokeOnceInterval)
         {
             if (component == null)
             {
@@ -197,8 +201,10 @@ namespace SharpLife.Engine.Entities.Components
                 throw new ArgumentOutOfRangeException("Invocation interval must be greater than 0.0001");
             }
 
-            //TODO: don't throw exception
-            var method = FindMethod(component.GetType(), methodName) ?? throw new ArgumentException("Method does not exist", nameof(methodName));
+            if (!TryGetMethod(component, methodName, out var method))
+            {
+                return false;
+            }
 
             var data = new InvokeData
             {
@@ -209,6 +215,8 @@ namespace SharpLife.Engine.Entities.Components
             };
 
             _invokeTargets.AddLast(data);
+
+            return true;
         }
 
         internal void CancelInvocations(Component component)
@@ -240,7 +248,7 @@ namespace SharpLife.Engine.Entities.Components
                 var data = node.Value;
 
                 if (ReferenceEquals(node.Value.Component, component)
-                    && data.Method.Name == methodName)
+                    && data.Method.Method.Name == methodName)
                 {
                     _invokeTargets.Remove(node);
                 }
