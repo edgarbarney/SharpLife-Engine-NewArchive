@@ -15,49 +15,27 @@
 
 using ImGuiNET;
 using Serilog;
-using SharpLife.Engine.Logging;
 using SharpLife.Utility;
 using System;
-using System.Numerics;
-using System.Text;
 
 namespace SharpLife.Engine.Client.UI
 {
-    internal sealed class ImGuiInterface : ILogListener
+    internal sealed class ImGuiInterface
     {
-        /// <summary>
-        /// In order to handle text addition properly, we have to track the state across frames
-        /// When added, the next frame won't scroll yet, since the content size is out of date
-        /// </summary>
-        private enum TextAdded
-        {
-            No = 0,
-            Yes,
-            ApplyScroll
-        }
-
         private readonly FrameTimeAverager _fta = new FrameTimeAverager(0.666);
 
         private readonly ILogger _logger;
 
         private readonly EngineClient _client;
 
-        private bool _consoleVisible;
-
-        private string _consoleText = string.Empty;
-
-        private const int _maxConsoleChars = ushort.MaxValue;
-
-        private TextAdded _textAdded;
-
-        private readonly byte[] _consoleInputBuffer = new byte[1024];
+        private readonly Console _console;
 
         public ImGuiInterface(ILogger logger, EngineClient client)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _client = client ?? throw new ArgumentNullException(nameof(client));
 
-            _client.LogListener = this;
+            _console = new Console(logger, client);
         }
 
         public void Update(float deltaSeconds)
@@ -71,7 +49,7 @@ namespace SharpLife.Engine.Client.UI
             {
                 if (ImGui.BeginMenu("Tools"))
                 {
-                    ImGui.Checkbox("Toggle Console", ref _consoleVisible);
+                    _console.AddMenuItem();
 
                     ImGui.EndMenu();
                 }
@@ -86,104 +64,7 @@ namespace SharpLife.Engine.Client.UI
                 ImGui.EndMainMenuBar();
             }
 
-            DrawConsole();
-        }
-
-        public void Write(char value)
-        {
-            _consoleText += value;
-
-            _textAdded = TextAdded.Yes;
-
-            TruncateConsoleText();
-        }
-
-        public void Write(char[] buffer, int index, int count)
-        {
-            var text = new string(buffer, index, count);
-            _consoleText += text;
-
-            _textAdded = TextAdded.Yes;
-
-            TruncateConsoleText();
-        }
-
-        private void TruncateConsoleText()
-        {
-            if (_consoleText.Length > _maxConsoleChars)
-            {
-                _consoleText = _consoleText.Substring(_consoleText.Length - _maxConsoleChars);
-            }
-        }
-
-        private void DrawConsole()
-        {
-            if (_consoleVisible && ImGui.Begin("Console", ref _consoleVisible, ImGuiWindowFlags.NoCollapse))
-            {
-                var textHeight = ImGuiNative.igGetTextLineHeight();
-
-                var contentMin = ImGui.GetWindowContentRegionMin();
-                var contentMax = ImGui.GetWindowContentRegionMax();
-
-                var wrapWidth = contentMax.X - contentMin.X;
-                //Leave some space at the bottom
-                var maxHeight = contentMax.Y - contentMin.Y - (textHeight * 3);
-
-                //Display as input text area to allow text selection
-                ImGui.InputTextMultiline("##consoleText", ref _consoleText, _maxConsoleChars, new Vector2(wrapWidth, maxHeight), ImGuiInputTextFlags.ReadOnly, null);
-
-                //Scroll to bottom when new text is added
-                ImGuiNative.igBeginGroup();
-                var id = ImGui.GetID("##consoleText");
-                ImGui.BeginChildFrame(id, new Vector2(wrapWidth, maxHeight), ImGuiWindowFlags.None);
-
-                switch (_textAdded)
-                {
-                    case TextAdded.Yes:
-                        {
-                            _textAdded = TextAdded.ApplyScroll;
-                            break;
-                        }
-
-                    case TextAdded.ApplyScroll:
-                        {
-                            _textAdded = TextAdded.No;
-
-                            var yPos = ImGuiNative.igGetScrollMaxY();
-
-                            ImGuiNative.igSetScrollY(yPos);
-                            break;
-                        }
-                }
-
-                ImGui.EndChildFrame();
-                ImGuiNative.igEndGroup();
-
-                ImGui.Text("Command:");
-                ImGui.SameLine();
-
-                //Max width for the input
-                ImGui.PushItemWidth(-1);
-
-                if (ImGui.InputText("##consoleInput", _consoleInputBuffer, (uint)_consoleInputBuffer.Length, ImGuiInputTextFlags.EnterReturnsTrue, null))
-                {
-                    //Needed since GetString doesn't understand null terminated strings
-                    var stringLength = StringUtils.NullTerminatedByteLength(_consoleInputBuffer);
-
-                    if (stringLength > 0)
-                    {
-                        var commandText = Encoding.UTF8.GetString(_consoleInputBuffer, 0, stringLength);
-                        _logger.Information($"] {commandText}");
-                        _client.CommandContext.QueueCommands(commandText);
-                    }
-
-                    Array.Fill<byte>(_consoleInputBuffer, 0, 0, stringLength);
-                }
-
-                ImGui.PopItemWidth();
-
-                ImGui.End();
-            }
+            _console.Draw();
         }
     }
 }
