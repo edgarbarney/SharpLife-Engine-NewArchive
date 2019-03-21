@@ -13,6 +13,7 @@
 *
 ****/
 
+using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Models;
 using SharpLife.Engine.ObjectEditor;
@@ -24,7 +25,7 @@ namespace SharpLife.Engine.Entities.Components
         [ObjectEditorVisible(Visible = false)]
         public abstract IModel Model { get; set; }
 
-        public abstract void Render(RendererModels renderer);
+        internal abstract void Render(IRendererModels renderer, in RenderContext renderContext);
 
         public void OnEnable()
         {

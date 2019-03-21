@@ -14,9 +14,6 @@
 ****/
 
 using SharpLife.Engine.Entities.Components;
-using SharpLife.Engine.Models.BSP.Rendering;
-using SharpLife.Engine.Models.MDL.Rendering;
-using SharpLife.Engine.Models.SPR.Rendering;
 
 namespace SharpLife.Engine.Client.UI.Rendering.Models
 {
@@ -29,11 +26,5 @@ namespace SharpLife.Engine.Client.UI.Rendering.Models
 
         void AddRenderable(RenderableComponent renderable);
         void RemoveRenderable(RenderableComponent renderable);
-
-        void RenderSpriteModel(ref SpriteModelRenderData renderData);
-
-        void RenderStudioModel(ref StudioModelRenderData renderData);
-
-        void RenderBrushModel(ref BrushModelRenderData renderData);
     }
 }

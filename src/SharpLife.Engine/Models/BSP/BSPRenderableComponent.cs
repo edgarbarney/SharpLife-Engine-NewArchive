@@ -18,17 +18,13 @@ using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Entities;
 using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Models.BSP.Rendering;
-using SharpLife.Engine.Models.Rendering;
 using SharpLife.Engine.ObjectEditor;
-using System.Numerics;
 using Transform = SharpLife.Engine.Entities.Components.Transform;
 
 namespace SharpLife.Engine.Models.BSP
 {
     public class BSPRenderableComponent : RenderableComponent
     {
-        private Transform _transform;
-
         public override IModel Model
         {
             get => BSPModel;
@@ -36,42 +32,24 @@ namespace SharpLife.Engine.Models.BSP
         }
 
         [ObjectEditorVisible(Visible = false)]
+        public Transform Transform { get; private set; }
+
+        [ObjectEditorVisible(Visible = false)]
         public BSPModel BSPModel { get; set; }
 
         public void Activate()
         {
-            _transform = Entity.GetComponent<Transform>();
+            Transform = Entity.GetComponent<Transform>();
 
-            if (_transform == null)
+            if (Transform == null)
             {
                 EntitySystem.Scene.Logger.Warning($"Missing {nameof(Transform)} component for {nameof(BSPRenderableComponent)}");
             }
         }
 
-        public override void Render(RendererModels renderer)
+        internal override void Render(IRendererModels renderer, in RenderContext renderContext)
         {
-            BrushModelRenderData data = new BrushModelRenderData
-            {
-                Shared = new SharedModelRenderData
-                {
-                    Index = 0,
-
-                    //TODO: fill in other values
-                    Origin = _transform.AbsolutePosition,
-                    Angles = Vector3.Zero,
-                    Scale = Vector3.One,
-
-                    Effects = EffectsFlags.None,
-
-                    RenderMode = RenderMode.Normal,
-                    RenderAmount = 0,
-                    RenderColor = Vector3.Zero,
-                    RenderFX = RenderFX.None,
-                },
-                Model = BSPModel
-            };
-
-            renderer.RenderBrushModel(ref data);
+            renderer.GetRenderer<BrushModelRenderer>().Render(renderContext, this);
         }
     }
 }

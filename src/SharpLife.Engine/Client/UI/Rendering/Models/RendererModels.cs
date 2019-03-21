@@ -14,9 +14,6 @@
 ****/
 
 using SharpLife.Engine.Entities.Components;
-using SharpLife.Engine.Models.BSP.Rendering;
-using SharpLife.Engine.Models.MDL.Rendering;
-using SharpLife.Engine.Models.SPR.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,10 +28,6 @@ namespace SharpLife.Engine.Client.UI.Rendering.Models
     public sealed class RendererModels : IRendererModels, IRenderable
     {
         private readonly IModelRenderer[] _renderers;
-
-        private bool _active;
-
-        private RenderContext _renderContext;
 
         private readonly HashSet<RenderableComponent> _renderables = new HashSet<RenderableComponent>();
 
@@ -84,69 +77,6 @@ namespace SharpLife.Engine.Client.UI.Rendering.Models
             _renderables.Remove(renderable);
         }
 
-        public void RenderSpriteModel(ref SpriteModelRenderData renderData)
-        {
-            if (renderData.Model == null)
-            {
-                throw new ArgumentNullException(nameof(renderData), $"{nameof(renderData.Model)} cannot be null");
-            }
-
-            if (!_active)
-            {
-                throw new InvalidOperationException($"Cannot call {nameof(RenderSpriteModel)} outside the render operation");
-            }
-
-            GetRenderer<SpriteModelRenderer>().Render(
-                _renderContext.GraphicsDevice,
-                _renderContext.CommandList,
-                _renderContext.SceneContext,
-                _renderContext.RenderPass,
-                renderData.Model.ResourceContainer,
-                ref renderData);
-        }
-
-        public void RenderStudioModel(ref StudioModelRenderData renderData)
-        {
-            if (renderData.Model == null)
-            {
-                throw new ArgumentNullException(nameof(renderData), $"{nameof(renderData.Model)} cannot be null");
-            }
-
-            if (!_active)
-            {
-                throw new InvalidOperationException($"Cannot call {nameof(RenderStudioModel)} outside the render operation");
-            }
-
-            GetRenderer<StudioModelRenderer>().Render(
-                _renderContext.GraphicsDevice,
-                _renderContext.CommandList,
-                _renderContext.SceneContext,
-                _renderContext.RenderPass,
-                renderData.Model.ResourceContainer,
-                ref renderData);
-        }
-
-        public void RenderBrushModel(ref BrushModelRenderData renderData)
-        {
-            if (renderData.Model == null)
-            {
-                throw new ArgumentNullException(nameof(renderData), $"{nameof(renderData.Model)} cannot be null");
-            }
-
-            if (!_active)
-            {
-                throw new InvalidOperationException($"Cannot call {nameof(RenderBrushModel)} outside the render operation");
-            }
-
-            GetRenderer<BrushModelRenderer>().Render(
-                _renderContext.GraphicsDevice,
-                _renderContext.CommandList,
-                _renderContext.SceneContext,
-                _renderContext.RenderPass,
-                renderData.Model.ResourceContainer,
-                ref renderData);
-        }
-
         public RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
         {
             return new RenderOrderKey();
@@ -154,12 +84,11 @@ namespace SharpLife.Engine.Client.UI.Rendering.Models
 
         public void Render(GraphicsDevice gd, CommandList cl, SceneContext sc, RenderPasses renderPass)
         {
-            _active = true;
-            _renderContext = new RenderContext { GraphicsDevice = gd, CommandList = cl, SceneContext = sc, RenderPass = renderPass };
+            var renderContext = new RenderContext(gd, cl, sc, renderPass);
 
             foreach (var renderable in _renderables)
             {
-                renderable.Render(this);
+                renderable.Render(this, renderContext);
             }
 
             //TODO: render all entities known to the renderer
@@ -192,9 +121,6 @@ namespace SharpLife.Engine.Client.UI.Rendering.Models
                 RenderBrushModel(ref data);
             }
             */
-
-            _renderContext = new RenderContext();
-            _active = false;
         }
     }
 }

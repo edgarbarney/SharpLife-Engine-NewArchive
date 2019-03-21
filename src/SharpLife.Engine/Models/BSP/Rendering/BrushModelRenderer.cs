@@ -192,8 +192,34 @@ namespace SharpLife.Engine.Models.BSP.Rendering
             }
         }
 
-        public void Render(GraphicsDevice gd, CommandList cl, SceneContext sc, RenderPasses renderPass, BSPModelResourceContainer modelResource, ref BrushModelRenderData renderData)
+        public void Render(in RenderContext renderContext, BSPRenderableComponent component)
         {
+            BrushModelRenderData renderData = new BrushModelRenderData
+            {
+                Shared = new SharedModelRenderData
+                {
+                    Index = 0,
+
+                    //TODO: fill in other values
+                    Origin = component.Transform.AbsolutePosition,
+                    Angles = Vector3.Zero,
+                    Scale = Vector3.One,
+
+                    Effects = EffectsFlags.None,
+
+                    RenderMode = RenderMode.Normal,
+                    RenderAmount = 0,
+                    RenderColor = Vector3.Zero,
+                    RenderFX = RenderFX.None,
+                },
+                Model = component.BSPModel
+            };
+
+            var modelResource = component.BSPModel.ResourceContainer;
+
+            var cl = renderContext.CommandList;
+            var sc = renderContext.SceneContext;
+
             var wai = new WorldAndInverse(renderData.Shared.Origin, renderData.Shared.Angles, renderData.Shared.Scale);
 
             sc.UpdateWorldAndInverseBuffer(cl, ref wai);

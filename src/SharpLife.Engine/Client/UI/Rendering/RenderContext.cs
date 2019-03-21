@@ -17,11 +17,19 @@ using Veldrid;
 
 namespace SharpLife.Engine.Client.UI.Rendering
 {
-    public struct RenderContext
+    public readonly struct RenderContext
     {
-        public GraphicsDevice GraphicsDevice;
-        public CommandList CommandList;
-        public SceneContext SceneContext;
-        public RenderPasses RenderPass;
+        public readonly GraphicsDevice GraphicsDevice;
+        public readonly CommandList CommandList;
+        public readonly SceneContext SceneContext;
+        public readonly RenderPasses RenderPass;
+
+        public RenderContext(GraphicsDevice gd, CommandList cl, SceneContext sc, RenderPasses renderPass)
+        {
+            GraphicsDevice = gd;
+            CommandList = cl;
+            SceneContext = sc;
+            RenderPass = renderPass;
+        }
     }
 }
