@@ -19,6 +19,7 @@ using SharpLife.CommandSystem.Commands.VariableFilters;
 using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Client.UI.Rendering.Utility;
+using SharpLife.Engine.Entities;
 using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Models.MDL.FileFormat;
 using SharpLife.Engine.Models.Rendering;
@@ -78,7 +79,7 @@ namespace SharpLife.Engine.Models.MDL.Rendering
 
         private readonly RenderModePipelines[,,] _pipelines = new RenderModePipelines[CullModeCount, MaskModeCount, AdditiveModeCount];
 
-        public StudioModelRenderer(Scene scene, ICommandContext commandContext)
+        public StudioModelRenderer(Client.UI.Rendering.Scene scene, ICommandContext commandContext)
         {
             _direct = commandContext.RegisterVariable(new VirtualVariableInfo<float>("direct", 0.9f)
                 .WithHelpInfo("Controls the shade light multiplier")
@@ -373,7 +374,7 @@ namespace SharpLife.Engine.Models.MDL.Rendering
 
             light *= floor;
 
-            for (var i = 0; i < Scene.MaxDLights; ++i)
+            for (var i = 0; i < Client.UI.Rendering.Scene.MaxDLights; ++i)
             {
                 ref var dlight = ref sc.Scene.DynamicLights[i];
 
@@ -462,7 +463,7 @@ namespace SharpLife.Engine.Models.MDL.Rendering
 
             var closest = 1000000.0;
 
-            for (int i = 0; i < Scene.MaxELights; ++i)
+            for (int i = 0; i < Client.UI.Rendering.Scene.MaxELights; ++i)
             {
                 ref var light = ref sc.Scene.EntityLights[i];
 
@@ -540,12 +541,57 @@ namespace SharpLife.Engine.Models.MDL.Rendering
             }
         }
 
-        public void Render(GraphicsDevice gd, CommandList cl, SceneContext sc, RenderPasses renderPass, StudioModelResourceContainer modelResource, ref StudioModelRenderData renderData)
+        public void Render(in RenderContext renderContext, StudioRenderableComponent component)
         {
+            var renderData = new StudioModelRenderData
+            {
+                Model = component.StudioModel,
+                Shared = new SharedModelRenderData
+                {
+                    Index = 0,
+
+                    //TODO: fill in other values
+                    Origin = component.Transform.AbsoluteOrigin,
+                    Angles = Vector3.Zero,
+                    Scale = Vector3.One,
+
+                    Effects = EffectsFlags.None,
+
+                    RenderMode = RenderMode.Normal,
+                    RenderAmount = 255,
+                    RenderColor = Vector3.Zero,
+                    RenderFX = RenderFX.None,
+                },
+                CurrentTime = EntitySystem.Time.ElapsedTime,
+                Sequence = component.Sequence,
+                LastTime = component.LastTime,
+                Frame = component.Frame,
+                FrameRate = component.FrameRate,
+                Body = component.Body,
+                Skin = component.Skin,
+                BoneData = new BoneData(),
+                RenderFXLightMultiplier = component.RenderFXLightMultiplier,
+            };
+
+            for (var i = 0; i < MDLConstants.MaxControllers; ++i)
+            {
+                renderData.BoneData.SetController(i, component.Controllers[i]);
+            }
+
+            for (var i = 0; i < MDLConstants.MaxBlenders; ++i)
+            {
+                renderData.BoneData.SetBlender(i, component.Blenders[i]);
+            }
+
             if (renderData.Skin >= renderData.Model.StudioFile.Skins.Count)
             {
                 renderData.Skin = 0;
             }
+
+            var modelResource = component.StudioModel.ResourceContainer;
+
+            var cl = renderContext.CommandList;
+            var sc = renderContext.SceneContext;
 
             //TODO: implement
             var wai = new WorldAndInverse(renderData.Shared.Origin, renderData.Shared.Angles, renderData.Shared.Scale);
