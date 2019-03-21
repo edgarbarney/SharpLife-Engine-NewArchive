@@ -165,15 +165,11 @@ namespace SharpLife.Engine.Entities.Components
 
         internal bool InvokeImmediate(Component component, string methodName)
         {
-            var method = FindMethod(component.GetType(), methodName);
-
-            if (method == null)
+            if (!component.MetaData.TryGetMethodAndInvoke(methodName, component))
             {
                 _scene.Logger.Error("Method {ComponentType}.{MethodName}() does not exist", component.GetType().FullName, methodName);
                 return false;
             }
-
-            method.Invoke(component, null);
 
             return true;
         }
