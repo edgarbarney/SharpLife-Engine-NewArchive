@@ -62,6 +62,14 @@ namespace SharpLife.Engine.Entities.Components
             }
         }
 
+        [ObjectEditorVector3(DisplayFormat = Vector3DisplayFormat.AnglesDegrees)]
+        public Vector3 RelativeAngles { get; set; }
+
+        //TODO: implement angle calculations
+        [KeyValue(Name = "angles")]
+        [ObjectEditorVector3(DisplayFormat = Vector3DisplayFormat.AnglesDegrees)]
+        public Vector3 AbsoluteAngles { get; set; }
+
         public void OnDisable()
         {
             //Detach from hierarchy

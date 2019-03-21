@@ -552,7 +552,7 @@ namespace SharpLife.Engine.Models.MDL.Rendering
 
                     //TODO: fill in other values
                     Origin = component.Transform.AbsoluteOrigin,
-                    Angles = Vector3.Zero,
+                    Angles = component.Transform.AbsoluteAngles,
                     Scale = Vector3.One,
 
                     Effects = EffectsFlags.None,
