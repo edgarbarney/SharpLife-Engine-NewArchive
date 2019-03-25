@@ -79,5 +79,12 @@ namespace SharpLife.Engine.Entities.KeyValues.Converters
 
             return Enum.IsDefined(typeof(T), result) ? (T)(object)result : defaultValue;
         }
+
+        public static object ParseEnum(string value, Type enumType, object defaultValue)
+        {
+            int.TryParse(value, out var result);
+
+            return Enum.IsDefined(enumType, result) ? result : defaultValue;
+        }
     }
 }

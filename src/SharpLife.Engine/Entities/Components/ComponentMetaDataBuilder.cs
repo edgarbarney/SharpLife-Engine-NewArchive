@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.Engine.Entities.KeyValues;
+using SharpLife.Engine.Entities.KeyValues.Converters;
 using SharpLife.Engine.ObjectEditor;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,8 @@ namespace SharpLife.Engine.Entities.Components
         private readonly HashSet<Assembly> _referencedAssemblies = new HashSet<Assembly>();
 
         private readonly Dictionary<Type, IKeyValueConverter> _convertersByConverterType;
+
+        private readonly EnumConverter _enumConverter = new EnumConverter();
 
         public ComponentMetaDataBuilder(ImmutableDictionary<Type, IKeyValueConverter> keyValueConverters)
         {
@@ -139,7 +142,11 @@ namespace SharpLife.Engine.Entities.Components
 
             if (keyValueAttr?.ConverterType == null)
             {
-                if (!_keyValueConverters.TryGetValue(memberType, out converter))
+                if (memberType.IsEnum)
+                {
+                    return _enumConverter;
+                }
+                else if (!_keyValueConverters.TryGetValue(memberType, out converter))
                 {
                     throw new ArgumentException($"KeyValue {member.DeclaringType.FullName}.{member.Name} uses type {memberType.FullName} with no converter");
                 }
