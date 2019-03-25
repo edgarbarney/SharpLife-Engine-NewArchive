@@ -80,7 +80,7 @@ namespace SharpLife.Engine.Entities
             }
 
             //The id should always be valid since only we can create entities
-            var info = _entities[entity._id];
+            var info = _entities[entity.Id];
 
             //This should never happen
             if (!ReferenceEquals(info.Entity, entity))

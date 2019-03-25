@@ -22,7 +22,7 @@ namespace SharpLife.Engine.Entities
     /// </summary>
     public sealed partial class Entity : IEquatable<Entity>
     {
-        internal readonly int _id;
+        public int Id { get; }
 
         public bool Destroyed { get; internal set; }
 
@@ -32,7 +32,7 @@ namespace SharpLife.Engine.Entities
 
         internal Entity(int id)
         {
-            _id = id;
+            Id = id;
         }
 
         public void Destroy() => EntitySystem.Scene.DestroyEntity(this);
@@ -46,7 +46,7 @@ namespace SharpLife.Engine.Entities
 
         public override string ToString()
         {
-            return $"Entity {_id}:{ClassName}:{TargetName}";
+            return $"Entity {Id}:{ClassName}:{TargetName}";
         }
     }
 }
