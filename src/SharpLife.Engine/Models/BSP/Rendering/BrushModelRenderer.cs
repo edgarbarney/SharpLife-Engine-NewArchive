@@ -206,8 +206,8 @@ namespace SharpLife.Engine.Models.BSP.Rendering
                     Index = component.Entity.Id,
 
                     //TODO: fill in other values
-                    Origin = component.Transform.AbsoluteOrigin,
-                    Angles = component.Transform.AbsoluteAngles,
+                    Origin = component.Transform.Origin,
+                    Angles = component.Transform.Angles,
                     Scale = component.Transform.ScaleVector,
 
                     Effects = EffectsFlags.None,

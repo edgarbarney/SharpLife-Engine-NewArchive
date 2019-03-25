@@ -45,7 +45,7 @@ namespace SharpLife.Engine.Entities.Components
         public Vector3 RelativeOrigin { get; set; }
 
         [KeyValue(Name = "origin")]
-        public Vector3 AbsoluteOrigin
+        public Vector3 Origin
         {
             get => ComputeAbsoluteOrigin();
 
@@ -53,7 +53,7 @@ namespace SharpLife.Engine.Entities.Components
             {
                 if (Parent != null)
                 {
-                    RelativeOrigin = value - Parent.AbsoluteOrigin;
+                    RelativeOrigin = value - Parent.Origin;
                 }
                 else
                 {
@@ -68,7 +68,7 @@ namespace SharpLife.Engine.Entities.Components
         //TODO: implement angle calculations
         [KeyValue(Name = "angles")]
         [ObjectEditorVector3(DisplayFormat = Vector3DisplayFormat.AnglesDegrees)]
-        public Vector3 AbsoluteAngles { get; set; }
+        public Vector3 Angles { get; set; }
 
         [KeyValue(Name = "scale")]
         public float Scale { get; set; }
@@ -192,7 +192,7 @@ namespace SharpLife.Engine.Entities.Components
 
             if (_parent != null)
             {
-                origin += _parent.AbsoluteOrigin;
+                origin += _parent.Origin;
             }
 
             return origin;

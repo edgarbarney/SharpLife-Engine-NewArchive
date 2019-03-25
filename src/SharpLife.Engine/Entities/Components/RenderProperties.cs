@@ -160,7 +160,7 @@ namespace SharpLife.Engine.Entities.Components
                         }
                         else
                         {
-                            var dot = Vector3.Dot(transform.AbsoluteOrigin - viewState.Origin, viewState.ViewVectors.Forward);
+                            var dot = Vector3.Dot(transform.Origin - viewState.Origin, viewState.ViewVectors.Forward);
 
                             if (dot <= 0)
                             {
