@@ -40,6 +40,16 @@ namespace SharpLife.Engine.Entities.Components
         [ObjectEditorVector3(DisplayFormat = Vector3DisplayFormat.Color24)]
         public Vector3 RenderColor { get; set; }
 
+        public static (RenderFX, RenderMode, int, Vector3) GetProperties(IViewState viewState, Transform transform, RenderProperties renderProperties)
+        {
+            var renderFX = renderProperties?.RenderFX ?? RenderFX.None;
+            var renderMode = renderProperties?.RenderMode ?? RenderMode.Normal;
+
+            var renderAmount = CalculateFXBlend(viewState, transform, renderFX, renderMode != RenderMode.Normal ? renderProperties?.RenderAmount ?? 0 : 255);
+
+            return (renderFX, renderMode, renderAmount, renderProperties?.RenderColor ?? Vector3.Zero);
+        }
+
         public static int CalculateFXBlend(IViewState viewState, Transform transform, RenderFX renderFX, int renderAmount)
         {
             //Offset is random based on entity index

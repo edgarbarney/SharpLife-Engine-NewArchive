@@ -213,19 +213,12 @@ namespace SharpLife.Engine.Models.BSP.Rendering
                     Scale = component.Transform.ScaleVector,
 
                     Effects = EffectsFlags.None,
-
-                    RenderMode = renderMode,
-                    //Normal behaves as though render amount is always 255
-                    RenderAmount = RenderProperties.CalculateFXBlend(
-                        sc.ViewState,
-                        component.Transform,
-                        renderProperties?.RenderFX ?? RenderFX.None,
-                        renderMode != RenderMode.Normal ? renderProperties?.RenderAmount ?? 0 : 255),
-                    RenderColor = renderProperties?.RenderColor ?? Vector3.Zero,
-                    RenderFX = renderProperties?.RenderFX ?? RenderFX.None,
                 },
                 Model = component.BSPModel
             };
+
+            (renderData.Shared.RenderFX, renderData.Shared.RenderMode, renderData.Shared.RenderAmount, renderData.Shared.RenderColor) =
+                RenderProperties.GetProperties(sc.ViewState, component.Transform, renderProperties);
 
             var modelResource = component.BSPModel.ResourceContainer;
 
