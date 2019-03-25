@@ -29,12 +29,18 @@ namespace SharpLife.Game.Entities.Factories.NPCs
         protected override void GetComponentTypes(ImmutableHashSet<Type>.Builder types)
         {
             types.Add(typeof(Transform));
+            types.Add(typeof(RenderProperties));
             types.Add(typeof(StudioRenderableComponent));
         }
 
         public override bool Initialize(EntityCreator creator, Entity entity, IReadOnlyList<KeyValuePair<string, string>> keyValues)
         {
             if (!creator.InitializeComponent(entity.GetComponent<Transform>(), keyValues))
+            {
+                return false;
+            }
+
+            if (!creator.InitializeComponent(entity.GetComponent<RenderProperties>(), keyValues))
             {
                 return false;
             }
