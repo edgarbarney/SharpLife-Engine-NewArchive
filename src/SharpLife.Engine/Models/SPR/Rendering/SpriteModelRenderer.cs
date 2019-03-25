@@ -340,8 +340,6 @@ namespace SharpLife.Engine.Models.SPR.Rendering
             //TODO: glow sprite visibility testing
             var angles = GetSpriteAngles(ref renderData.Shared, component.SpriteModel.SpriteFile.Type, sc.ViewState);
 
-            angles = VectorUtils.ToRadians(angles);
-
             var wai = new WorldAndInverse();
 
             var anglesWithoutYaw = angles;
@@ -354,8 +352,6 @@ namespace SharpLife.Engine.Models.SPR.Rendering
                 * Matrix4x4.CreateTranslation(renderData.Shared.Origin);
 
             wai.InverseWorld = VdUtilities.CalculateInverseTranspose(ref wai.World);
-
-            //var wai = new WorldAndInverse(renderData.Origin, angles, renderData.Scale);
 
             sc.UpdateWorldAndInverseBuffer(cl, ref wai);
 
