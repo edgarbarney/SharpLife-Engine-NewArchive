@@ -294,8 +294,36 @@ namespace SharpLife.Engine.Models.SPR.Rendering
             return new Vector3();
         }
 
-        public void Render(GraphicsDevice gd, CommandList cl, SceneContext sc, RenderPasses renderPass, SpriteModelResourceContainer modelResource, ref SpriteModelRenderData renderData)
+        public void Render(in RenderContext renderContext, SpriteRenderableComponent component)
         {
+            var renderData = new SpriteModelRenderData
+            {
+                Model = component.SpriteModel,
+                Shared = new SharedModelRenderData
+                {
+                    Index = 0,
+
+                    //TODO: fill in other values
+                    Origin = component.Transform.AbsoluteOrigin,
+                    Angles = component.Transform.AbsoluteAngles,
+                    Scale = component.Transform.ScaleVector,
+
+                    Effects = EffectsFlags.None,
+
+                    RenderMode = RenderMode.Normal,
+                    RenderAmount = 255,
+                    RenderColor = Vector3.Zero,
+                    RenderFX = RenderFX.None,
+                },
+                Frame = component.Frame
+            };
+
+            var sc = renderContext.SceneContext;
+
+            var cl = renderContext.CommandList;
+
+            var modelResource = component.SpriteModel.ResourceContainer;
+
             if (renderData.Shared.RenderMode == RenderMode.Glow)
             {
                 renderData.Shared.RenderAmount = GlowBlend(ref renderData.Shared, sc.ViewState);
@@ -310,7 +338,7 @@ namespace SharpLife.Engine.Models.SPR.Rendering
             var blend = renderData.Shared.RenderMode != RenderMode.Normal ? renderData.Shared.RenderAmount : 255;
 
             //TODO: glow sprite visibility testing
-            var angles = GetSpriteAngles(ref renderData.Shared, modelResource.SpriteModel.SpriteFile.Type, sc.ViewState);
+            var angles = GetSpriteAngles(ref renderData.Shared, component.SpriteModel.SpriteFile.Type, sc.ViewState);
 
             angles = VectorUtils.ToRadians(angles);
 
