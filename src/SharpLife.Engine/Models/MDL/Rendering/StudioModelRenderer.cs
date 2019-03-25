@@ -553,7 +553,7 @@ namespace SharpLife.Engine.Models.MDL.Rendering
                 Model = component.StudioModel,
                 Shared = new SharedModelRenderData
                 {
-                    Index = 0,
+                    Index = component.Entity.Id,
 
                     //TODO: fill in other values
                     Origin = component.Transform.AbsoluteOrigin,

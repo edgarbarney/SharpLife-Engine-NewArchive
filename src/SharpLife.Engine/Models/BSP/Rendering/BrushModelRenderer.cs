@@ -203,7 +203,7 @@ namespace SharpLife.Engine.Models.BSP.Rendering
             {
                 Shared = new SharedModelRenderData
                 {
-                    Index = 0,
+                    Index = component.Entity.Id,
 
                     //TODO: fill in other values
                     Origin = component.Transform.AbsoluteOrigin,

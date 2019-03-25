@@ -306,7 +306,7 @@ namespace SharpLife.Engine.Models.SPR.Rendering
                 Model = component.SpriteModel,
                 Shared = new SharedModelRenderData
                 {
-                    Index = 0,
+                    Index = component.Entity.Id,
 
                     //TODO: fill in other values
                     Origin = component.Transform.AbsoluteOrigin,
