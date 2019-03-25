@@ -20,6 +20,7 @@ using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Client.UI.Rendering.Utility;
 using SharpLife.Engine.Entities;
+using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Models.MDL.FileFormat;
 using SharpLife.Engine.Models.Rendering;
@@ -543,6 +544,10 @@ namespace SharpLife.Engine.Models.MDL.Rendering
 
         public void Render(in RenderContext renderContext, StudioRenderableComponent component)
         {
+            var sc = renderContext.SceneContext;
+
+            var renderProperties = component.Entity.GetComponent<RenderProperties>();
+
             var renderData = new StudioModelRenderData
             {
                 Model = component.StudioModel,
@@ -556,11 +561,6 @@ namespace SharpLife.Engine.Models.MDL.Rendering
                     Scale = component.Transform.ScaleVector,
 
                     Effects = EffectsFlags.None,
-
-                    RenderMode = RenderMode.Normal,
-                    RenderAmount = 255,
-                    RenderColor = Vector3.Zero,
-                    RenderFX = RenderFX.None,
                 },
                 CurrentTime = EntitySystem.Time.ElapsedTime,
                 Sequence = component.Sequence,
@@ -572,6 +572,9 @@ namespace SharpLife.Engine.Models.MDL.Rendering
                 BoneData = new BoneData(),
                 RenderFXLightMultiplier = component.RenderFXLightMultiplier,
             };
+
+            (renderData.Shared.RenderFX, renderData.Shared.RenderMode, renderData.Shared.RenderAmount, renderData.Shared.RenderColor) =
+                RenderProperties.GetProperties(sc.ViewState, component.Transform, renderProperties);
 
             for (var i = 0; i < MDLConstants.MaxControllers; ++i)
             {
@@ -591,7 +594,6 @@ namespace SharpLife.Engine.Models.MDL.Rendering
             var modelResource = component.StudioModel.ResourceContainer;
 
             var cl = renderContext.CommandList;
-            var sc = renderContext.SceneContext;
 
             //TODO: implement
             var wai = new WorldAndInverse(renderData.Shared.Origin, renderData.Shared.Angles, renderData.Shared.Scale);

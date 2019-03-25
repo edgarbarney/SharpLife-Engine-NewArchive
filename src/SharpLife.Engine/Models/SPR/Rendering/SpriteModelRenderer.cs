@@ -17,6 +17,7 @@ using Serilog;
 using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Client.UI.Rendering.Utility;
+using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Models.Rendering;
 using SharpLife.Engine.Models.SPR.FileFormat;
 using SharpLife.Utility.Mathematics;
@@ -296,6 +297,10 @@ namespace SharpLife.Engine.Models.SPR.Rendering
 
         public void Render(in RenderContext renderContext, SpriteRenderableComponent component)
         {
+            var sc = renderContext.SceneContext;
+
+            var renderProperties = component.Entity.GetComponent<RenderProperties>();
+
             var renderData = new SpriteModelRenderData
             {
                 Model = component.SpriteModel,
@@ -318,7 +323,8 @@ namespace SharpLife.Engine.Models.SPR.Rendering
                 Frame = component.Frame
             };
 
-            var sc = renderContext.SceneContext;
+            (renderData.Shared.RenderFX, renderData.Shared.RenderMode, renderData.Shared.RenderAmount, renderData.Shared.RenderColor) =
+                RenderProperties.GetProperties(sc.ViewState, component.Transform, renderProperties);
 
             var cl = renderContext.CommandList;
 

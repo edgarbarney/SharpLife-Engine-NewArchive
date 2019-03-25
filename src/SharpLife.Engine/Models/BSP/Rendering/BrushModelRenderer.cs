@@ -199,8 +199,6 @@ namespace SharpLife.Engine.Models.BSP.Rendering
 
             var renderProperties = component.Entity.GetComponent<RenderProperties>();
 
-            var renderMode = renderProperties?.RenderMode ?? RenderMode.Normal;
-
             BrushModelRenderData renderData = new BrushModelRenderData
             {
                 Shared = new SharedModelRenderData
