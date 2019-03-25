@@ -49,6 +49,9 @@ namespace SharpLife.Engine.Entities
 
         public bool Active { get; private set; }
 
+        //TODO: should use the same generator used by the original engine
+        public Random Random { get; } = new Random();
+
         /// <summary>
         /// The game time instance associated with this scene
         /// </summary>
