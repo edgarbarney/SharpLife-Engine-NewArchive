@@ -41,7 +41,7 @@ namespace SharpLife.Engine.Entities
         {
             var info = GetFreeInfo();
 
-            info.Entity = new Entity(info.Index);
+            info.Entity = new Entity((uint)info.Index);
 
             if (HighestIndex < info.Index)
             {
@@ -80,7 +80,7 @@ namespace SharpLife.Engine.Entities
             }
 
             //The id should always be valid since only we can create entities
-            var info = _entities[entity.Id];
+            var info = _entities[(int)entity.Id];
 
             //This should never happen
             if (!ReferenceEquals(info.Entity, entity))

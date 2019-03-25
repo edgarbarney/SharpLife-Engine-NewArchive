@@ -22,7 +22,7 @@ namespace SharpLife.Engine.Entities
     /// </summary>
     public sealed partial class Entity : IEquatable<Entity>
     {
-        public int Id { get; }
+        public uint Id { get; }
 
         public bool Destroyed { get; internal set; }
 
@@ -30,7 +30,7 @@ namespace SharpLife.Engine.Entities
 
         public string TargetName { get; set; }
 
-        internal Entity(int id)
+        internal Entity(uint id)
         {
             Id = id;
         }
