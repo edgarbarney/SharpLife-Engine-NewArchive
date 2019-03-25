@@ -16,6 +16,7 @@
 using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Client.UI.Rendering.Utility;
+using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Models.Rendering;
 using System;
 using System.Numerics;
@@ -194,6 +195,12 @@ namespace SharpLife.Engine.Models.BSP.Rendering
 
         public void Render(in RenderContext renderContext, BSPRenderableComponent component)
         {
+            var sc = renderContext.SceneContext;
+
+            var renderProperties = component.Entity.GetComponent<RenderProperties>();
+
+            var renderMode = renderProperties?.RenderMode ?? RenderMode.Normal;
+
             BrushModelRenderData renderData = new BrushModelRenderData
             {
                 Shared = new SharedModelRenderData
@@ -207,10 +214,15 @@ namespace SharpLife.Engine.Models.BSP.Rendering
 
                     Effects = EffectsFlags.None,
 
-                    RenderMode = RenderMode.Normal,
-                    RenderAmount = 0,
-                    RenderColor = Vector3.Zero,
-                    RenderFX = RenderFX.None,
+                    RenderMode = renderMode,
+                    //Normal behaves as though render amount is always 255
+                    RenderAmount = RenderProperties.CalculateFXBlend(
+                        sc.ViewState,
+                        component.Transform,
+                        renderProperties?.RenderFX ?? RenderFX.None,
+                        renderMode != RenderMode.Normal ? renderProperties?.RenderAmount ?? 0 : 255),
+                    RenderColor = renderProperties?.RenderColor ?? Vector3.Zero,
+                    RenderFX = renderProperties?.RenderFX ?? RenderFX.None,
                 },
                 Model = component.BSPModel
             };
@@ -218,7 +230,6 @@ namespace SharpLife.Engine.Models.BSP.Rendering
             var modelResource = component.BSPModel.ResourceContainer;
 
             var cl = renderContext.CommandList;
-            var sc = renderContext.SceneContext;
 
             var wai = new WorldAndInverse(renderData.Shared.Origin, renderData.Shared.Angles, renderData.Shared.Scale);
 
