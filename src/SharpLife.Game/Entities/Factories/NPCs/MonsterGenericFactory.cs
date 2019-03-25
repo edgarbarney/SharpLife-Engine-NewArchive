@@ -20,7 +20,6 @@ using SharpLife.Engine.Models.MDL;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace SharpLife.Game.Entities.Factories.NPCs
 {
@@ -43,25 +42,6 @@ namespace SharpLife.Game.Entities.Factories.NPCs
             var renderable = entity.GetComponent<StudioRenderableComponent>();
 
             renderable.FrameRate = 1;
-
-            //TODO: need to refactor this
-            var modelName = keyValues.FirstOrDefault(p => p.Key == "model").Value;
-
-            if (modelName == null)
-            {
-                creator.Logger.Warning("No model for monster_generic");
-                return false;
-            }
-
-            var model = EntitySystem.Scene.Models.Load(modelName);
-
-            if (!(model is StudioModel studio))
-            {
-                creator.Logger.Warning("Model has wrong format");
-                return false;
-            }
-
-            renderable.StudioModel = studio;
 
             if (!creator.InitializeComponent(renderable, keyValues))
             {

@@ -20,6 +20,7 @@ using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Entities.KeyValues;
 using SharpLife.Engine.Models.SPR.Rendering;
 using SharpLife.Engine.ObjectEditor;
+using System;
 using Transform = SharpLife.Engine.Entities.Components.Transform;
 
 namespace SharpLife.Engine.Models.SPR
@@ -35,6 +36,8 @@ namespace SharpLife.Engine.Models.SPR
             get => SpriteModel;
             set => SpriteModel = (SpriteModel)value;
         }
+
+        protected override Type ModelFormat => typeof(SpriteModel);
 
         [ObjectEditorVisible(Visible = false)]
         public Transform Transform { get; private set; }
@@ -77,6 +80,18 @@ namespace SharpLife.Engine.Models.SPR
             {
                 EntitySystem.Scene.Logger.Warning($"Missing {nameof(Transform)} component for {nameof(SpriteRenderableComponent)}");
             }
+        }
+
+        protected override bool InternalTrySetModel(IModel model)
+        {
+            if (model is SpriteModel sprite)
+            {
+                SpriteModel = sprite;
+                return true;
+            }
+
+            //TODO: set error model instead?
+            return false;
         }
 
         internal override void Render(IRendererModels renderer, in RenderContext renderContext)

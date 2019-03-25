@@ -20,7 +20,6 @@ using SharpLife.Engine.Models.BSP;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace SharpLife.Game.Entities.Factories.BrushModels
 {
@@ -40,28 +39,7 @@ namespace SharpLife.Game.Entities.Factories.BrushModels
                 return false;
             }
 
-            var renderable = entity.GetComponent<BSPRenderableComponent>();
-
-            //TODO: need to refactor this
-            var modelName = keyValues.FirstOrDefault(p => p.Key == "model").Value;
-
-            if (modelName == null)
-            {
-                creator.Logger.Warning("No model for env_sprite");
-                return false;
-            }
-
-            var model = EntitySystem.Scene.Models.Load(modelName);
-
-            if (!(model is BSPModel brush))
-            {
-                creator.Logger.Warning("Model has wrong format");
-                return false;
-            }
-
-            renderable.BSPModel = brush;
-
-            if (!creator.InitializeComponent(renderable, keyValues))
+            if (!creator.InitializeComponent(entity.GetComponent<BSPRenderableComponent>(), keyValues))
             {
                 return false;
             }

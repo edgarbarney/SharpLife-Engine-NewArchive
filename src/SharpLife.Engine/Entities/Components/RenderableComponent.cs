@@ -15,8 +15,10 @@
 
 using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.Client.UI.Rendering.Models;
+using SharpLife.Engine.Entities.KeyValues;
 using SharpLife.Engine.Models;
 using SharpLife.Engine.ObjectEditor;
+using System;
 
 namespace SharpLife.Engine.Entities.Components
 {
@@ -24,6 +26,36 @@ namespace SharpLife.Engine.Entities.Components
     {
         [ObjectEditorVisible(Visible = false)]
         public abstract IModel Model { get; set; }
+
+        [KeyValue(Name = "model")]
+        public string ModelName
+        {
+            get => Model?.Name;
+            set => TrySetModel(value);
+        }
+
+        protected abstract Type ModelFormat { get; }
+
+        public bool TrySetModel(string modelName) => TrySetModel(EntitySystem.Scene.Models.Load(modelName));
+
+        public bool TrySetModel(IModel model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            if (!InternalTrySetModel(model))
+            {
+                EntitySystem.Scene.Logger.Warning("Entity {Entity} Model has wrong format: got {ActualFormat}, expected {ExpectedFormat}",
+                    Entity.ToString(), model.GetType().Name, ModelFormat.Name);
+                return false;
+            }
+
+            return true;
+        }
+
+        protected abstract bool InternalTrySetModel(IModel model);
 
         internal abstract void Render(IRendererModels renderer, in RenderContext renderContext);
 

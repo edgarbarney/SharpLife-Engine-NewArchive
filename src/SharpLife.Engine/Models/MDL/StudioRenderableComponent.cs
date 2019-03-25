@@ -21,6 +21,7 @@ using SharpLife.Engine.Entities.KeyValues;
 using SharpLife.Engine.Models.MDL.FileFormat;
 using SharpLife.Engine.Models.MDL.Rendering;
 using SharpLife.Engine.ObjectEditor;
+using System;
 using System.Diagnostics;
 using Transform = SharpLife.Engine.Entities.Components.Transform;
 
@@ -37,6 +38,8 @@ namespace SharpLife.Engine.Models.MDL
             get => StudioModel;
             set => StudioModel = (StudioModel)value;
         }
+
+        protected override Type ModelFormat => typeof(StudioModel);
 
         [ObjectEditorVisible(Visible = false)]
         public Transform Transform { get; private set; }
@@ -123,6 +126,18 @@ namespace SharpLife.Engine.Models.MDL
             {
                 EntitySystem.Scene.Logger.Warning($"Missing {nameof(Transform)} component for {nameof(StudioRenderableComponent)}");
             }
+        }
+
+        protected override bool InternalTrySetModel(IModel model)
+        {
+            if (model is StudioModel studio)
+            {
+                StudioModel = studio;
+                return true;
+            }
+
+            //TODO: set error model instead?
+            return false;
         }
 
         internal override void Render(IRendererModels renderer, in RenderContext renderContext)

@@ -20,7 +20,6 @@ using SharpLife.Engine.Models.SPR;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace SharpLife.Game.Entities.Factories.Effects
 {
@@ -43,25 +42,6 @@ namespace SharpLife.Game.Entities.Factories.Effects
             var renderable = entity.GetComponent<SpriteRenderableComponent>();
 
             renderable.FrameRate = 1;
-
-            //TODO: need to refactor this
-            var modelName = keyValues.FirstOrDefault(p => p.Key == "model").Value;
-
-            if (modelName == null)
-            {
-                creator.Logger.Warning("No model for env_sprite");
-                return false;
-            }
-
-            var model = EntitySystem.Scene.Models.Load(modelName);
-
-            if (!(model is SpriteModel sprite))
-            {
-                creator.Logger.Warning("Model has wrong format");
-                return false;
-            }
-
-            renderable.SpriteModel = sprite;
 
             if (!creator.InitializeComponent(renderable, keyValues))
             {
