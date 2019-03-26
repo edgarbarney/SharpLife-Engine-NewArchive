@@ -18,18 +18,33 @@ using System.Reflection;
 
 namespace SharpLife.Engine.Entities.Components
 {
-    internal sealed class DelegateInvoker<T>
+    internal sealed class DelegateInvoker<TComponent, TParameter>
     {
-        private readonly Action<T> _delegate;
+        private readonly Action<TComponent, TParameter> _delegate;
 
         public DelegateInvoker(MethodInfo methodInfo)
         {
-            _delegate = (Action<T>)Delegate.CreateDelegate(typeof(Action<T>), methodInfo);
+            _delegate = (Action<TComponent, TParameter>)Delegate.CreateDelegate(typeof(Action<TComponent, TParameter>), methodInfo);
         }
 
-        public void Invoke(object instance)
+        public void Invoke(object instance, object parameter)
         {
-            _delegate.Invoke((T)instance);
+            _delegate.Invoke((TComponent)instance, (TParameter)parameter);
+        }
+    }
+
+    internal sealed class DelegateInvoker<TComponent>
+    {
+        private readonly Action<TComponent> _delegate;
+
+        public DelegateInvoker(MethodInfo methodInfo)
+        {
+            _delegate = (Action<TComponent>)Delegate.CreateDelegate(typeof(Action<TComponent>), methodInfo);
+        }
+
+        public void Invoke(object instance, object parameter)
+        {
+            _delegate.Invoke((TComponent)instance);
         }
     }
 }

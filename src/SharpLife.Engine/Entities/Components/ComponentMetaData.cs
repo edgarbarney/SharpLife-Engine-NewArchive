@@ -24,7 +24,44 @@ namespace SharpLife.Engine.Entities.Components
 {
     public sealed class ComponentMetaData
     {
-        public delegate void InvokableMethod(Component instance);
+        public delegate void InvokableMethod(Component instance, object parameter);
+
+        private readonly struct MethodKey : IEquatable<MethodKey>
+        {
+            public readonly string Name;
+            public readonly Type ParameterType;
+
+            public MethodKey(string name, Type parameterType)
+            {
+                Name = name;
+                ParameterType = parameterType;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is MethodKey methodKey && Equals(methodKey);
+            }
+
+            public bool Equals(MethodKey other)
+            {
+                return Name == other.Name && ParameterType == other.ParameterType;
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(Name, ParameterType);
+            }
+
+            public static bool operator ==(in MethodKey key1, in MethodKey key2)
+            {
+                return key1.Equals(key2);
+            }
+
+            public static bool operator !=(in MethodKey key1, in MethodKey key2)
+            {
+                return !(key1 == key2);
+            }
+        }
 
         public readonly Type ComponentType;
         public readonly Type InvokerType;
@@ -32,7 +69,7 @@ namespace SharpLife.Engine.Entities.Components
         public readonly TypeAccessor Accessor;
 
         //Allocated on demand only to reduce memory usage for simple types
-        private Dictionary<string, InvokableMethod> _invokableMethods;
+        private Dictionary<MethodKey, InvokableMethod> _invokableMethods;
 
         public ImmutableDictionary<string, KeyValueMetaData> KeyValues { get; }
 
@@ -46,25 +83,43 @@ namespace SharpLife.Engine.Entities.Components
             KeyValues = keyValues ?? throw new ArgumentNullException(nameof(keyValues));
         }
 
-        private MethodInfo FindMethod(string methodName)
+        private MethodInfo FindMethod(string methodName, Type parameterType)
         {
-            return ComponentType.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public, null, Array.Empty<Type>(), null);
+            var parameters = parameterType != typeof(void) ? new[] { parameterType } : Array.Empty<Type>();
+
+            return ComponentType.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public, null, parameters, null);
         }
 
-        private InvokableMethod CreateInvoker(MethodInfo methodInfo)
+        private InvokableMethod CreateInvoker(MethodInfo methodInfo, Type parameterType)
         {
-            var invoker = Activator.CreateInstance(InvokerType, methodInfo);
+            var invokerType = parameterType == typeof(void) ? InvokerType : typeof(DelegateInvoker<,>).MakeGenericType(new[] { ComponentType, parameterType });
 
-            return (InvokableMethod)Delegate.CreateDelegate(typeof(InvokableMethod), invoker, InvokerType.GetMethod(nameof(DelegateInvoker<Component>.Invoke)));
+            var invoker = Activator.CreateInstance(invokerType, methodInfo);
+
+            return (InvokableMethod)Delegate.CreateDelegate(typeof(InvokableMethod), invoker, invokerType.GetMethod(nameof(DelegateInvoker<Component>.Invoke)));
         }
 
-        internal bool TryGetMethod(string methodName, out InvokableMethod invokable)
+        internal bool TryGetMethod(string methodName, object parameter, out InvokableMethod invokable)
         {
+            var parameterType = parameter != null ? parameter.GetType() : typeof(void);
+
+            var key = new MethodKey(methodName, parameterType);
+
             invokable = null;
 
-            if (_invokableMethods?.TryGetValue(methodName, out invokable) != true)
+            if (_invokableMethods?.TryGetValue(key, out invokable) != true)
             {
-                var method = FindMethod(methodName);
+                var method = FindMethod(methodName, parameterType);
+
+                if (method == null && parameterType != typeof(void))
+                {
+                    //Find an overload with no parameters
+                    parameterType = typeof(void);
+
+                    //Don't change the key, otherwise repeated calls will keep recreating everything
+
+                    method = FindMethod(methodName, parameterType);
+                }
 
                 //TODO: could add this to the dictionary as well to speed up lookup, but since this is a rare case it probably won't be needed
                 if (method == null)
@@ -74,22 +129,22 @@ namespace SharpLife.Engine.Entities.Components
 
                 if (_invokableMethods == null)
                 {
-                    _invokableMethods = new Dictionary<string, InvokableMethod>();
+                    _invokableMethods = new Dictionary<MethodKey, InvokableMethod>();
                 }
 
-                invokable = CreateInvoker(method);
+                invokable = CreateInvoker(method, parameterType);
 
-                _invokableMethods.Add(methodName, invokable);
+                _invokableMethods.Add(key, invokable);
             }
 
             return true;
         }
 
-        internal bool TryGetMethodAndInvoke(string methodName, Component instance)
+        internal bool TryGetMethodAndInvoke(string methodName, Component instance, object parameter = null)
         {
-            if (TryGetMethod(methodName, out var invokable))
+            if (TryGetMethod(methodName, parameter, out var invokable))
             {
-                invokable.Invoke(instance);
+                invokable.Invoke(instance, parameter);
 
                 return true;
             }

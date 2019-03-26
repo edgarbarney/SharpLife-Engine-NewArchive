@@ -81,7 +81,7 @@ namespace SharpLife.Engine.Entities.Components
 
                 if (data.InvocationTime <= _scene.Time.ElapsedTime)
                 {
-                    data.Method(data.Component);
+                    data.Method(data.Component, null);
 
                     //The node could've been removed in the invocation
                     if (node.List != null)
@@ -155,9 +155,9 @@ namespace SharpLife.Engine.Entities.Components
             CancelInvocations(component);
         }
 
-        private bool TryGetMethod(Component component, string methodName, out ComponentMetaData.InvokableMethod invokable)
+        private bool TryGetMethod(Component component, string methodName, object parameter, out ComponentMetaData.InvokableMethod invokable)
         {
-            if (!component.MetaData.TryGetMethod(methodName, out invokable))
+            if (!component.MetaData.TryGetMethod(methodName, parameter, out invokable))
             {
                 _scene.Logger.Warning("Method void {ComponentType}.{MethodName}() does not exist", component.GetType().FullName, methodName);
                 return false;
@@ -166,14 +166,14 @@ namespace SharpLife.Engine.Entities.Components
             return true;
         }
 
-        internal bool InvokeImmediate(Component component, string methodName)
+        internal bool InvokeImmediate(Component component, string methodName, object parameter = null)
         {
-            if (!TryGetMethod(component, methodName, out var invokable))
+            if (!TryGetMethod(component, methodName, parameter, out var invokable))
             {
                 return false;
             }
 
-            invokable(component);
+            invokable(component, parameter);
 
             return true;
         }
@@ -201,7 +201,7 @@ namespace SharpLife.Engine.Entities.Components
                 throw new ArgumentOutOfRangeException("Invocation interval must be greater than 0.0001");
             }
 
-            if (!TryGetMethod(component, methodName, out var method))
+            if (!TryGetMethod(component, methodName, null, out var method))
             {
                 return false;
             }
