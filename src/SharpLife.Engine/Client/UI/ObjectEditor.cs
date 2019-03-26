@@ -222,7 +222,7 @@ namespace SharpLife.Engine.Client.UI
 
                                     if (ImGui.Button($"Invoke ## {componentIndex}") && componentData.InvokeBuffer.Length > 0)
                                     {
-                                        componentData.Component.Invoke(componentData.InvokeBuffer);
+                                        componentData.Component.InvokeImmediate(componentData.InvokeBuffer);
                                     }
 
                                     //Display all properties
