@@ -32,11 +32,11 @@ namespace SharpLife.Engine.Entities
 
         public bool HasComponent<TComponent>() where TComponent : Component => InternalHasComponent(typeof(TComponent));
 
-        private Component InternalGetComponent(Type componentType)
+        private Component InternalGetComponent(Type componentType, bool checkDerivedTypes = false)
         {
             foreach (var component in _components)
             {
-                if (componentType.Equals(component.GetType()))
+                if (checkDerivedTypes ? componentType.IsInstanceOfType(component) : componentType.Equals(component.GetType()))
                 {
                     return component;
                 }
@@ -47,7 +47,7 @@ namespace SharpLife.Engine.Entities
 
         public Component GetComponent(Type componentType) => InternalGetComponent(componentType ?? throw new ArgumentNullException(nameof(componentType)));
 
-        public TComponent GetComponent<TComponent>() where TComponent : Component => (TComponent)InternalGetComponent(typeof(TComponent));
+        public TComponent GetComponent<TComponent>(bool checkDerivedTypes = false) where TComponent : Component => (TComponent)InternalGetComponent(typeof(TComponent), checkDerivedTypes);
 
         private bool InternalTryGetComponent(Type componentType, out Component component)
         {
