@@ -22,6 +22,8 @@ namespace SharpLife.Engine.Entities
     {
         private readonly List<EntityInfo> _entities = new List<EntityInfo>();
 
+        public int Count { get; private set; }
+
         public int HighestIndex { get; private set; }
 
         public Entity this[int index]
@@ -47,6 +49,8 @@ namespace SharpLife.Engine.Entities
             {
                 HighestIndex = info.Index;
             }
+
+            ++Count;
 
             return info.Entity;
         }
@@ -106,6 +110,8 @@ namespace SharpLife.Engine.Entities
             entity.Destroyed = true;
 
             entity.RemoveAllComponents();
+
+            --Count;
         }
     }
 }
