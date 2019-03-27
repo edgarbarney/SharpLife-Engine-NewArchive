@@ -84,6 +84,12 @@ namespace SharpLife.Engine.Models.SPR
 
         protected override bool InternalTrySetModel(IModel model)
         {
+            if (model == null)
+            {
+                SpriteModel = null;
+                return true;
+            }
+
             if (model is SpriteModel sprite)
             {
                 SpriteModel = sprite;

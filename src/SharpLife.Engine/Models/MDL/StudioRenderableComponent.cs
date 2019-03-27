@@ -130,6 +130,12 @@ namespace SharpLife.Engine.Models.MDL
 
         protected override bool InternalTrySetModel(IModel model)
         {
+            if (model == null)
+            {
+                StudioModel = null;
+                return true;
+            }
+
             if (model is StudioModel studio)
             {
                 StudioModel = studio;

@@ -52,6 +52,12 @@ namespace SharpLife.Engine.Models.BSP
 
         protected override bool InternalTrySetModel(IModel model)
         {
+            if (model == null)
+            {
+                BSPModel = null;
+                return true;
+            }
+
             if (model is BSPModel brush)
             {
                 BSPModel = brush;

@@ -40,11 +40,6 @@ namespace SharpLife.Engine.Entities.Components
 
         public bool TrySetModel(IModel model)
         {
-            if (model == null)
-            {
-                throw new ArgumentNullException(nameof(model));
-            }
-
             if (!InternalTrySetModel(model))
             {
                 EntitySystem.Scene.Logger.Warning("Entity {Entity} Model has wrong format: got {ActualFormat}, expected {ExpectedFormat}",
