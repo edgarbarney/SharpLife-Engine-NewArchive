@@ -118,7 +118,7 @@ namespace SharpLife.Engine.Models.MDL
 
         public float SeqenceGroundSpeed { get; private set; }
 
-        public void Activate()
+        public void Initialize()
         {
             Transform = Entity.GetComponent<Transform>();
 

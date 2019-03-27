@@ -72,7 +72,7 @@ namespace SharpLife.Engine.Models.SPR
         [KeyValue(Name = "framerate")]
         public float FrameRate { get; set; }
 
-        public void Activate()
+        public void Initialize()
         {
             Transform = Entity.GetComponent<Transform>();
 

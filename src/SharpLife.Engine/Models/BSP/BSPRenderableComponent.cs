@@ -40,7 +40,7 @@ namespace SharpLife.Engine.Models.BSP
         [ObjectEditorVisible(Visible = false)]
         public BSPModel BSPModel { get; set; }
 
-        public void Activate()
+        public void Initialize()
         {
             Transform = Entity.GetComponent<Transform>();
 
