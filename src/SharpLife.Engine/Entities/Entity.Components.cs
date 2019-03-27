@@ -163,7 +163,7 @@ namespace SharpLife.Engine.Entities
 
             component.InternalAdded(this);
 
-            if (EntitySystem.Scene.Running)
+            if (EntitySystem.Scene.Running && _activated)
             {
                 component.MetaData.TryGetMethodAndInvoke(BuiltInComponentMethods.Activate, component);
             }

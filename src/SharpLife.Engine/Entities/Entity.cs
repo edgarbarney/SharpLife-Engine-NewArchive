@@ -22,6 +22,8 @@ namespace SharpLife.Engine.Entities
     /// </summary>
     public sealed partial class Entity : IEquatable<Entity>
     {
+        internal bool _activated;
+
         public uint Id { get; }
 
         public bool Destroyed { get; internal set; }

@@ -82,6 +82,14 @@ namespace SharpLife.Engine.Entities.Factories
                 return false;
             }
 
+            //If the scene is already running, all components should be activated now
+            if (EntitySystem.Scene.Running)
+            {
+                entity.SendMessage(BuiltInComponentMethods.Activate);
+            }
+
+            entity._activated = true;
+
             return true;
         }
 
