@@ -159,7 +159,8 @@ namespace SharpLife.Engine.Entities.Components
         {
             if (!component.MetaData.TryGetMethod(methodName, parameter, out invokable))
             {
-                _scene.Logger.Warning("Method void {ComponentType}.{MethodName}() does not exist", component.GetType().FullName, methodName);
+                //Since this method is a try, don't log failures
+                //_scene.Logger.Warning("Method void {ComponentType}.{MethodName}() does not exist", component.GetType().FullName, methodName);
                 return false;
             }
 
