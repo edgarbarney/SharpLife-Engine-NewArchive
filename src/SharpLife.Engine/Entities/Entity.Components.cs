@@ -163,8 +163,10 @@ namespace SharpLife.Engine.Entities
 
             component.InternalAdded(this);
 
+            //Any components added after an entity has been spawned should be initialized and activated immediately
             if (EntitySystem.Scene.Running && _activated)
             {
+                component.MetaData.TryGetMethodAndInvoke(BuiltInComponentMethods.Initialize, component);
                 component.MetaData.TryGetMethodAndInvoke(BuiltInComponentMethods.Activate, component);
             }
         }

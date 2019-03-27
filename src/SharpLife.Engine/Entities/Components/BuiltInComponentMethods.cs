@@ -19,6 +19,7 @@ namespace SharpLife.Engine.Entities.Components
     {
         public const string OnEnable = nameof(OnEnable);
         public const string OnDisable = nameof(OnDisable);
+        public const string Initialize = nameof(Initialize);
         public const string Activate = nameof(Activate);
         public const string Start = nameof(Start);
         public const string Update = nameof(Update);

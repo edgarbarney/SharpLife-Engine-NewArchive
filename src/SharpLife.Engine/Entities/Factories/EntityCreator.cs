@@ -73,6 +73,8 @@ namespace SharpLife.Engine.Entities.Factories
 
             entity = CreateUninitializedEntity(className, factory);
 
+            entity.SendMessage(BuiltInComponentMethods.Initialize);
+
             if (!factory.Initialize(this, entity, keyValues))
             {
                 Scene.DestroyEntity(entity);
