@@ -48,5 +48,20 @@ namespace SharpLife.Engine.Entities
         {
             return $"Entity {Id}:{ClassName}:{TargetName}";
         }
+
+        /// <summary>
+        /// Invokes the given method name on all enabled components
+        /// </summary>
+        /// <param name="methodName"></param>
+        public void SendMessage(string methodName, object parameter = null)
+        {
+            foreach (var component in _components)
+            {
+                if (component.Enabled)
+                {
+                    component.InvokeImmediate(methodName, parameter);
+                }
+            }
+        }
     }
 }
