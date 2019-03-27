@@ -324,5 +324,18 @@ namespace SharpLife.Engine.Entities
 
             _components.Clear();
         }
+
+        public TComponent GetRequiredComponent<TComponent>(bool checkDerivedTypes = false)
+            where TComponent : Component
+        {
+            var component = GetComponent<TComponent>(checkDerivedTypes);
+
+            if (component == null)
+            {
+                EntitySystem.Scene.Logger.Warning("Missing {ComponentTypeName} component for {ClassName}", typeof(TComponent).FullName, ClassName);
+            }
+
+            return component;
+        }
     }
 }
