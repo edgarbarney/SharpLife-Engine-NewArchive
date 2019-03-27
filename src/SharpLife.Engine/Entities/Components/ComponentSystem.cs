@@ -192,9 +192,9 @@ namespace SharpLife.Engine.Entities.Components
             }
 
             //Needed because otherwise we could end up in an infinite loop invoking the same method over and over
-            if (delay <= 0.0001f)
+            if (delay < 0)
             {
-                throw new ArgumentOutOfRangeException("Invocation delay must be greater than 0.0001");
+                throw new ArgumentOutOfRangeException("Invocation delay must be a positive value");
             }
 
             if (interval != InvokeOnceInterval && interval <= 0.0001f)
