@@ -68,5 +68,16 @@ namespace SharpLife.Engine.Entities.Components
 
             return factory(entity, model);
         }
+
+        public static RenderMode GetRenderMode(this Entity entity, RenderMode defaultValue = RenderMode.Normal)
+        {
+            return entity.GetComponent<RenderProperties>()?.RenderMode ?? defaultValue;
+        }
+
+        public static bool IsWorld(this Entity entity)
+        {
+            //TODO: find a better way to do this
+            return entity.Id == 0;
+        }
     }
 }
