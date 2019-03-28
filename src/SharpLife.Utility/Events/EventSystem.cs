@@ -139,7 +139,7 @@ namespace SharpLife.Utility.Events
 
             foreach (var metaData in _events)
             {
-                metaData.Value.Listeners.RemoveAll(invoker => ReferenceEquals(invoker.Target, listener));
+                metaData.Value.Listeners.RemoveAll(invoker => ReferenceEquals(invoker, listener));
             }
         }
 
