@@ -17,17 +17,18 @@ using FastMember;
 using ImGuiNET;
 using System;
 using System.Reflection;
-using System.Text;
 
 namespace SharpLife.Engine.Client.UI.EditableMemberTypes
 {
     public abstract class BaseEditableText : IEditableMemberType
     {
+        private const int MaxLength = 1024;
+
         private readonly string _label;
 
         protected readonly MemberInfo _info;
 
-        private readonly byte[] _buffer = new byte[256];
+        private string _currentValue = string.Empty;
 
         private readonly ImGuiInputTextFlags _flags;
 
@@ -44,24 +45,15 @@ namespace SharpLife.Engine.Client.UI.EditableMemberTypes
 
         public void Display(object editObject, ObjectAccessor objectAccessor)
         {
-            if (ImGui.InputText(_label, _buffer, (uint)_buffer.Length, _flags | ImGuiInputTextFlags.EnterReturnsTrue, null))
+            if (ImGui.InputText(_label, ref _currentValue, MaxLength, _flags | ImGuiInputTextFlags.EnterReturnsTrue, null))
             {
-                var text = Encoding.UTF8.GetString(_buffer);
-
-                OnValueChanged(objectAccessor, text);
+                OnValueChanged(objectAccessor, _currentValue);
             }
         }
 
         protected void SetValue(string value)
         {
-            if (value != null)
-            {
-                Encoding.UTF8.GetBytes(value, new Span<byte>(_buffer));
-            }
-            else
-            {
-                Array.Clear(_buffer, 0, _buffer.Length);
-            }
+            _currentValue = value ?? string.Empty;
         }
 
         protected abstract void OnValueChanged(ObjectAccessor objectAccessor, string newValue);
