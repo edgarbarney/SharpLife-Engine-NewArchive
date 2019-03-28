@@ -21,7 +21,7 @@ namespace SharpLife.Engine.Entities.Factories
     /// Links a class name to a factory
     /// Multiple instances of this attribute can be used to provide multiple names
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
     public sealed class LinkEntityToFactoryAttribute : Attribute
     {
         /// <summary>
