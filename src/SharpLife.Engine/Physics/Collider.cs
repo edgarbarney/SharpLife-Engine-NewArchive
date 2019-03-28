@@ -178,6 +178,11 @@ namespace SharpLife.Engine.Physics
             Array.Copy(other._leafNums, _leafNums, _leafNums.Length);
         }
 
+        internal void OriginChanged()
+        {
+            EntitySystem.Scene.Physics.LinkEdict(this, false);
+        }
+
         /// <summary>
         /// Sets the size of the entity's bounds
         /// </summary>

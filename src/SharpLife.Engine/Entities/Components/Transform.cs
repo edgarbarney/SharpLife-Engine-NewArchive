@@ -15,6 +15,7 @@
 
 using SharpLife.Engine.Entities.KeyValues;
 using SharpLife.Engine.ObjectEditor;
+using SharpLife.Engine.Physics;
 using System.Numerics;
 
 namespace SharpLife.Engine.Entities.Components
@@ -26,6 +27,8 @@ namespace SharpLife.Engine.Entities.Components
         private Transform _firstChild;
 
         private Transform _nextSibling;
+
+        private Collider _collider;
 
         [ObjectEditorVisible(Visible = false)]
         public Transform Parent
@@ -99,6 +102,11 @@ namespace SharpLife.Engine.Entities.Components
         public Vector3 ViewOffset;
 
         public FixAngleMode FixAngle;
+
+        public void Initialize()
+        {
+            _collider = Entity.GetComponent<Collider>();
+        }
 
         public void OnDisable()
         {
@@ -213,12 +221,15 @@ namespace SharpLife.Engine.Entities.Components
 
         private Vector3 ComputeAbsoluteOrigin()
         {
+            //TODO: if origin changes, relink entity
             var origin = RelativeOrigin;
 
             if (_parent != null)
             {
                 origin += _parent.Origin;
             }
+
+            _collider?.OriginChanged();
 
             return origin;
         }
