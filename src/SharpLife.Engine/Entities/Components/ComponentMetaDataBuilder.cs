@@ -88,13 +88,9 @@ namespace SharpLife.Engine.Entities.Components
 
                 if (objectEditorVisible?.Visible != false)
                 {
+                    //Allow members to be used as both keyvalues and spawnflags
                     var keyValueAttr = member.GetCustomAttribute<KeyValueAttribute>();
                     var spawnFlagAttr = member.GetCustomAttribute<SpawnFlagAttribute>();
-
-                    if (keyValueAttr != null && spawnFlagAttr != null)
-                    {
-                        throw new NotSupportedException($"Cannot use both {nameof(KeyValueAttribute)} and {nameof(SpawnFlagAttribute)} on member {type.FullName}.{member.Name}");
-                    }
 
                     Type memberType;
 
@@ -131,24 +127,22 @@ namespace SharpLife.Engine.Entities.Components
 
                         spawnFlagsBuilder.Add(new SpawnFlagMetaData(member, spawnFlagAttr.Flag));
                     }
-                    else
+
+                    var name = member.Name;
+
+                    if (keyValueAttr != null)
                     {
-                        var name = member.Name;
-
-                        if (keyValueAttr != null)
-                        {
-                            name = keyValueAttr.Name;
-                        }
-
-                        if (keyValueBuilder.ContainsKey(name))
-                        {
-                            throw new NotSupportedException("Using the same name for multiple keyvalues is not allowed");
-                        }
-
-                        var converter = GetConverter(member, memberType, keyValueAttr);
-
-                        keyValueBuilder.Add(name, new KeyValueMetaData(member, memberType, converter));
+                        name = keyValueAttr.Name;
                     }
+
+                    if (keyValueBuilder.ContainsKey(name))
+                    {
+                        throw new NotSupportedException("Using the same name for multiple keyvalues is not allowed");
+                    }
+
+                    var converter = GetConverter(member, memberType, keyValueAttr);
+
+                    keyValueBuilder.Add(name, new KeyValueMetaData(member, memberType, converter));
                 }
             }
 
