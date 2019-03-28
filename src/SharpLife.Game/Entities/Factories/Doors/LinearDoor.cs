@@ -42,12 +42,20 @@ namespace SharpLife.Game.Entities.Factories.Doors
         [KeyValue(Name = "lip")]
         public float Lip;
 
-        //TODO: initialize from spawnflags
-        public bool Silent;
-        public bool UseOnly;
-        public bool NoAutoReturn;
-        public bool Passable;
+        [SpawnFlag(1 << 0)]
         public bool StartsOpen;
+
+        [SpawnFlag(1 << 3)]
+        public bool Passable;
+
+        [SpawnFlag(1 << 5)]
+        public bool NoAutoReturn;
+
+        [SpawnFlag(1 << 8)]
+        public bool UseOnly;
+
+        [SpawnFlag(1U << 31)]
+        public bool Silent;
 
         /// <summary>
         /// If this button has a master switch, this is the targetname.
