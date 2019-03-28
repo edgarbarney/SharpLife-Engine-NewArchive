@@ -34,7 +34,7 @@ namespace SharpLife.Engine.GameWorld
 {
     public sealed class WorldState
     {
-        private readonly EventSystem _eventSystem;
+        private readonly IEventSystem _eventSystem;
 
         private readonly IFileSystem _fileSystem;
 
@@ -60,7 +60,7 @@ namespace SharpLife.Engine.GameWorld
 
         public WorldState(
             ILogger logger,
-            EventSystem eventSystem,
+            IEventSystem eventSystem,
             IFileSystem fileSystem,
             EntitySystemMetaData entitySystemMetaData,
             IRenderer renderer,

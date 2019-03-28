@@ -13,7 +13,10 @@
 *
 ****/
 
-namespace SharpLife.Utility.Events
+namespace SharpLife.Utility.Events.Queue
 {
-    public delegate void Listener(string name, object data);
+    internal interface IOperation
+    {
+        void Execute(IEventSystem eventSystem);
+    }
 }

@@ -13,7 +13,14 @@
 *
 ****/
 
-namespace SharpLife.Utility.Events
+
+namespace SharpLife.Utility.Events.Queue
 {
-    public delegate void Listener(string name, object data);
+    internal sealed class RemoveAllListenersOperation : IOperation
+    {
+        public void Execute(IEventSystem eventSystem)
+        {
+            eventSystem.RemoveAllListeners();
+        }
+    }
 }

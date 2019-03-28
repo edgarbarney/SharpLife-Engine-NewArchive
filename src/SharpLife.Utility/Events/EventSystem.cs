@@ -14,7 +14,6 @@
 ****/
 
 using System;
-using System.Collections.Generic;
 
 namespace SharpLife.Utility.Events
 {
@@ -23,21 +22,22 @@ namespace SharpLife.Utility.Events
     /// Events can contain data, represented as classes inheriting from a base event data class
     /// Listeners cannot be added or removed while an event dispatch is ongoing, they will be queued up and processed after the dispatch
     /// </summary>
-    public class EventSystem
+    public class EventSystem : IEventSystem
     {
+        private readonly QueuedEventSystem _queuedEventSystem = new QueuedEventSystem();
+        private readonly DirectEventSystem _directEventSystem = new DirectEventSystem();
+
+        private IEventSystem _internalEventSystem;
+
         /// <summary>
         /// Indicates whether the event system is currently dispatching events
         /// </summary>
-        public bool IsDispatching => _inDispatchCount > 0;
+        private bool IsDispatching => _internalEventSystem == _queuedEventSystem;
 
-        private readonly Dictionary<string, EventMetaData> _events = new Dictionary<string, EventMetaData>();
-
-        /// <summary>
-        /// Keeps track of our nested dispatch count
-        /// </summary>
-        private int _inDispatchCount;
-
-        private readonly List<PostDispatchCallback> _postDispatchCallbacks = new List<PostDispatchCallback>();
+        public EventSystem()
+        {
+            _internalEventSystem = _directEventSystem;
+        }
 
         private static void ValidateName(string name)
         {
@@ -47,11 +47,6 @@ namespace SharpLife.Utility.Events
             }
         }
 
-        /// <summary>
-        /// Adds a listener for a specific event
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="listener"></param>
         public void AddListener(string name, Listener listener)
         {
             ValidateName(name);
@@ -61,41 +56,16 @@ namespace SharpLife.Utility.Events
                 throw new ArgumentNullException(nameof(listener));
             }
 
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot add listeners while dispatching");
-            }
-
-            if (!_events.TryGetValue(name, out var metaData))
-            {
-                metaData = new EventMetaData(name);
-
-                _events.Add(name, metaData);
-            }
-
-            metaData.Listeners.Add(listener);
+            _internalEventSystem.AddListener(name, listener);
         }
 
-        /// <summary>
-        /// Removes all listeners of a specific event
-        /// </summary>
-        /// <param name="name"></param>
         public void RemoveListeners(string name)
         {
             ValidateName(name);
 
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot remove listeners while dispatching");
-            }
-
-            _events.Remove(name);
+            _internalEventSystem.RemoveListeners(name);
         }
 
-        /// <summary>
-        /// Removes a listener by delegate
-        /// </summary>
-        /// <param name="listener"></param>
         public void RemoveListener(Listener listener)
         {
             if (listener == null)
@@ -103,22 +73,9 @@ namespace SharpLife.Utility.Events
                 throw new ArgumentNullException(nameof(listener));
             }
 
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot remove listeners while dispatching");
-            }
-
-            foreach (var metaData in _events)
-            {
-                metaData.Value.Listeners.RemoveAll(invoker => ReferenceEquals(invoker, listener));
-            }
+            _internalEventSystem.RemoveListener(listener);
         }
 
-        /// <summary>
-        /// Removes a listener from a specific event
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="listener"></param>
         public void RemoveListener(string name, Listener listener)
         {
             ValidateName(name);
@@ -128,31 +85,9 @@ namespace SharpLife.Utility.Events
                 throw new ArgumentNullException(nameof(listener));
             }
 
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot remove listeners while dispatching");
-            }
-
-            if (_events.TryGetValue(name, out var metaData))
-            {
-                var index = metaData.Listeners.FindIndex(invoker => invoker.Equals(listener));
-
-                if (index != -1)
-                {
-                    metaData.Listeners.RemoveAt(index);
-                }
-
-                if (metaData.Listeners.Count == 0)
-                {
-                    _events.Remove(name);
-                }
-            }
+            _internalEventSystem.RemoveListener(name, listener);
         }
 
-        /// <summary>
-        /// Removes the given listener from all events that is it listening to
-        /// </summary>
-        /// <param name="listener"></param>
         public void RemoveListener(object listener)
         {
             if (listener == null)
@@ -160,80 +95,38 @@ namespace SharpLife.Utility.Events
                 throw new ArgumentNullException(nameof(listener));
             }
 
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot remove listeners while dispatching");
-            }
-
-            foreach (var metaData in _events)
-            {
-                metaData.Value.Listeners.RemoveAll(delegateListener => delegateListener.Target == listener);
-            }
+            _internalEventSystem.RemoveListener(listener);
         }
 
-        /// <summary>
-        /// Removes all listeners
-        /// </summary>
         public void RemoveAllListeners()
         {
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot remove listeners while dispatching");
-            }
-
-            _events.Clear();
+            _internalEventSystem.RemoveAllListeners();
         }
 
-        /// <summary>
-        /// Dispatches an event to all listeners of that event
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="data">Data to provide to listeners</param>
-        /// <exception cref="ArgumentNullException">If name is null</exception>
         public void DispatchEvent(string name, object data = null)
         {
             ValidateName(name);
 
-            if (_events.TryGetValue(name, out var metaData))
+            //if we're already dispatching an event, queue this up for later
+            if (IsDispatching)
             {
-                ++_inDispatchCount;
+                _internalEventSystem.DispatchEvent(name, data);
+            }
+            else
+            {
+                //Swap to the queued system to avoid corrupting execution state
+                _internalEventSystem = _queuedEventSystem;
 
-                for (var i = 0; i < metaData.Listeners.Count; ++i)
+                _directEventSystem.DispatchEvent(name, data);
+
+                while (_queuedEventSystem.HasOperations)
                 {
-                    metaData.Listeners[i].Invoke(name, data);
+                    _queuedEventSystem.ApplyTo(_directEventSystem);
                 }
 
-                --_inDispatchCount;
-
-                if (_inDispatchCount == 0 && _postDispatchCallbacks.Count > 0)
-                {
-                    _postDispatchCallbacks.ForEach(callback => callback(this));
-                    _postDispatchCallbacks.Clear();
-                    //Avoid wasting memory, since this is a rarely used operation
-                    _postDispatchCallbacks.Capacity = 0;
-                }
+                //Reset this after applying operations to avoid edge cases where a queued up dispatch allows operations to go to the direct system
+                _internalEventSystem = _directEventSystem;
             }
-        }
-
-        /// <summary>
-        /// Adds a post dispatch callback
-        /// Use this when adding or removing listeners or events while in an event dispatch
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <exception cref="InvalidOperationException">If a callback is added while not in an event dispatch</exception>
-        public void AddPostDispatchCallback(PostDispatchCallback callback)
-        {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
-
-            if (!IsDispatching)
-            {
-                throw new InvalidOperationException("Can only add post dispatch callbacks while dispatching events");
-            }
-
-            _postDispatchCallbacks.Add(callback);
         }
     }
 }

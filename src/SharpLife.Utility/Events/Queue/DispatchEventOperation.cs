@@ -13,7 +13,22 @@
 *
 ****/
 
-namespace SharpLife.Utility.Events
+namespace SharpLife.Utility.Events.Queue
 {
-    public delegate void Listener(string name, object data);
+    internal sealed class DispatchEventOperation : IOperation
+    {
+        private readonly string _name;
+        private readonly object _data;
+
+        public DispatchEventOperation(string name, object data)
+        {
+            _name = name;
+            _data = data;
+        }
+
+        public void Execute(IEventSystem eventSystem)
+        {
+            eventSystem.DispatchEvent(_name, _data);
+        }
+    }
 }
