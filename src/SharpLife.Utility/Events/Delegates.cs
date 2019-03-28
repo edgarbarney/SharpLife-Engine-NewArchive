@@ -17,7 +17,7 @@ namespace SharpLife.Utility.Events
 {
     public static class Delegates
     {
-        public delegate void Listener(in Event @event);
+        public delegate void Listener(string name, object data);
 
         public delegate void PostDispatchCallback(EventSystem eventSystem);
     }

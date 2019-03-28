@@ -226,13 +226,11 @@ namespace SharpLife.Utility.Events
 
             if (_events.TryGetValue(name, out var metaData))
             {
-                var @event = new Event(this, name, data);
-
                 ++_inDispatchCount;
 
                 for (var i = 0; i < metaData.Listeners.Count; ++i)
                 {
-                    metaData.Listeners[i].Invoke(@event);
+                    metaData.Listeners[i].Invoke(name, data);
                 }
 
                 --_inDispatchCount;
