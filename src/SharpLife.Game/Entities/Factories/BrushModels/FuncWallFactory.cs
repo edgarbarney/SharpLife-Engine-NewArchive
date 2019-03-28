@@ -17,6 +17,7 @@ using SharpLife.Engine.Entities;
 using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Entities.Factories;
 using SharpLife.Engine.Models.BSP;
+using SharpLife.Engine.Physics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -29,6 +30,7 @@ namespace SharpLife.Game.Entities.Factories.BrushModels
         protected override void GetComponentTypes(ImmutableHashSet<Type>.Builder types)
         {
             types.Add(typeof(Transform));
+            types.Add(typeof(Collider));
             types.Add(typeof(RenderProperties));
             types.Add(typeof(BSPRenderableComponent));
         }
@@ -36,6 +38,11 @@ namespace SharpLife.Game.Entities.Factories.BrushModels
         public override bool Initialize(EntityCreator creator, Entity entity, IReadOnlyList<KeyValuePair<string, string>> keyValues)
         {
             if (!creator.InitializeComponent(entity.GetComponent<Transform>(), keyValues))
+            {
+                return false;
+            }
+
+            if (!creator.InitializeComponent(entity.GetComponent<Collider>(), keyValues))
             {
                 return false;
             }
