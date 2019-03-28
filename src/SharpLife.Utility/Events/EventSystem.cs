@@ -37,7 +37,7 @@ namespace SharpLife.Utility.Events
         /// </summary>
         private int _inDispatchCount;
 
-        private readonly List<Delegates.PostDispatchCallback> _postDispatchCallbacks = new List<Delegates.PostDispatchCallback>();
+        private readonly List<PostDispatchCallback> _postDispatchCallbacks = new List<PostDispatchCallback>();
 
         private static void ValidateName(string name)
         {
@@ -52,7 +52,7 @@ namespace SharpLife.Utility.Events
         /// </summary>
         /// <param name="name"></param>
         /// <param name="listener"></param>
-        public void AddListener(string name, Delegates.Listener listener)
+        public void AddListener(string name, Listener listener)
         {
             ValidateName(name);
 
@@ -82,7 +82,7 @@ namespace SharpLife.Utility.Events
         /// </summary>
         /// <param name="names">List of names</param>
         /// <param name="listener"></param>
-        public void AddListeners(string[] names, Delegates.Listener listener)
+        public void AddListeners(string[] names, Listener listener)
         {
             if (names == null)
             {
@@ -125,7 +125,7 @@ namespace SharpLife.Utility.Events
         /// Removes a listener by delegate
         /// </summary>
         /// <param name="listener"></param>
-        public void RemoveListener(Delegates.Listener listener)
+        public void RemoveListener(Listener listener)
         {
             if (listener == null)
             {
@@ -148,7 +148,7 @@ namespace SharpLife.Utility.Events
         /// </summary>
         /// <param name="name"></param>
         /// <param name="listener"></param>
-        public void RemoveListener(string name, Delegates.Listener listener)
+        public void RemoveListener(string name, Listener listener)
         {
             ValidateName(name);
 
@@ -250,7 +250,7 @@ namespace SharpLife.Utility.Events
         /// </summary>
         /// <param name="callback"></param>
         /// <exception cref="InvalidOperationException">If a callback is added while not in an event dispatch</exception>
-        public void AddPostDispatchCallback(Delegates.PostDispatchCallback callback)
+        public void AddPostDispatchCallback(PostDispatchCallback callback)
         {
             if (callback == null)
             {
