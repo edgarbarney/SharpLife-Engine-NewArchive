@@ -19,8 +19,9 @@ namespace SharpLife.Utility.Events
 {
     /// <summary>
     /// An event system that immediately executes given operations
+    /// Does not perform error checking (handled in <see cref="EventSystem"/>
     /// </summary>
-    public class DirectEventSystem : IEventSystem
+    internal sealed class DirectEventSystem : IEventSystem
     {
         /// <summary>
         /// Indicates whether the event system is currently dispatching events
