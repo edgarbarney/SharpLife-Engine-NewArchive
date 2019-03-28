@@ -23,17 +23,7 @@ namespace SharpLife.Utility.Events
     /// </summary>
     internal sealed class DirectEventSystem : IEventSystem
     {
-        /// <summary>
-        /// Indicates whether the event system is currently dispatching events
-        /// </summary>
-        public bool IsDispatching => _inDispatchCount > 0;
-
         private readonly Dictionary<string, List<Listener>> _eventListeners = new Dictionary<string, List<Listener>>();
-
-        /// <summary>
-        /// Keeps track of our nested dispatch count
-        /// </summary>
-        private int _inDispatchCount;
 
         public void AddListener(string name, Listener listener)
         {
@@ -95,14 +85,10 @@ namespace SharpLife.Utility.Events
         {
             if (_eventListeners.TryGetValue(name, out var listeners))
             {
-                ++_inDispatchCount;
-
                 for (var i = 0; i < listeners.Count; ++i)
                 {
                     listeners[i].Invoke(name, data);
                 }
-
-                --_inDispatchCount;
             }
         }
     }
