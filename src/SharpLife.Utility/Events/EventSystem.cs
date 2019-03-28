@@ -77,35 +77,6 @@ namespace SharpLife.Utility.Events
         }
 
         /// <summary>
-        /// Adds a listener to multiple events
-        /// <seealso cref="AddListener(string, Delegates.Listener)"/>
-        /// </summary>
-        /// <param name="names">List of names</param>
-        /// <param name="listener"></param>
-        public void AddListeners(string[] names, Listener listener)
-        {
-            if (names == null)
-            {
-                throw new ArgumentNullException(nameof(names));
-            }
-
-            if (listener == null)
-            {
-                throw new ArgumentNullException(nameof(listener));
-            }
-
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot add listeners while dispatching");
-            }
-
-            foreach (var name in names)
-            {
-                AddListener(name, listener);
-            }
-        }
-
-        /// <summary>
         /// Removes all listeners of a specific event
         /// </summary>
         /// <param name="name"></param>
