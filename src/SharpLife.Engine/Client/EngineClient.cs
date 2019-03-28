@@ -17,6 +17,7 @@ using SDL2;
 using SharpLife.CommandSystem;
 using SharpLife.Engine.Client.UI;
 using SharpLife.Engine.Configuration;
+using SharpLife.Engine.Events;
 using SharpLife.Engine.Host;
 using SharpLife.Engine.Logging;
 using System;
@@ -95,10 +96,14 @@ namespace SharpLife.Engine.Client
 
             //TODO: need a way to hook into this event before world is created
             UserInterface.Renderer.ImGui.ImGuiInterface.OnMapStart(Engine.World.Scene);
+
+            Engine.EventSystem.DispatchEvent(EngineEvents.ClientMapFinishLoad);
         }
 
         public void Disconnect(bool shutdownServer)
         {
+            Engine.EventSystem.DispatchEvent(EngineEvents.ClientMapEnd);
+
             UserInterface.Renderer.ImGui.ImGuiInterface.OnMapEnd();
             //TODO
         }

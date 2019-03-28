@@ -102,5 +102,9 @@ namespace SharpLife.Engine.Events
         /// Dispatched right after the client has finished disconnecting
         /// </summary>
         public const string ClientEndDisconnect = nameof(ClientEndDisconnect);
+
+        public const string ClientMapFinishLoad = nameof(ClientMapFinishLoad);
+
+        public const string ClientMapEnd = nameof(ClientMapEnd);
     }
 }

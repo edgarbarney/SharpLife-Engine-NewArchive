@@ -16,6 +16,7 @@
 using SharpLife.CommandSystem;
 using SharpLife.CommandSystem.Commands;
 using SharpLife.CommandSystem.Commands.VariableFilters;
+using SharpLife.Engine.Events;
 using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.Engine.Models.BSP.Rendering;
@@ -43,6 +44,8 @@ namespace SharpLife.Engine.Client.UI.Rendering
         private readonly List<IUpdateable> _updateables = new List<IUpdateable>();
         private readonly List<IRenderable> _renderables = new List<IRenderable>();
 
+        private readonly List<IResourceContainer> _newResourceContainers = new List<IResourceContainer>();
+
         private readonly IVariable<float> _mainGamma;
 
         private readonly IVariable<float> _textureGamma;
@@ -58,6 +61,8 @@ namespace SharpLife.Engine.Client.UI.Rendering
         private bool _lightingSettingChanged;
 
         private readonly int[] _cachedLightStyles = new int[BSPConstants.MaxLightStyles];
+
+        private bool _running;
 
         public Camera Camera { get; }
 
@@ -82,7 +87,7 @@ namespace SharpLife.Engine.Client.UI.Rendering
 
         public DirectionalVectors ViewVectors => _viewAngles;
 
-        public Scene(IInputSystem inputSystem, ICommandContext commandContext, GraphicsDevice gd, int viewWidth, int viewHeight)
+        internal Scene(EngineClient client, IInputSystem inputSystem, ICommandContext commandContext, GraphicsDevice gd, int viewWidth, int viewHeight)
         {
             Camera = new Camera(inputSystem, gd, viewWidth, viewHeight);
             _updateables.Add(Camera);
@@ -131,16 +136,26 @@ namespace SharpLife.Engine.Client.UI.Rendering
                 new VirtualVariableInfo<bool>("mat_fullbright", false)
                 .WithHelpInfo("Enable or disable full brightness (debug)")
                 .WithChangeHandler((ref VariableChangeEvent<bool> _) => _lightingSettingChanged = true));
+
+            client.Engine.EventSystem.AddListener(EngineEvents.ClientMapFinishLoad, OnMapStart);
+            client.Engine.EventSystem.AddListener(EngineEvents.ClientMapEnd, OnMapEnd);
         }
 
         public void AddContainer(IResourceContainer r)
         {
             _resourceContainers.Add(r);
+
+            if (_running)
+            {
+                _newResourceContainers.Add(r);
+            }
         }
 
         public void RemoveContainer(IResourceContainer r)
         {
             _resourceContainers.Remove(r);
+
+            _newResourceContainers.Remove(r);
         }
 
         public void AddRenderable(IRenderable r)
@@ -348,6 +363,26 @@ namespace SharpLife.Engine.Client.UI.Rendering
             {
                 r.CreateDeviceObjects(gd, cl, sc, scope);
             }
+        }
+
+        public void CreateNewDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc, ResourceScope scope)
+        {
+            foreach (var r in _newResourceContainers)
+            {
+                r.CreateDeviceObjects(gd, cl, sc, scope);
+            }
+
+            _newResourceContainers.Clear();
+        }
+
+        private void OnMapStart(string name, object data)
+        {
+            _running = true;
+        }
+
+        private void OnMapEnd(string name, object data)
+        {
+            _running = false;
         }
 
         private class RenderPassesComparer : IEqualityComparer<RenderPasses>

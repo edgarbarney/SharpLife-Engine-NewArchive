@@ -110,7 +110,7 @@ namespace SharpLife.Engine.Client.UI.Rendering
 
             _userInterface.Window.GetSize(out var width, out var height);
 
-            Scene = new Scene(_userInterface.InputSystem, commandContext, _gd, width, height);
+            Scene = new Scene(client, _userInterface.InputSystem, commandContext, _gd, width, height);
 
             ImGui = new ImGuiRenderable(_userInterface.InputSystem, width, height, logger, client);
 
@@ -178,6 +178,8 @@ namespace SharpLife.Engine.Client.UI.Rendering
             }
 
             _frameCommands.Begin();
+
+            Scene.CreateNewDeviceObjects(_gd, _frameCommands, _sc, ResourceScope.Map);
 
             Scene.RenderAllStages(_gd, _frameCommands, _sc);
 
