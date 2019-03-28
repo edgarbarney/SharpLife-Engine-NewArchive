@@ -73,7 +73,9 @@ namespace SharpLife.Engine.Entities.Components
 
         public ImmutableDictionary<string, KeyValueMetaData> KeyValues { get; }
 
-        internal ComponentMetaData(Type componentType, ImmutableDictionary<string, KeyValueMetaData> keyValues)
+        public ImmutableArray<SpawnFlagMetaData> SpawnFlags { get; }
+
+        internal ComponentMetaData(Type componentType, ImmutableDictionary<string, KeyValueMetaData> keyValues, ImmutableArray<SpawnFlagMetaData> spawnFlags)
         {
             ComponentType = componentType ?? throw new ArgumentNullException(nameof(componentType));
             InvokerType = typeof(DelegateInvoker<>).MakeGenericType(componentType);
@@ -81,6 +83,7 @@ namespace SharpLife.Engine.Entities.Components
             Accessor = TypeAccessor.Create(componentType);
 
             KeyValues = keyValues ?? throw new ArgumentNullException(nameof(keyValues));
+            SpawnFlags = spawnFlags;
         }
 
         private MethodInfo FindMethod(string methodName, Type parameterType)

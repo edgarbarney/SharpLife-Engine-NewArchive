@@ -27,6 +27,7 @@ namespace SharpLife.Engine.Entities.Components
     public sealed class ComponentMetaDataBuilder
     {
         private static readonly ImmutableDictionary<string, KeyValueMetaData> EmptyDictionary = ImmutableDictionary.Create<string, KeyValueMetaData>();
+        private static readonly ImmutableArray<SpawnFlagMetaData> EmptyArray = ImmutableArray.Create<SpawnFlagMetaData>();
 
         private readonly ImmutableDictionary<Type, IKeyValueConverter> _keyValueConverters;
 
@@ -76,7 +77,8 @@ namespace SharpLife.Engine.Entities.Components
         private ComponentMetaData BuildOne(Type type)
         {
             //Build keyvalue map
-            var builder = ImmutableDictionary.CreateBuilder<string, KeyValueMetaData>();
+            var keyValueBuilder = ImmutableDictionary.CreateBuilder<string, KeyValueMetaData>();
+            var spawnFlagsBuilder = ImmutableArray.CreateBuilder<SpawnFlagMetaData>();
 
             foreach (var member in type
                 .GetMembers(BindingFlags.Public | BindingFlags.Instance)
@@ -87,17 +89,11 @@ namespace SharpLife.Engine.Entities.Components
                 if (objectEditorVisible?.Visible != false)
                 {
                     var keyValueAttr = member.GetCustomAttribute<KeyValueAttribute>();
+                    var spawnFlagAttr = member.GetCustomAttribute<SpawnFlagAttribute>();
 
-                    var name = member.Name;
-
-                    if (keyValueAttr != null)
+                    if (keyValueAttr != null && spawnFlagAttr != null)
                     {
-                        name = keyValueAttr.Name;
-                    }
-
-                    if (builder.ContainsKey(name))
-                    {
-                        throw new NotSupportedException("Using the same name for multiple keyvalues is not allowed");
+                        throw new NotSupportedException($"Cannot use both {nameof(KeyValueAttribute)} and {nameof(SpawnFlagAttribute)} on member {type.FullName}.{member.Name}");
                     }
 
                     Type memberType;
@@ -116,24 +112,51 @@ namespace SharpLife.Engine.Entities.Components
                         default: throw new NotSupportedException("Unsupported member type");
                     }
 
-                    var converter = GetConverter(member, memberType, keyValueAttr);
+                    if (spawnFlagAttr != null)
+                    {
+                        if (memberType != typeof(bool))
+                        {
+                            throw new NotSupportedException($"{nameof(SpawnFlagAttribute)} can only be used on boolean members ({type.FullName}.{member.Name})");
+                        }
 
-                    builder.Add(name, new KeyValueMetaData(member, memberType, converter));
+                        if (spawnFlagAttr.Flag == 0 || (spawnFlagAttr.Flag & (spawnFlagAttr.Flag - 1)) != 0)
+                        {
+                            throw new InvalidOperationException($"{nameof(SpawnFlagAttribute)} should be given a flags value with exactly one bit set ({type.FullName}.{member.Name})");
+                        }
+
+                        //For efficient processing add the metadata at the index for the given flag
+                        var spawnFlag = new SpawnFlagMetaData(member, spawnFlagAttr.Flag);
+
+                        var index = (int)Math.Log(spawnFlagAttr.Flag, 2);
+
+                        spawnFlagsBuilder.Add(new SpawnFlagMetaData(member, spawnFlagAttr.Flag));
+                    }
+                    else
+                    {
+                        var name = member.Name;
+
+                        if (keyValueAttr != null)
+                        {
+                            name = keyValueAttr.Name;
+                        }
+
+                        if (keyValueBuilder.ContainsKey(name))
+                        {
+                            throw new NotSupportedException("Using the same name for multiple keyvalues is not allowed");
+                        }
+
+                        var converter = GetConverter(member, memberType, keyValueAttr);
+
+                        keyValueBuilder.Add(name, new KeyValueMetaData(member, memberType, converter));
+                    }
                 }
             }
 
-            ImmutableDictionary<string, KeyValueMetaData> keyValues;
+            var keyValues = keyValueBuilder.Count > 0 ? keyValueBuilder.ToImmutable() : EmptyDictionary;
 
-            if (builder.Count > 0)
-            {
-                keyValues = builder.ToImmutable();
-            }
-            else
-            {
-                keyValues = EmptyDictionary;
-            }
+            var spawnFlags = spawnFlagsBuilder.Count > 0 ? spawnFlagsBuilder.ToImmutable() : EmptyArray;
 
-            return new ComponentMetaData(type, keyValues);
+            return new ComponentMetaData(type, keyValues, spawnFlags);
         }
 
         private IKeyValueConverter GetConverter(MemberInfo member, Type memberType, KeyValueAttribute keyValueAttr)

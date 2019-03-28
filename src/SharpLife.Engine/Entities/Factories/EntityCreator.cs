@@ -15,6 +15,7 @@
 
 using Serilog;
 using SharpLife.Engine.Entities.Components;
+using SharpLife.Engine.Entities.KeyValues.Converters;
 using System;
 using System.Collections.Generic;
 
@@ -117,6 +118,21 @@ namespace SharpLife.Engine.Entities.Factories
                 if (component.MetaData.KeyValues.TryGetValue(keyValue.Key, out var member))
                 {
                     component.MetaData.Accessor[component, member.Member.Name] = member.Converter.FromString(member.MemberType, keyValue.Key, keyValue.Value);
+                }
+
+                //Special handling for spawnflags to remap them to booleans
+                if (keyValue.Key == "spawnflags")
+                {
+                    var spawnFlags = KeyValueUtils.ParseInt(keyValue.Value);
+
+                    foreach (var flag in component.MetaData.SpawnFlags)
+                    {
+                        //All flags are assumed to default to false, so only set to true here
+                        if ((flag.Flag & spawnFlags) != 0)
+                        {
+                            component.MetaData.Accessor[component, flag.Member.Name] = true;
+                        }
+                    }
                 }
             }
 
