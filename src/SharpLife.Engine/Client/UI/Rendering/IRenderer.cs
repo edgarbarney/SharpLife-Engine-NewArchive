@@ -14,11 +14,16 @@
 ****/
 
 using SharpLife.Engine.Client.UI.Rendering.Models;
+using System.Numerics;
 
 namespace SharpLife.Engine.Client.UI.Rendering
 {
     public interface IRenderer
     {
+        Vector3 SkyColor { get; set; }
+
+        Vector3 SkyNormal { get; set; }
+
         IRendererModels Models { get; }
 
         Scene Scene { get; }

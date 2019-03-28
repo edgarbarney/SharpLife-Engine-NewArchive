@@ -28,6 +28,7 @@ using SharpLife.Utility.FileSystem;
 using System;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using Veldrid;
 
 namespace SharpLife.Engine.Client.UI.Rendering
@@ -60,6 +61,18 @@ namespace SharpLife.Engine.Client.UI.Rendering
         private CoordinateAxes _coordinateAxes;
 
         private Skybox2D _skyboxRenderable;
+
+        public Vector3 SkyColor
+        {
+            get => Scene.SkyColor;
+            set => Scene.SkyColor = value;
+        }
+
+        public Vector3 SkyNormal
+        {
+            get => Scene.SkyNormal;
+            set => Scene.SkyNormal = value;
+        }
 
         public IRendererModels Models => _models;
 

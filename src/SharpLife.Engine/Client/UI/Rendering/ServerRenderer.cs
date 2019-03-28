@@ -14,6 +14,7 @@
 ****/
 
 using SharpLife.Engine.Client.UI.Rendering.Models;
+using System.Numerics;
 
 namespace SharpLife.Engine.Client.UI.Rendering
 {
@@ -22,6 +23,11 @@ namespace SharpLife.Engine.Client.UI.Rendering
     /// </summary>
     internal sealed class ServerRenderer : IRenderer
     {
+        //TODO: should throw NotSupportedException
+        public Vector3 SkyColor { get; set; }
+
+        public Vector3 SkyNormal { get; set; }
+
         public IRendererModels Models { get; } = new ServerRendererModels();
 
         public Scene Scene => null;

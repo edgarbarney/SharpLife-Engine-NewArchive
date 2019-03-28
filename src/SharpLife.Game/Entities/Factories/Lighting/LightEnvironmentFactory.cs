@@ -14,7 +14,6 @@
 ****/
 
 using SharpLife.Engine.Entities;
-using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Entities.Factories;
 using System;
 using System.Collections.Generic;
@@ -22,30 +21,24 @@ using System.Collections.Immutable;
 
 namespace SharpLife.Game.Entities.Factories.Lighting
 {
-    /// <summary>
-    /// Non-displayed light.
-    /// Default light value is 300
-    /// Default style is 0
-    /// If targeted, it will toggle between on or off.
-    /// </summary>
-    [LinkEntityToFactory(ClassName = "light")]
-    [LinkEntityToFactory(ClassName = "light_spot")]
-    public class LightFactory : EntityFactory
+    [LinkEntityToFactory(ClassName = "light_environment")]
+    public class LightEnvironmentFactory : LightFactory
     {
         protected override void GetComponentTypes(ImmutableHashSet<Type>.Builder types)
         {
-            types.Add(typeof(Transform));
-            types.Add(typeof(Light));
+            base.GetComponentTypes(types);
+
+            types.Add(typeof(LightEnvironment));
         }
 
         public override bool Initialize(EntityCreator creator, Entity entity, IReadOnlyList<KeyValuePair<string, string>> keyValues)
         {
-            if (!creator.InitializeComponent(entity.GetComponent<Transform>(), keyValues))
+            if (!base.Initialize(creator, entity, keyValues))
             {
                 return false;
             }
 
-            if (!creator.InitializeComponent(entity.GetComponent<Light>(), keyValues))
+            if (!creator.InitializeComponent(entity.GetComponent<LightEnvironment>(), keyValues))
             {
                 return false;
             }
