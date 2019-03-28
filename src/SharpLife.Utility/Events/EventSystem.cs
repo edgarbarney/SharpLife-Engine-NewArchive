@@ -118,10 +118,7 @@ namespace SharpLife.Utility.Events
                 throw new InvalidOperationException("Cannot remove listeners while dispatching");
             }
 
-            if (_events.TryGetValue(name, out var metaData))
-            {
-                metaData.Listeners.Clear();
-            }
+            _events.Remove(name);
         }
 
         /// <summary>
@@ -173,6 +170,11 @@ namespace SharpLife.Utility.Events
                 {
                     metaData.Listeners.RemoveAt(index);
                 }
+
+                if (metaData.Listeners.Count == 0)
+                {
+                    _events.Remove(name);
+                }
             }
         }
 
@@ -208,10 +210,7 @@ namespace SharpLife.Utility.Events
                 throw new InvalidOperationException("Cannot remove listeners while dispatching");
             }
 
-            foreach (var metaData in _events)
-            {
-                metaData.Value.Listeners.Clear();
-            }
+            _events.Clear();
         }
 
         /// <summary>
