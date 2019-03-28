@@ -38,11 +38,11 @@ namespace SharpLife.Engine.GameWorld
 
         private readonly IFileSystem _fileSystem;
 
-        private readonly IRenderer _renderer;
-
         private readonly ModelCreator _modelCreator;
 
         public ILogger Logger { get; }
+
+        public IRenderer Renderer { get; }
 
         public BSPModelUtils BSPUtils { get; }
 
@@ -74,13 +74,13 @@ namespace SharpLife.Engine.GameWorld
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _eventSystem = eventSystem ?? throw new ArgumentNullException(nameof(eventSystem));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-            _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
+            Renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
 
             BSPUtils = new BSPModelUtils(Framework.BSPModelNamePrefix, Framework.Directory.Maps, Framework.Extension.BSP);
 
             EntitySystemMetaData = entitySystemMetaData ?? throw new ArgumentNullException(nameof(entitySystemMetaData));
             _modelCreator = new ModelCreator(logger, fileSystem, modelFormats.Select(p => p.CreateLoader()));
-            RendererModels = _renderer.Models ?? throw new ArgumentNullException(nameof(_renderer.Models));
+            RendererModels = Renderer.Models ?? throw new ArgumentNullException(nameof(Renderer.Models));
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace SharpLife.Engine.GameWorld
         public bool TryLoadMap(string mapName, ITime engineTime, ICommandContext commandContext)
         {
             //TODO: need to make sure the scene can be queried properly
-            var models = new ModelManager(_modelCreator, _renderer.Scene);
+            var models = new ModelManager(_modelCreator, Renderer.Scene);
 
             try
             {
