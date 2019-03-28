@@ -28,7 +28,7 @@ namespace SharpLife.Utility.Events
         /// </summary>
         public bool IsDispatching => _inDispatchCount > 0;
 
-        private readonly Dictionary<string, EventMetaData> _events = new Dictionary<string, EventMetaData>();
+        private readonly Dictionary<string, List<Listener>> _eventListeners = new Dictionary<string, List<Listener>>();
 
         /// <summary>
         /// Keeps track of our nested dispatch count
@@ -37,69 +37,69 @@ namespace SharpLife.Utility.Events
 
         public void AddListener(string name, Listener listener)
         {
-            if (!_events.TryGetValue(name, out var metaData))
+            if (!_eventListeners.TryGetValue(name, out var listeners))
             {
-                metaData = new EventMetaData(name);
+                listeners = new List<Listener>();
 
-                _events.Add(name, metaData);
+                _eventListeners.Add(name, listeners);
             }
 
-            metaData.Listeners.Add(listener);
+            listeners.Add(listener);
         }
 
         public void RemoveListeners(string name)
         {
-            _events.Remove(name);
+            _eventListeners.Remove(name);
         }
 
         public void RemoveListener(Listener listener)
         {
-            foreach (var metaData in _events)
+            foreach (var listeners in _eventListeners)
             {
-                metaData.Value.Listeners.RemoveAll(invoker => ReferenceEquals(invoker, listener));
+                listeners.Value.RemoveAll(invoker => ReferenceEquals(invoker, listener));
             }
         }
 
         public void RemoveListener(string name, Listener listener)
         {
-            if (_events.TryGetValue(name, out var metaData))
+            if (_eventListeners.TryGetValue(name, out var listeners))
             {
-                var index = metaData.Listeners.FindIndex(invoker => invoker.Equals(listener));
+                var index = listeners.FindIndex(invoker => invoker.Equals(listener));
 
                 if (index != -1)
                 {
-                    metaData.Listeners.RemoveAt(index);
+                    listeners.RemoveAt(index);
                 }
 
-                if (metaData.Listeners.Count == 0)
+                if (listeners.Count == 0)
                 {
-                    _events.Remove(name);
+                    _eventListeners.Remove(name);
                 }
             }
         }
 
         public void RemoveListener(object listener)
         {
-            foreach (var metaData in _events)
+            foreach (var listeners in _eventListeners)
             {
-                metaData.Value.Listeners.RemoveAll(delegateListener => delegateListener.Target == listener);
+                listeners.Value.RemoveAll(delegateListener => delegateListener.Target == listener);
             }
         }
 
         public void RemoveAllListeners()
         {
-            _events.Clear();
+            _eventListeners.Clear();
         }
 
         public void DispatchEvent(string name, object data = null)
         {
-            if (_events.TryGetValue(name, out var metaData))
+            if (_eventListeners.TryGetValue(name, out var listeners))
             {
                 ++_inDispatchCount;
 
-                for (var i = 0; i < metaData.Listeners.Count; ++i)
+                for (var i = 0; i < listeners.Count; ++i)
                 {
-                    metaData.Listeners[i].Invoke(name, data);
+                    listeners[i].Invoke(name, data);
                 }
 
                 --_inDispatchCount;
