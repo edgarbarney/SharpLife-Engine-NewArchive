@@ -70,10 +70,35 @@ namespace SharpLife.Engine.Entities.Components
         [ObjectEditorVector3(DisplayFormat = Vector3DisplayFormat.AnglesDegrees)]
         public Vector3 Angles { get; set; }
 
+        //TODO: needs relativebasevelocity?
+        public Vector3 BaseVelocity;
+
+        //TODO: implement
+        public Vector3 RelativeVelocity
+        {
+            get => Velocity;
+            set => Velocity = value;
+        }
+
+        [KeyValue(Name = "velocity")]
+        public Vector3 Velocity;
+
+        [KeyValue(Name = "avelocity")]
+        public Vector3 AngularVelocity { get; set; }
+
         [KeyValue(Name = "scale")]
         public float Scale { get; set; }
 
         public Vector3 ScaleVector => Scale == 0 ? Vector3.One : new Vector3(Scale);
+
+        //TODO: these should probably be isolated to specific components
+        public float Speed;
+
+        public Vector3 MoveDirection;
+
+        public Vector3 ViewOffset;
+
+        public FixAngleMode FixAngle;
 
         public void OnDisable()
         {

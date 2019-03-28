@@ -23,5 +23,10 @@ namespace SharpLife.Engine.Entities.Components
         public const string Activate = nameof(Activate);
         public const string Start = nameof(Start);
         public const string Update = nameof(Update);
+        public const string PhysicsUpdate = nameof(PhysicsUpdate);
+
+        public const string SetAbsBox = nameof(SetAbsBox);
+        public const string Touch = nameof(Touch);
+        public const string Blocked = nameof(Blocked);
     }
 }

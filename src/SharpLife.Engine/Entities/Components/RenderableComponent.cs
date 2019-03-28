@@ -18,7 +18,9 @@ using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Entities.KeyValues;
 using SharpLife.Engine.Models;
 using SharpLife.Engine.ObjectEditor;
+using SharpLife.Engine.Physics;
 using System;
+using System.Numerics;
 
 namespace SharpLife.Engine.Entities.Components
 {
@@ -45,6 +47,20 @@ namespace SharpLife.Engine.Entities.Components
                 EntitySystem.Scene.Logger.Warning("Entity {Entity} Model has wrong format: got {ActualFormat}, expected {ExpectedFormat}",
                     Entity.ToString(), model.GetType().Name, ModelFormat.Name);
                 return false;
+            }
+
+            var collider = Entity.GetComponent<Collider>();
+
+            if (collider != null)
+            {
+                if (model != null)
+                {
+                    collider.SetSize(model.Mins, model.Maxs);
+                }
+                else
+                {
+                    collider.SetSize(Vector3.Zero, Vector3.Zero);
+                }
             }
 
             return true;

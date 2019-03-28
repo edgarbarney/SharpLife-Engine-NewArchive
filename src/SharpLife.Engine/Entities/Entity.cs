@@ -32,6 +32,9 @@ namespace SharpLife.Engine.Entities
 
         public string TargetName { get; set; }
 
+        //TODO: move out of Entity class
+        public EntityFlags Flags { get; set; }
+
         internal Entity(uint id)
         {
             Id = id;

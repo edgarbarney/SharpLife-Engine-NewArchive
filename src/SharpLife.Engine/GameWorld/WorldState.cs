@@ -14,6 +14,7 @@
 ****/
 
 using Serilog;
+using SharpLife.CommandSystem;
 using SharpLife.Engine.Client.UI.Rendering;
 using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Entities;
@@ -22,6 +23,7 @@ using SharpLife.Engine.Models;
 using SharpLife.Engine.Models.BSP;
 using SharpLife.Engine.Models.BSP.FileFormat;
 using SharpLife.FileSystem;
+using SharpLife.Utility;
 using SharpLife.Utility.Events;
 using System;
 using System.Collections.Generic;
@@ -90,7 +92,7 @@ namespace SharpLife.Engine.GameWorld
             return _fileSystem.Exists(BSPUtils.FormatMapFileName(mapName));
         }
 
-        public bool TryLoadMap(string mapName)
+        public bool TryLoadMap(string mapName, ITime engineTime, ICommandContext commandContext)
         {
             //TODO: need to make sure the scene can be queried properly
             var models = new ModelManager(_modelCreator, _renderer?.Scene);
@@ -141,7 +143,7 @@ namespace SharpLife.Engine.GameWorld
                 //Load the fallback model now to ensure that BSP indices are matched up
                 models.LoadFallbackModel(Framework.FallbackModelName);
 
-                Scene = new Entities.Scene(this, EntitySystemMetaData, models);
+                Scene = new Entities.Scene(this, EntitySystemMetaData, models, engineTime, commandContext);
 
                 models = null;
 

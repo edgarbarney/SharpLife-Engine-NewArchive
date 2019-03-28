@@ -107,7 +107,7 @@ namespace SharpLife.Engine.Server
                 (flags & ServerStartFlags.ChangeLevel) != 0,
                 (flags & ServerStartFlags.LoadGame) != 0));
 
-            if (!_engine.World.TryLoadMap(mapName))
+            if (!_engine.World.TryLoadMap(mapName, _engine.EngineTime, CommandContext))
             {
                 return false;
             }

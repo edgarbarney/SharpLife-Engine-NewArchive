@@ -14,10 +14,12 @@
 ****/
 
 using Serilog;
+using SharpLife.CommandSystem;
 using SharpLife.Engine.Entities.Components;
 using SharpLife.Engine.Entities.Factories;
 using SharpLife.Engine.GameWorld;
 using SharpLife.Engine.Models;
+using SharpLife.Engine.Physics;
 using SharpLife.Utility;
 using SharpLife.Utility.Text;
 using System;
@@ -31,6 +33,8 @@ namespace SharpLife.Engine.Entities
     /// </summary>
     public sealed class Scene : IDisposable
     {
+        private readonly ITime _engineTime;
+
         public WorldState WorldState { get; }
 
         public EntitySystemMetaData EntitySystemMetaData { get; }
@@ -45,6 +49,10 @@ namespace SharpLife.Engine.Entities
 
         public EntityList Entities { get; } = new EntityList();
 
+        public GamePhysics Physics { get; }
+
+        public GameMovement Movement { get; }
+
         public bool Running { get; private set; }
 
         public bool Active { get; private set; }
@@ -57,6 +65,9 @@ namespace SharpLife.Engine.Entities
         /// </summary>
         public SnapshotTime Time { get; } = new SnapshotTime();
 
+        //Stored as a Collider because the world must be solid
+        public Collider World { get; private set; }
+
         /// <summary>
         /// Invoked when a scene is activated
         /// </summary>
@@ -67,13 +78,17 @@ namespace SharpLife.Engine.Entities
         /// </summary>
         public event Action<Scene> SceneDeactivated;
 
-        public Scene(WorldState worldState, EntitySystemMetaData entitySystemMetaData, IModelManager modelManager)
+        public Scene(WorldState worldState, EntitySystemMetaData entitySystemMetaData, IModelManager modelManager, ITime engineTime, ICommandContext commandContext)
         {
+            _engineTime = engineTime ?? throw new ArgumentNullException(nameof(engineTime));
+
             WorldState = worldState ?? throw new ArgumentNullException(nameof(worldState));
             EntitySystemMetaData = entitySystemMetaData ?? throw new ArgumentNullException(nameof(entitySystemMetaData));
             EntityCreator = new EntityCreator(this);
             Components = new ComponentSystem(this);
             Models = modelManager ?? throw new ArgumentNullException(nameof(modelManager));
+            Physics = new GamePhysics(WorldState.Logger, this, engineTime, Time, WorldState.MapInfo.Model, commandContext);
+            Movement = new GameMovement(WorldState.Logger, this, engineTime, Time, Random, Physics, commandContext);
         }
 
         internal void Activate()
@@ -129,6 +144,8 @@ namespace SharpLife.Engine.Entities
                 entity.Destroy();
             }
 
+            World = null;
+
             Running = false;
         }
 
@@ -140,6 +157,9 @@ namespace SharpLife.Engine.Entities
             Time.ElapsedTime = (float)currentTime;
 
             Components.Update();
+
+            //TODO: get frametime as parameter
+            Movement.RunPhysics(_engineTime.FrameTime);
         }
 
         public Entity CreateEntity() => Entities.CreateEntity();
@@ -162,6 +182,9 @@ namespace SharpLife.Engine.Entities
                     Logger.Error(e, $"A problem occurred while creating entity {index}");
                 }
             }
+
+            //TODO: maybe verify that this is worldspawn?
+            World = Entities[0].GetComponent<Collider>();
         }
 
         private string GetClassName(List<KeyValuePair<string, string>> block, int index)
