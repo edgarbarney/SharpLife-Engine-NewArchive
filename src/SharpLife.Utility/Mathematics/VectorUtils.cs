@@ -14,6 +14,7 @@
 ****/
 
 using System;
+using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -198,6 +199,11 @@ namespace SharpLife.Utility.Mathematics
             return (Math.Abs(lhs.X - rhs.X) <= EqualEpsilon)
                 && (Math.Abs(lhs.Y - rhs.Y) <= EqualEpsilon)
                 && (Math.Abs(lhs.Z - rhs.Z) <= EqualEpsilon);
+        }
+
+        public static string ToString(in Vector3 vector)
+        {
+            return $"{vector.X.ToString(CultureInfo.InvariantCulture)} {vector.Y.ToString(CultureInfo.InvariantCulture)} {vector.Z.ToString(CultureInfo.InvariantCulture)}";
         }
     }
 }
