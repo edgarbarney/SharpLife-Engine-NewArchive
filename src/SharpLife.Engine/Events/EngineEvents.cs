@@ -13,12 +13,10 @@
 *
 ****/
 
-using SharpLife.Utility.Events;
-using System;
 
 namespace SharpLife.Engine.Events
 {
-    public class EngineEvents : IEventList
+    public static class EngineEvents
     {
         /// <summary>
         /// A new map request has been given
@@ -34,6 +32,11 @@ namespace SharpLife.Engine.Events
         /// Dispatched right before map data starts loading
         /// </summary>
         public const string ServerMapDataStartLoad = nameof(ServerMapDataStartLoad);
+
+        /// <summary>
+        /// <see cref="Events.MapStartedLoading"/>
+        /// </summary>
+        public const string MapStartedLoading = nameof(MapStartedLoading);
 
         /// <summary>
         /// Dispatched right after map data finished loading
@@ -99,31 +102,5 @@ namespace SharpLife.Engine.Events
         /// Dispatched right after the client has finished disconnecting
         /// </summary>
         public const string ClientEndDisconnect = nameof(ClientEndDisconnect);
-
-        public string[] SimpleEvents => new[]
-        {
-            EngineNewMapRequest,
-            EngineStartingServer,
-            ServerMapDataStartLoad,
-            ServerMapDataFinishLoad,
-            ServerMapCRCComputed,
-            ServerMapEntitiesStartLoad,
-            ServerMapEntitiesFinishLoad,
-
-            ServerActivatePreGameActivate,
-            ServerActivatePostGameActivate,
-            ServerActivatePostSteamActivate,
-            ServerActivatePostCreateGenericResources,
-
-            ClientStartConnect,
-            ClientStartDisconnect,
-            ClientDisconnectSent,
-            ClientEndDisconnect,
-        };
-
-        public Type[] EventTypes => new Type[]
-        {
-            typeof(MapStartedLoading),
-        };
     }
 }

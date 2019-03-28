@@ -32,13 +32,13 @@ namespace SharpLife.Utility.Events
         /// <summary>
         /// Event data
         /// </summary>
-        public EventData Data { get; }
+        public object Data { get; }
 
-        public Event(EventSystem eventSystem, string name, EventData data)
+        public Event(EventSystem eventSystem, string name, object data)
         {
             EventSystem = eventSystem ?? throw new ArgumentNullException(nameof(eventSystem));
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            Data = data ?? throw new ArgumentNullException(nameof(data));
+            Data = data;
         }
     }
 }

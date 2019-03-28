@@ -22,14 +22,11 @@ namespace SharpLife.Utility.Events
     {
         public readonly string Name;
 
-        public readonly Type DataType;
-
         public readonly List<Invoker> Listeners = new List<Invoker>();
 
-        public EventMetaData(string name, Type dataType)
+        public EventMetaData(string name)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            DataType = dataType ?? throw new ArgumentNullException(nameof(dataType));
         }
     }
 }

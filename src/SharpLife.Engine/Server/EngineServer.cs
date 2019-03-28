@@ -101,7 +101,7 @@ namespace SharpLife.Engine.Server
             _gameTime.ElapsedTime = _engine.EngineTime.ElapsedTime;
             _gameTime.FrameTime = 0;
 
-            _engine.EventSystem.DispatchEvent(new MapStartedLoading(
+            _engine.EventSystem.DispatchEvent(EngineEvents.MapStartedLoading, new MapStartedLoading(
                 mapName,
                 _engine.World.MapInfo?.Name,
                 (flags & ServerStartFlags.ChangeLevel) != 0,

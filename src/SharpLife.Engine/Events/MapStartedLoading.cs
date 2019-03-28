@@ -13,7 +13,6 @@
 *
 ****/
 
-using SharpLife.Utility.Events;
 using System;
 
 namespace SharpLife.Engine.Events
@@ -21,7 +20,7 @@ namespace SharpLife.Engine.Events
     /// <summary>
     /// The server has started loading a new map
     /// </summary>
-    public class MapStartedLoading : EventData
+    public class MapStartedLoading
     {
         public string MapName { get; }
 

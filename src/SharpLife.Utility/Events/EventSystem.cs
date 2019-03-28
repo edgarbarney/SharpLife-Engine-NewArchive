@@ -48,231 +48,41 @@ namespace SharpLife.Utility.Events
         }
 
         /// <summary>
-        /// Returns whether the given event exists
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public bool HasEvent(string name)
-        {
-            ValidateName(name);
-
-            return _events.ContainsKey(name);
-        }
-
-        private void InternalRegisterEvent(string name, Type dataType)
-        {
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot register events while dispatching");
-            }
-
-            if (HasEvent(name))
-            {
-                throw new ArgumentException($"Event \"{name}\" has already been registered");
-            }
-
-            _events.Add(name, new EventMetaData(name, dataType));
-        }
-
-        /// <summary>
-        /// Registers an event name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="dataType"></param>
-        public void RegisterEvent(string name)
-        {
-            RegisterEvent<EmptyEventData>(name);
-        }
-
-        /// <summary>
-        /// Registers an event name
-        /// </summary>
-        /// <typeparam name="TDataType">Event data type</typeparam>
-        /// <param name="name"></param>
-        public void RegisterEvent<TDataType>(string name) where TDataType : EventData
-        {
-            ValidateName(name);
-
-            InternalRegisterEvent(name, typeof(TDataType));
-        }
-
-        /// <summary>
-        /// Registers an event name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="dataType"></param>
-        public void RegisterEvent(string name, Type dataType)
-        {
-            ValidateName(name);
-
-            if (dataType == null)
-            {
-                throw new ArgumentNullException(nameof(dataType));
-            }
-
-            if (!typeof(EventData).IsAssignableFrom(dataType))
-            {
-                throw new InvalidOperationException($"Event \"{name}\" has data type {dataType.FullName}\", not compatible with data type \"{typeof(EventData).FullName}\"");
-            }
-
-            InternalRegisterEvent(name, dataType);
-        }
-
-        /// <summary>
-        /// Unregisters an event
-        /// Also removes all listeners for the event
-        /// </summary>
-        /// <param name="name"></param>
-        public void UnregisterEvent(string name)
-        {
-            ValidateName(name);
-
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot unregister events while dispatching");
-            }
-
-            _events.Remove(name);
-        }
-
-        /// <summary>
         /// Adds a listener for a specific event
         /// </summary>
         /// <param name="name"></param>
         /// <param name="listener"></param>
         public void AddListener(string name, Delegates.Listener listener)
         {
-            AddListener<EmptyEventData>(name, listener);
-        }
+            ValidateName(name);
 
-        private void InternalAddListener<TDataType>(string name, Invoker invoker) where TDataType : EventData
-        {
+            if (listener == null)
+            {
+                throw new ArgumentNullException(nameof(listener));
+            }
+
+            if (IsDispatching)
+            {
+                throw new InvalidOperationException("Cannot add listeners while dispatching");
+            }
+
             if (!_events.TryGetValue(name, out var metaData))
             {
-                throw new InvalidOperationException($"Event \"{name}\" has not been registered");
+                metaData = new EventMetaData(name);
+
+                _events.Add(name, metaData);
             }
 
-            var dataType = typeof(TDataType);
-
-            if (!metaData.DataType.IsAssignableFrom(dataType))
-            {
-                throw new InvalidOperationException($"Event \"{name}\" has data type {metaData.DataType.FullName}\", not compatible with data type \"{dataType.FullName}\"");
-            }
-
-            metaData.Listeners.Add(invoker);
-        }
-
-        /// <summary>
-        /// Adds a listener for a specific event
-        /// </summary>
-        /// <typeparam name="TDataType">Event data type</typeparam>
-        /// <param name="name"></param>
-        /// <param name="listener"></param>
-        public void AddListener<TDataType>(string name, Delegates.Listener listener) where TDataType : EventData
-        {
-            ValidateName(name);
-
-            if (listener == null)
-            {
-                throw new ArgumentNullException(nameof(listener));
-            }
-
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot add listeners while dispatching");
-            }
-
-            InternalAddListener<TDataType>(name, new PlainInvoker(listener));
-        }
-
-        /// <summary>
-        /// Adds a listener for a specific event
-        /// The event name is inferred from the type
-        /// </summary>
-        /// <typeparam name="TDataType">Event data type</typeparam>
-        /// <param name="listener"></param>
-        public void AddListener<TDataType>(Delegates.Listener listener) where TDataType : EventData
-        {
-            if (listener == null)
-            {
-                throw new ArgumentNullException(nameof(listener));
-            }
-
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot add listeners while dispatching");
-            }
-
-            var name = EventUtils.EventName<TDataType>();
-
-            InternalAddListener<TDataType>(name, new PlainInvoker(listener));
-        }
-
-        /// <summary>
-        /// Adds a listener for a specific event, taking the data as a separate argument
-        /// </summary>
-        /// <typeparam name="TDataType"></typeparam>
-        /// <param name="name"></param>
-        /// <param name="listener"></param>
-        public void AddListener<TDataType>(string name, Delegates.DataListener<TDataType> listener) where TDataType : EventData
-        {
-            ValidateName(name);
-
-            if (listener == null)
-            {
-                throw new ArgumentNullException(nameof(listener));
-            }
-
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot add listeners while dispatching");
-            }
-
-            InternalAddListener<TDataType>(name, new DataInvoker<TDataType>(listener));
+            metaData.Listeners.Add(new PlainInvoker(listener));
         }
 
         /// <summary>
         /// Adds a listener to multiple events
-        /// <seealso cref="M:SharpLife.Utility.Events.IEventSystem.AddListener(System.String,SharpLife.Utility.Events.Delegates.Listener)" />
+        /// <seealso cref="AddListener(string, Delegates.Listener)"/>
         /// </summary>
         /// <param name="names">List of names</param>
         /// <param name="listener"></param>
         public void AddListeners(string[] names, Delegates.Listener listener)
-        {
-            AddListeners<EmptyEventData>(names, listener);
-        }
-
-        /// <summary>
-        /// Adds a listener for a specific event, taking the data as a separate argument
-        /// The event name is inferred from the type
-        /// </summary>
-        /// <typeparam name="TDataType"></typeparam>
-        /// <param name="listener"></param>
-        public void AddListener<TDataType>(Delegates.DataListener<TDataType> listener) where TDataType : EventData
-        {
-            if (listener == null)
-            {
-                throw new ArgumentNullException(nameof(listener));
-            }
-
-            if (IsDispatching)
-            {
-                throw new InvalidOperationException("Cannot add listeners while dispatching");
-            }
-
-            var name = EventUtils.EventName<TDataType>();
-
-            InternalAddListener<TDataType>(name, new DataInvoker<TDataType>(listener));
-        }
-
-        /// <summary>
-        /// Adds a listener to multiple events
-        /// <seealso cref="M:SharpLife.Utility.Events.IEventSystem.AddListener(System.String,SharpLife.Utility.Events.Delegates.Listener)" />
-        /// </summary>
-        /// <typeparam name="TDataType">Event data type</typeparam>
-        /// <param name="names">List of names</param>
-        /// <param name="listener"></param>
-        public void AddListeners<TDataType>(string[] names, Delegates.Listener listener) where TDataType : EventData
         {
             if (names == null)
             {
@@ -291,7 +101,7 @@ namespace SharpLife.Utility.Events
 
             foreach (var name in names)
             {
-                AddListener<TDataType>(name, listener);
+                AddListener(name, listener);
             }
         }
 
@@ -406,16 +216,14 @@ namespace SharpLife.Utility.Events
 
         /// <summary>
         /// Dispatches an event to all listeners of that event
-        /// An instance of <see cref="EmptyEventData" /> is provided as data
         /// </summary>
         /// <param name="name"></param>
-        public void DispatchEvent(string name)
+        /// <param name="data">Data to provide to listeners</param>
+        /// <exception cref="ArgumentNullException">If name is null</exception>
+        public void DispatchEvent(string name, object data = null)
         {
-            DispatchEvent(name, EmptyEventData.Instance);
-        }
+            ValidateName(name);
 
-        private void InternalDispatchEvent<TDataType>(string name, TDataType data) where TDataType : EventData
-        {
             if (_events.TryGetValue(name, out var metaData))
             {
                 var @event = new Event(this, name, data);
@@ -437,44 +245,6 @@ namespace SharpLife.Utility.Events
                     _postDispatchCallbacks.Capacity = 0;
                 }
             }
-        }
-
-        /// <summary>
-        /// Dispatches an event to all listeners of that event
-        /// </summary>
-        /// <typeparam name="TDataType">Event data type</typeparam>
-        /// <param name="name"></param>
-        /// <param name="data">Data to provide to listeners</param>
-        /// <exception cref="ArgumentNullException">If name or data are null</exception>
-        public void DispatchEvent<TDataType>(string name, TDataType data) where TDataType : EventData
-        {
-            ValidateName(name);
-
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            InternalDispatchEvent(name, data);
-        }
-
-        /// <summary>
-        /// Dispatches an event to all listeners of that event
-        /// The event name is inferred from the data type
-        /// </summary>
-        /// <typeparam name="TDataType">Event data type</typeparam>
-        /// <param name="data">Data to provide to listeners</param>
-        /// <exception cref="ArgumentNullException">If name or data are null</exception>
-        public void DispatchEvent<TDataType>(TDataType data) where TDataType : EventData
-        {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            var name = EventUtils.EventName<TDataType>();
-
-            InternalDispatchEvent(name, data);
         }
 
         /// <summary>

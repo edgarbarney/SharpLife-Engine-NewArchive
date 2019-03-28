@@ -195,8 +195,6 @@ namespace SharpLife.Engine.Host
 
             _engineTimeStopwatch.Start();
 
-            EventUtils.RegisterEvents(EventSystem, new EngineEvents());
-
             EngineContext.AddStuffCmds(Logger, CommandLine);
             EngineContext.AddExec(Logger, FileSystem, ExecPathIDs);
             EngineContext.AddEcho(Logger);
@@ -301,8 +299,6 @@ namespace SharpLife.Engine.Host
             Server.Shutdown();
 
             Client?.Shutdown();
-
-            EventUtils.UnregisterEvents(EventSystem, new EngineEvents());
 
             EngineContext.Dispose();
             CommandSystem.Dispose();
