@@ -22,7 +22,7 @@ namespace SharpLife.Utility.Events
     {
         public readonly string Name;
 
-        public readonly List<Invoker> Listeners = new List<Invoker>();
+        public readonly List<Delegates.Listener> Listeners = new List<Delegates.Listener>();
 
         public EventMetaData(string name)
         {

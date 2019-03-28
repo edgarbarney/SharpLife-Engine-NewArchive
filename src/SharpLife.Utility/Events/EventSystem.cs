@@ -73,7 +73,7 @@ namespace SharpLife.Utility.Events
                 _events.Add(name, metaData);
             }
 
-            metaData.Listeners.Add(new PlainInvoker(listener));
+            metaData.Listeners.Add(listener);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace SharpLife.Utility.Events
 
             if (_events.TryGetValue(name, out var metaData))
             {
-                var index = metaData.Listeners.FindIndex(invoker => invoker.Delegate.Equals(listener));
+                var index = metaData.Listeners.FindIndex(invoker => invoker.Equals(listener));
 
                 if (index != -1)
                 {
