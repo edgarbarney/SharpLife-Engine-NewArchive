@@ -40,7 +40,7 @@ namespace SharpLife.Engine.Server
 
         public ICommandContext CommandContext { get; }
 
-        public IEventSystem EventSystem => _engine.EventSystem;
+        public EventSystem EventSystem => _engine.EventSystem;
 
         public bool Active { get; private set; }
 

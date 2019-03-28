@@ -18,8 +18,16 @@ using System.Collections.Generic;
 
 namespace SharpLife.Utility.Events
 {
-    public class EventSystem : IEventSystem
+    /// <summary>
+    /// The event system allows named events to be dispatched to listeners that want to know about them
+    /// Events can contain data, represented as classes inheriting from a base event data class
+    /// Listeners cannot be added or removed while an event dispatch is ongoing, they will be queued up and processed after the dispatch
+    /// </summary>
+    public class EventSystem
     {
+        /// <summary>
+        /// Indicates whether the event system is currently dispatching events
+        /// </summary>
         public bool IsDispatching => _inDispatchCount > 0;
 
         private readonly Dictionary<string, EventMetaData> _events = new Dictionary<string, EventMetaData>();
@@ -39,6 +47,11 @@ namespace SharpLife.Utility.Events
             }
         }
 
+        /// <summary>
+        /// Returns whether the given event exists
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool HasEvent(string name)
         {
             ValidateName(name);
@@ -61,11 +74,21 @@ namespace SharpLife.Utility.Events
             _events.Add(name, new EventMetaData(name, dataType));
         }
 
+        /// <summary>
+        /// Registers an event name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="dataType"></param>
         public void RegisterEvent(string name)
         {
             RegisterEvent<EmptyEventData>(name);
         }
 
+        /// <summary>
+        /// Registers an event name
+        /// </summary>
+        /// <typeparam name="TDataType">Event data type</typeparam>
+        /// <param name="name"></param>
         public void RegisterEvent<TDataType>(string name) where TDataType : EventData
         {
             ValidateName(name);
@@ -73,6 +96,11 @@ namespace SharpLife.Utility.Events
             InternalRegisterEvent(name, typeof(TDataType));
         }
 
+        /// <summary>
+        /// Registers an event name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="dataType"></param>
         public void RegisterEvent(string name, Type dataType)
         {
             ValidateName(name);
@@ -90,6 +118,11 @@ namespace SharpLife.Utility.Events
             InternalRegisterEvent(name, dataType);
         }
 
+        /// <summary>
+        /// Unregisters an event
+        /// Also removes all listeners for the event
+        /// </summary>
+        /// <param name="name"></param>
         public void UnregisterEvent(string name)
         {
             ValidateName(name);
@@ -102,6 +135,11 @@ namespace SharpLife.Utility.Events
             _events.Remove(name);
         }
 
+        /// <summary>
+        /// Adds a listener for a specific event
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="listener"></param>
         public void AddListener(string name, Delegates.Listener listener)
         {
             AddListener<EmptyEventData>(name, listener);
@@ -124,6 +162,12 @@ namespace SharpLife.Utility.Events
             metaData.Listeners.Add(invoker);
         }
 
+        /// <summary>
+        /// Adds a listener for a specific event
+        /// </summary>
+        /// <typeparam name="TDataType">Event data type</typeparam>
+        /// <param name="name"></param>
+        /// <param name="listener"></param>
         public void AddListener<TDataType>(string name, Delegates.Listener listener) where TDataType : EventData
         {
             ValidateName(name);
@@ -141,6 +185,12 @@ namespace SharpLife.Utility.Events
             InternalAddListener<TDataType>(name, new PlainInvoker(listener));
         }
 
+        /// <summary>
+        /// Adds a listener for a specific event
+        /// The event name is inferred from the type
+        /// </summary>
+        /// <typeparam name="TDataType">Event data type</typeparam>
+        /// <param name="listener"></param>
         public void AddListener<TDataType>(Delegates.Listener listener) where TDataType : EventData
         {
             if (listener == null)
@@ -158,6 +208,12 @@ namespace SharpLife.Utility.Events
             InternalAddListener<TDataType>(name, new PlainInvoker(listener));
         }
 
+        /// <summary>
+        /// Adds a listener for a specific event, taking the data as a separate argument
+        /// </summary>
+        /// <typeparam name="TDataType"></typeparam>
+        /// <param name="name"></param>
+        /// <param name="listener"></param>
         public void AddListener<TDataType>(string name, Delegates.DataListener<TDataType> listener) where TDataType : EventData
         {
             ValidateName(name);
@@ -175,11 +231,23 @@ namespace SharpLife.Utility.Events
             InternalAddListener<TDataType>(name, new DataInvoker<TDataType>(listener));
         }
 
+        /// <summary>
+        /// Adds a listener to multiple events
+        /// <seealso cref="M:SharpLife.Utility.Events.IEventSystem.AddListener(System.String,SharpLife.Utility.Events.Delegates.Listener)" />
+        /// </summary>
+        /// <param name="names">List of names</param>
+        /// <param name="listener"></param>
         public void AddListeners(string[] names, Delegates.Listener listener)
         {
             AddListeners<EmptyEventData>(names, listener);
         }
 
+        /// <summary>
+        /// Adds a listener for a specific event, taking the data as a separate argument
+        /// The event name is inferred from the type
+        /// </summary>
+        /// <typeparam name="TDataType"></typeparam>
+        /// <param name="listener"></param>
         public void AddListener<TDataType>(Delegates.DataListener<TDataType> listener) where TDataType : EventData
         {
             if (listener == null)
@@ -197,6 +265,13 @@ namespace SharpLife.Utility.Events
             InternalAddListener<TDataType>(name, new DataInvoker<TDataType>(listener));
         }
 
+        /// <summary>
+        /// Adds a listener to multiple events
+        /// <seealso cref="M:SharpLife.Utility.Events.IEventSystem.AddListener(System.String,SharpLife.Utility.Events.Delegates.Listener)" />
+        /// </summary>
+        /// <typeparam name="TDataType">Event data type</typeparam>
+        /// <param name="names">List of names</param>
+        /// <param name="listener"></param>
         public void AddListeners<TDataType>(string[] names, Delegates.Listener listener) where TDataType : EventData
         {
             if (names == null)
@@ -220,6 +295,10 @@ namespace SharpLife.Utility.Events
             }
         }
 
+        /// <summary>
+        /// Removes all listeners of a specific event
+        /// </summary>
+        /// <param name="name"></param>
         public void RemoveListeners(string name)
         {
             ValidateName(name);
@@ -235,6 +314,10 @@ namespace SharpLife.Utility.Events
             }
         }
 
+        /// <summary>
+        /// Removes a listener by delegate
+        /// </summary>
+        /// <param name="listener"></param>
         public void RemoveListener(Delegates.Listener listener)
         {
             if (listener == null)
@@ -253,6 +336,11 @@ namespace SharpLife.Utility.Events
             }
         }
 
+        /// <summary>
+        /// Removes a listener from a specific event
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="listener"></param>
         public void RemoveListener(string name, Delegates.Listener listener)
         {
             ValidateName(name);
@@ -278,6 +366,10 @@ namespace SharpLife.Utility.Events
             }
         }
 
+        /// <summary>
+        /// Removes the given listener from all events that is it listening to
+        /// </summary>
+        /// <param name="listener"></param>
         public void RemoveListener(object listener)
         {
             if (listener == null)
@@ -296,6 +388,9 @@ namespace SharpLife.Utility.Events
             }
         }
 
+        /// <summary>
+        /// Removes all listeners
+        /// </summary>
         public void RemoveAllListeners()
         {
             if (IsDispatching)
@@ -309,6 +404,11 @@ namespace SharpLife.Utility.Events
             }
         }
 
+        /// <summary>
+        /// Dispatches an event to all listeners of that event
+        /// An instance of <see cref="EmptyEventData" /> is provided as data
+        /// </summary>
+        /// <param name="name"></param>
         public void DispatchEvent(string name)
         {
             DispatchEvent(name, EmptyEventData.Instance);
@@ -339,6 +439,13 @@ namespace SharpLife.Utility.Events
             }
         }
 
+        /// <summary>
+        /// Dispatches an event to all listeners of that event
+        /// </summary>
+        /// <typeparam name="TDataType">Event data type</typeparam>
+        /// <param name="name"></param>
+        /// <param name="data">Data to provide to listeners</param>
+        /// <exception cref="ArgumentNullException">If name or data are null</exception>
         public void DispatchEvent<TDataType>(string name, TDataType data) where TDataType : EventData
         {
             ValidateName(name);
@@ -351,6 +458,13 @@ namespace SharpLife.Utility.Events
             InternalDispatchEvent(name, data);
         }
 
+        /// <summary>
+        /// Dispatches an event to all listeners of that event
+        /// The event name is inferred from the data type
+        /// </summary>
+        /// <typeparam name="TDataType">Event data type</typeparam>
+        /// <param name="data">Data to provide to listeners</param>
+        /// <exception cref="ArgumentNullException">If name or data are null</exception>
         public void DispatchEvent<TDataType>(TDataType data) where TDataType : EventData
         {
             if (data == null)
@@ -363,6 +477,12 @@ namespace SharpLife.Utility.Events
             InternalDispatchEvent(name, data);
         }
 
+        /// <summary>
+        /// Adds a post dispatch callback
+        /// Use this when adding or removing listeners or events while in an event dispatch
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <exception cref="InvalidOperationException">If a callback is added while not in an event dispatch</exception>
         public void AddPostDispatchCallback(Delegates.PostDispatchCallback callback)
         {
             if (callback == null)

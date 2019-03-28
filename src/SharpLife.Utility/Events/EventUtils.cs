@@ -64,7 +64,7 @@ namespace SharpLife.Utility.Events
         /// </summary>
         /// <param name="eventSystem"></param>
         /// <param name="eventList"></param>
-        public static void RegisterEvents(IEventSystem eventSystem, IEventList eventList)
+        public static void RegisterEvents(EventSystem eventSystem, IEventList eventList)
         {
             if (eventSystem == null)
             {
@@ -92,7 +92,7 @@ namespace SharpLife.Utility.Events
         /// </summary>
         /// <param name="eventSystem"></param>
         /// <param name="eventList"></param>
-        public static void UnregisterEvents(IEventSystem eventSystem, IEventList eventList)
+        public static void UnregisterEvents(EventSystem eventSystem, IEventList eventList)
         {
             if (eventSystem == null)
             {

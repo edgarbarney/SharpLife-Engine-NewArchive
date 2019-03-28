@@ -107,7 +107,7 @@ namespace SharpLife.Engine.Host
         /// <summary>
         /// The engine wide event system
         /// </summary>
-        public IEventSystem EventSystem { get; } = new EventSystem();
+        public EventSystem EventSystem { get; } = new EventSystem();
 
         public PluginManager PluginManager { get; }
 

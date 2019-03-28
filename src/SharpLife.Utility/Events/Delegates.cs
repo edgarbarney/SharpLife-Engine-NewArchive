@@ -21,6 +21,6 @@ namespace SharpLife.Utility.Events
 
         public delegate void DataListener<TDataType>(in Event @event, TDataType data);
 
-        public delegate void PostDispatchCallback(IEventSystem eventSystem);
+        public delegate void PostDispatchCallback(EventSystem eventSystem);
     }
 }

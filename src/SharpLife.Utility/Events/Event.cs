@@ -22,7 +22,7 @@ namespace SharpLife.Utility.Events
         /// <summary>
         /// The event system that dispatched this event
         /// </summary>
-        public IEventSystem EventSystem { get; }
+        public EventSystem EventSystem { get; }
 
         /// <summary>
         /// Event name
@@ -34,7 +34,7 @@ namespace SharpLife.Utility.Events
         /// </summary>
         public EventData Data { get; }
 
-        public Event(IEventSystem eventSystem, string name, EventData data)
+        public Event(EventSystem eventSystem, string name, EventData data)
         {
             EventSystem = eventSystem ?? throw new ArgumentNullException(nameof(eventSystem));
             Name = name ?? throw new ArgumentNullException(nameof(name));
