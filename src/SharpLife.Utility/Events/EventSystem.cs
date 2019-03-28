@@ -29,11 +29,6 @@ namespace SharpLife.Utility.Events
 
         private IEventSystem _internalEventSystem;
 
-        /// <summary>
-        /// Indicates whether the event system is currently dispatching events
-        /// </summary>
-        private bool IsDispatching => _internalEventSystem == _queuedEventSystem;
-
         public EventSystem()
         {
             _internalEventSystem = _directEventSystem;
@@ -107,8 +102,11 @@ namespace SharpLife.Utility.Events
         {
             ValidateName(name);
 
+            //The fast path here is the direct system being used all the time, and the queued system never seeing action
+            //Only rarely will the event system be used while an event is being dispatched, so this should be pretty efficient
+
             //if we're already dispatching an event, queue this up for later
-            if (IsDispatching)
+            if (_internalEventSystem == _queuedEventSystem)
             {
                 _internalEventSystem.DispatchEvent(name, data);
             }
