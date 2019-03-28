@@ -95,7 +95,7 @@ namespace SharpLife.Engine.GameWorld
         public bool TryLoadMap(string mapName, ITime engineTime, ICommandContext commandContext)
         {
             //TODO: need to make sure the scene can be queried properly
-            var models = new ModelManager(_modelCreator, _renderer?.Scene);
+            var models = new ModelManager(_modelCreator, _renderer.Scene);
 
             try
             {
