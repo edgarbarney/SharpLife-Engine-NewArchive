@@ -14,13 +14,37 @@ namespace Wrapper
 {
 namespace Log
 {
-const std::string LOG_FILENAME{ "logs/SharpLifeWrapper-Native.log" };
+const std::string LOG_BASE_DIRECTORY{ "logs" };
+const std::string LOG_FILENAME{ "SharpLifeWrapper-Native.log" };
 
+std::string LOG_BASE_PATH;
 std::string LOG_FILE_PATH;
 
 static void LogToFile( const char* pszFormat, va_list list )
 {
 	assert( !LOG_FILE_PATH.empty() );
+#
+	if( !LOG_BASE_PATH.empty() )
+	{
+		//Ensure all directories have been created
+		std::error_code error;
+		std::filesystem::create_directories( LOG_BASE_PATH, error );
+
+		//If an error occurs while creating the directory hierarchy fall back to logging to the game directory
+		//if( error )
+		{
+			const auto basePath{ std::move( LOG_BASE_PATH ) };
+			//Prevents infinite recursion and constant attempts to create directories
+			LOG_BASE_PATH.clear();
+
+			auto gameDir = std::filesystem::path{ basePath }.parent_path();
+			
+			LOG_FILE_PATH = ( gameDir / LOG_FILENAME ).u8string();
+			LOG_FILE_PATH.shrink_to_fit();
+
+			Message( "Couldn't create directory hierarchy \"%s\" for log output", basePath.c_str() );
+		}
+	}
 
 	if( std::ofstream file{ LOG_FILE_PATH, std::ofstream::app }; file )
 	{
@@ -96,7 +120,11 @@ void SetDebugLoggingEnabled( bool bEnable )
 void SetGameDirectory( const std::string_view& szGameDir )
 {
 	//Convert to string to avoid any additional memory usage in specific path implementations
-	LOG_FILE_PATH = ( std::filesystem::path( szGameDir ) / LOG_FILENAME ).string();
+	const auto logPath = std::filesystem::path( szGameDir ) / LOG_BASE_DIRECTORY;
+
+	LOG_BASE_PATH = logPath.u8string();
+	LOG_BASE_PATH.shrink_to_fit();
+	LOG_FILE_PATH = ( logPath / LOG_FILENAME ).string();
 	LOG_FILE_PATH.shrink_to_fit();
 }
 }
