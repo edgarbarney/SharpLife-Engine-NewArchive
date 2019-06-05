@@ -31,7 +31,7 @@ static void LogToFile( const char* pszFormat, va_list list )
 		std::filesystem::create_directories( LOG_BASE_PATH, error );
 
 		//If an error occurs while creating the directory hierarchy fall back to logging to the game directory
-		//if( error )
+		if( error )
 		{
 			const auto basePath{ std::move( LOG_BASE_PATH ) };
 			//Prevents infinite recursion and constant attempts to create directories
