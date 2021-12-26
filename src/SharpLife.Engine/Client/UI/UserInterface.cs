@@ -22,6 +22,9 @@ using SharpLife.FileSystem;
 using SharpLife.Input;
 using SharpLife.Utility;
 using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using Veldrid;
 
 namespace SharpLife.Engine.Client.UI
 {
@@ -65,11 +68,49 @@ namespace SharpLife.Engine.Client.UI
 
             SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING);
 
+            RenderDoc renderDoc = null;
+
+            if (client.Engine.EngineConfiguration.EnableRenderDoc)
+            {
+                string renderDocLibName;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    renderDocLibName = "renderdoc.dll";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    renderDocLibName = "renderdoc.dylib";
+                }
+                else
+                {
+                    renderDocLibName = "renderdoc.so";
+                }
+
+                var renderDocLibPath = Path.Combine(client.Engine.GameDirectory, "assemblies", renderDocLibName);
+
+                if (RenderDoc.Load(renderDocLibPath, out renderDoc))
+                {
+                    renderDoc.AllowFullscreen = true;
+                    renderDoc.AllowVSync = true;
+                    renderDoc.APIValidation = true;
+                    renderDoc.CaptureAllCmdLists = true;
+                    renderDoc.CaptureCallstacks = true;
+                    renderDoc.OverlayEnabled = true;
+                    renderDoc.RefAllResources = true;
+                    renderDoc.VerifyBufferAccess = true;
+
+                    renderDoc.SetCaptureSavePath(Path.Combine(client.Engine.GameDirectory, "renderdoc", "captures"));
+
+                    //commandContext.RegisterCommand(new CommandInfo("renderdoc_captureframe", CaptureRenderDocFrame));
+                }
+            }
+
             Window = new Window(_logger, _fileSystem, windowTitle, additionalFlags);
 
             Window.Center();
 
-            Renderer = new Renderer(logger, engineTime, commandContext, fileSystem, this, client, startupState, Framework.Path.Shaders);
+            Renderer = new Renderer(logger, engineTime, commandContext, fileSystem, this, client, startupState, renderDoc, Framework.Path.Shaders);
         }
 
         /// <summary>

@@ -15,6 +15,7 @@
 
 using Serilog;
 using SharpLife.CommandSystem;
+using SharpLife.CommandSystem.Commands;
 using SharpLife.Engine.Client.UI.Rendering.Models;
 using SharpLife.Engine.Client.UI.Rendering.Objects;
 using SharpLife.Engine.FileFormats.WAD;
@@ -43,6 +44,8 @@ namespace SharpLife.Engine.Client.UI.Rendering
         private readonly ITime _engineTime;
 
         private readonly IFileSystem _fileSystem;
+
+        private readonly RenderDoc _renderDoc;
 
         private readonly GraphicsDevice _gd;
 
@@ -88,6 +91,7 @@ namespace SharpLife.Engine.Client.UI.Rendering
             UserInterface userInterface,
             EngineClient client,
             EngineStartupState startupState,
+            RenderDoc renderDoc,
             string shadersDirectory)
         {
             if (client == null)
@@ -98,11 +102,48 @@ namespace SharpLife.Engine.Client.UI.Rendering
             _userInterface = userInterface ?? throw new ArgumentNullException(nameof(userInterface));
             _engineTime = engineTime ?? throw new ArgumentNullException(nameof(engineTime));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            _renderDoc = renderDoc;
+
+            /*
+            if (client.Engine.EngineConfiguration.EnableRenderDoc)
+            {
+                string renderDocLibName;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    renderDocLibName = "renderdoc.dll";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    renderDocLibName = "renderdoc.dylib";
+                }
+                else
+                {
+                    renderDocLibName = "renderdoc.so";
+                }
+
+                var renderDocLibPath = Path.Combine(client.Engine.GameDirectory, "assemblies", renderDocLibName);
+
+                if (RenderDoc.Load(renderDocLibPath, out _renderDoc))
+                {
+                    _renderDoc.AllowFullscreen = true;
+                    _renderDoc.AllowVSync = true;
+                    _renderDoc.APIValidation = true;
+                    _renderDoc.CaptureAllCmdLists = true;
+                    _renderDoc.CaptureCallstacks = true;
+                    _renderDoc.OverlayEnabled = true;
+                    _renderDoc.RefAllResources = true;
+                    _renderDoc.VerifyBufferAccess = true;
+
+                    _renderDoc.SetCaptureSavePath(Path.Combine(client.Engine.GameDirectory, "renderdoc", "captures"));
+
+                    commandContext.RegisterCommand(new CommandInfo("renderdoc_captureframe", CaptureRenderDocFrame));
+                }
+            }
+            */
 
             //Configure Veldrid graphics device
-            //Don't use a swap chain depth format, it won't render anything on Vulkan
-            //It isn't needed right now so it should be disabled for the time being
-            var options = new GraphicsDeviceOptions(false, null/*PixelFormat.R8_G8_B8_A8_UNorm*/, false, ResourceBindingModel.Improved, true, true);
+            var options = new GraphicsDeviceOptions(false, PixelFormat.D24_UNorm_S8_UInt, false, ResourceBindingModel.Improved, true, true);
 
             _gd = GraphicsDeviceUtils.CreateGraphicsDevice(logger, _userInterface.Window, options, GraphicsBackend.OpenGL);
 
@@ -276,6 +317,11 @@ namespace SharpLife.Engine.Client.UI.Rendering
             _sc.MapResourceCache.DestroyAllDeviceObjects();
 
             Scene.WorldModel = null;
+        }
+
+        private void CaptureRenderDocFrame(ICommandArgs args)
+        {
+            _renderDoc.TriggerCapture();
         }
     }
 }

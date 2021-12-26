@@ -48,6 +48,11 @@ namespace SharpLife.Engine.Configuration
         public bool EnableAddonsFolder { get; set; }
 
         /// <summary>
+        /// Whether to enable RenderDoc debugging
+        /// </summary>
+        public bool EnableRenderDoc { get; set; }
+
+        /// <summary>
         /// The engine's logging configuration
         /// </summary>
         public LoggingConfiguration LoggingConfiguration { get; set; }

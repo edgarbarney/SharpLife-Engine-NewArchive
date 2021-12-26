@@ -36,8 +36,8 @@ namespace SharpLife.Engine.Client.UI.Rendering
         private Matrix4x4 _viewMatrix;
         private Matrix4x4 _projectionMatrix;
 
-        private Vector3 _position = new Vector3(0, 3, 0);
-        private Vector3 _lookDirection = new Vector3(0, -.3f, -1f);
+        private Vector3 _position = new Vector3(0, 0, 0);
+        private Vector3 _lookDirection = new Vector3(0, 0, 0);
         private float _moveSpeed = 1000.0f;
 
         private float _yaw;
