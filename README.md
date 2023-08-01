@@ -2,6 +2,25 @@
 
 This contains the C# based version of the Half-Life 1 engine, derived from the Half-Life 1 SDK source code releases.
 
+This was an experiment to build a game engine that runs as a mod on top of the Half-Life 1 engine, developed between 2018 and 2019.
+
+The basic principle is that since the engine is almost entirely single-threaded it is possible to run an entire engine while the original engine is still starting up.
+
+This new engine is written in C# to address the difficulty involved with learning C++ (and C as well due to how SDK code is structured) which is a major stumbling block for most modders.
+
+This experiment ultimately proved to be a failure due to the size of game engines, the complexity involved with building one and the need to replicate some original engine functionality exactly (e.g. physics) to make game logic work as in the original game.
+
+Without the original source code and the ability to run it separately making an updated version is not viable.
+
+Additionally some of the workarounds needed to run C# code in conjunction with the original engine caused problems that may be impossible to work around on some platforms.
+
+Half-Life 1's SDL2 library uses a Windows-specific thread naming mechanism (an exception) that causes the C# managed debugger to shut down the entire process if it occurs.
+
+This project worked around that by shutting down the original SDL2 library and loading a second, newer version that has the option to disable this feature but loading two versions of the same library can cause problems.
+In SDL2's case process-global state had to be changed to avoid conflicts on Windows. On Linux runtime linker behavior may cause malfunctions as well but this was not tested.
+
+This project's source code is available as an example. It contains some useful features like a partial renderer built using Veldrid and OpenGL shaders but it is not recommended to use this as a base.
+
 Half Life 1 SDK LICENSE
 ======================
 
