@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<EngineConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<DefaultGame>valve</DefaultGame>
+	<DefaultGameName>Half-Life</DefaultGameName>
+	<GameName>SharpLife Test</GameName>
+	<EnableHDModels>true</EnableHDModels>
+	<EnableAddonsFolder>false</EnableAddonsFolder>
+	<EnableRenderDoc>true</EnableRenderDoc>
+	
+	<LoggingConfiguration>
+		<RetainedFileCountLimit>8</RetainedFileCountLimit>
+		<LogFormat>Text</LogFormat>
+	</LoggingConfiguration>
+	<GameAssemblies>
+		<GameAssembly>
+			<AssemblyName>assemblies/SharpLife.Game.dll</AssemblyName>
+			<Targets>
+				<Target>Client</Target>
+				<Target>Server</Target>
+			</Targets>
+		</GameAssembly>
+	</GameAssemblies>
+</EngineConfiguration>
